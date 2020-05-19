@@ -49,7 +49,10 @@ class CustomDataset(Dataset):
 		return len(self.filtered_fns)
 
 	def __getitem__(self, idx):
-		video = torchvision.io.read_video(self.filtered_fns[idx][0], pts_unit = 'sec')[0]
+		if torchvision.__version__[:3] == '0.4':
+			video = torchvision.io.read_video(self.filtered_fns[idx][0])[0]
+		else: # Newer version
+			video = torchvision.io.read_video(self.filtered_fns[idx][0], pts_unit = 'sec')[0]
 		label = self.filtered_fns[idx][1]
 		n_frames = video.size()[0]
 		if n_frames > 300: # Chop off to last 1000
