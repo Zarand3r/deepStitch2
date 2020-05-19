@@ -3,6 +3,7 @@ from collections import Counter
 from sklearn.metrics import confusion_matrix
 import seaborn as sns
 import matplotlib.pyplot as plt
+from copy import deepcopy
 
 # Torch imports
 from pytorch_lightning.core.lightning import LightningModule
@@ -17,7 +18,7 @@ from torch.utils.data import Dataset, DataLoader
 
 class CustomDataset(Dataset):
 	"""CustomDataset"""
-	def __init__(self, global_dir, idxs= None, include_classes = [], flow_method = 'dali'):
+	def __init__(self, global_dir, idxs= None, include_classes = [], flow_method = 'dali', balance_classes = False):
 		self.global_dir = global_dir
 		if len(include_classes) == 0:
 			self.classes = os.listdir(global_dir)
@@ -31,7 +32,18 @@ class CustomDataset(Dataset):
 			raise ValueError('Likely that you have not pre-computed the optical flow')
 		if idxs == None: # load all
 			idxs = list(range(len(fns)))
-		self.filtered_fns = [(f, self.classes.index(f.split('/')[-2]) ) for i, f in enumerate(fns) if i in idxs]
+		self.filtered_fns = [[f, self.classes.index(f.split('/')[-2]) ] for i, f in enumerate(fns) if i in idxs]
+		if balance_classes:
+			class_counter = Counter([f[1] for f in self.filtered_fns])
+			print(class_counter)
+			print('balancing...')
+			n_match = class_counter.most_common()[0][1]
+			for class_curr in class_counter.keys():
+				cnt = class_counter[class_curr]
+				print(class_curr, cnt)
+				self.filtered_fns.extend(random.choices([f for f in self.filtered_fns if f[1] == int(class_curr)], k=max(n_match-cnt, 1) ))
+			print(Counter([f[1] for f in self.filtered_fns]))
+			print('Classes now balanced')
 
 	def __len__(self):
 		return len(self.filtered_fns)
@@ -222,7 +234,7 @@ class FusionModel(LightningModule):
 		return optimizer
 
 	def train_dataloader(self):
-		train_dataset 	= CustomDataset(self.hparams.datadir, idxs = self.hparams.idx_train , include_classes = self.hparams.include_classes, flow_method = self.hparams.flow_method)
+		train_dataset 	= CustomDataset(self.hparams.datadir, idxs = self.hparams.idx_train , include_classes = self.hparams.include_classes, flow_method = self.hparams.flow_method, balance_classes=True)
 		train_dataloader 	= DataLoader(train_dataset, batch_size=1, shuffle=True, num_workers=1)
 
 		self.epoch_len = len(train_dataset)
