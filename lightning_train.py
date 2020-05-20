@@ -204,7 +204,7 @@ class FusionModel(LightningModule):
 		
 		avg_loss = torch.stack([x['val_loss'] for x in outputs]).mean()
 		tensorboard_logs = {'val/loss': avg_loss, 'val/top1': top1_val, 'train/top1': top1_train, 'step': self.current_epoch}
-		return {'val_loss': avg_loss, 'log': tensorboard_logs}
+		return {'val_loss': avg_loss, 'val_acc':top1_val, 'log': tensorboard_logs}
 	
 	def send_im_calculate_top1(self, actual, predicted, cmap_use = 'Blues', name = 'tmp/name'):
 		cm = confusion_matrix(actual, predicted)
@@ -318,7 +318,7 @@ if __name__ == '__main__':
 	print("==> creating model FUSION '{}' ".format(hparams.arch))
 	model = FusionModel(hparams)
 	#####################################################################################
-	logger = TensorBoardLogger("lightning_logs", name=hparams.datadir.split('/')[-1])
+	logger = TensorBoardLogger("lightning_logs", name='%s/%s_%s_%s' %(hparams.datadir.split('/')[-1], hparams.arch, hparams.trainable_base))
 	logger.log_hyperparams(hparams)
 	# Set default device
 	# torch.cuda.set_device(hparams.gpu)
@@ -331,7 +331,7 @@ if __name__ == '__main__':
     # mode='min')
 
 
-	kwargs = {'gpus': hparams.gpu, 'logger':logger, 'check_val_every_n_epoch':5, 
+	kwargs = {'gpus': [hparams.gpu], 'logger':logger, 'check_val_every_n_epoch':1, 
 				'accumulate_grad_batches':1, 'fast_dev_run' :False, 
 				'num_sanity_val_steps':0, 'reload_dataloaders_every_epoch':False, 
 				'max_epochs' : hparams.epochs, 'log_save_interval':200, 'profiler':False, 
