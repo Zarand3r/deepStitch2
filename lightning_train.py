@@ -219,12 +219,12 @@ class FusionModel(LightningModule):
 									{'params': self.fc_pre.parameters()},
 									{'params': self.rnn.parameters()},
 									{'params': self.fc.parameters()}],
-									lr=self.hparams.lr, betas=(0.9, 0.999))
+									lr=self.hparams.lr, betas=(0.9, 0.999), weight_decay = self.hparams.weight_decay)
 		else:
 			optimizer = torch.optim.Adam([{'params': self.fc_pre.parameters()},
 									{'params': self.rnn.parameters()},
 									{'params': self.fc.parameters()}],
-									lr=self.hparams.lr, betas=(0.9, 0.999))
+									lr=self.hparams.lr, betas=(0.9, 0.999), weight_decay = self.hparams.weight_decay)
 		return optimizer
 
 	def train_dataloader(self):
@@ -299,6 +299,8 @@ if __name__ == '__main__':
 	parser.add_argument('--flow_method', default='flownet', type=str, help='Which flow method to use (flownet or dali)')
 	parser.add_argument('--random_crop', default=0, type=int, help='Whether or not to augment with random crops...')
 	parser.add_argument('--seed', default=0, type=int)
+	parser.add_argument('--weight_decay', default=0, type=float)
+	
 	
 	hparams = parser.parse_args()
 	if hparams.trainable_base == 1:
