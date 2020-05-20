@@ -9,6 +9,7 @@ from copy import deepcopy
 from pytorch_lightning.core.lightning import LightningModule
 from pytorch_lightning import Trainer
 from pytorch_lightning.logging import TensorBoardLogger
+from pytorch_lightning.callbacks import ModelCheckpoint
 import torch
 import torch.nn as nn
 import torchvision.models as models
@@ -57,8 +58,7 @@ class CustomDataset(Dataset):
 		n_frames = video.size()[0]
 		if n_frames > 300: # Chop off to last 1000
 			video = video[-299:, :, :]
-		#start_phase = random.choice([0, 1, 2])
-		start_phase = 0
+		start_phase = random.choice([0, 1, 2])
 		video = video[list(range(start_phase, video.size()[0], 3)), :, :]
 		return (video, label)
 
@@ -68,6 +68,7 @@ class FusionModel(LightningModule):
 		self.hparams = args
 		self.actual = []; self.actual_train = []
 		self.predicted = []; self.predicted_train = []
+		self.batch_size = 1
 		############################################################################################
 		# Generate the train and test splits
 		train_proportion = 0.8; fns = []
@@ -214,38 +215,27 @@ class FusionModel(LightningModule):
 		
 	def configure_optimizers(self):
 		if self.trainable_base:
-			optimizer = torch.optim.Adam([{'params': model.features.parameters()},
-									{'params': model.fc_pre.parameters()},
-									{'params': model.rnn.parameters()},
-									{'params': model.fc.parameters()}],
+			optimizer = torch.optim.Adam([{'params': self.features.parameters()},
+									{'params': self.fc_pre.parameters()},
+									{'params': self.rnn.parameters()},
+									{'params': self.fc.parameters()}],
 									lr=self.hparams.lr, betas=(0.9, 0.999))
-			# optimizer = torch.optim.SGD([{'params': model.features.parameters()},
-			# 						{'params': model.fc_pre.parameters()},
-			# 						{'params': model.rnn.parameters()},
-			# 						{'params': model.fc.parameters()}],
-			# 						lr=self.hparams.lr, momentum=0.9)
 		else:
-			optimizer = torch.optim.Adam([{'params': model.fc_pre.parameters()},
-									{'params': model.rnn.parameters()},
-									{'params': model.fc.parameters()}],
+			optimizer = torch.optim.Adam([{'params': self.fc_pre.parameters()},
+									{'params': self.rnn.parameters()},
+									{'params': self.fc.parameters()}],
 									lr=self.hparams.lr, betas=(0.9, 0.999))
-			# optimizer = torch.optim.SGD([{'params': model.fc_pre.parameters()},
-			# 						{'params': model.rnn.parameters()},
-			# 						{'params': model.fc.parameters()}],
-			# 						lr=self.hparams.lr, momentum=0.9)
-		#scheduler = torch.optim.lr_scheduler.MultiplicativeLR(optimizer, lr_lambda=self.hparams.lr_lambdas)
 		return optimizer
 
 	def train_dataloader(self):
 		train_dataset 	= CustomDataset(self.hparams.datadir, idxs = self.hparams.idx_train , include_classes = self.hparams.include_classes, flow_method = self.hparams.flow_method, balance_classes=True)
-		train_dataloader 	= DataLoader(train_dataset, batch_size=1, shuffle=True, num_workers=1)
-
+		train_dataloader 	= DataLoader(train_dataset, batch_size=self.batch_size, shuffle=True, num_workers=1)
 		self.epoch_len = len(train_dataset)
 		return train_dataloader
 
 	def val_dataloader(self):
 		val_dataset 	= CustomDataset(self.hparams.datadir, idxs = self.hparams.idx_test , include_classes = self.hparams.include_classes, flow_method = self.hparams.flow_method)
-		val_dataloader 	= DataLoader(val_dataset, batch_size=1, shuffle=False, num_workers=1)
+		val_dataloader 	= DataLoader(val_dataset, batch_size=self.batch_size, shuffle=False, num_workers=1)
 		return val_dataloader
 
 	def apply_transforms_GPU(self, batch):
@@ -297,7 +287,7 @@ if __name__ == '__main__':
 	parser.add_argument('--datadir', default='/home/fluongo/code/usc_project/usc_data/balint/training_ready/cfr_cut_mov', help='train directory')
 	parser.add_argument('--gpu', default=1, type=int, help='GPU device number')
 	parser.add_argument('--arch', default='alexnet', help='model architecture')
-	parser.add_argument('--trainable-base', default=False, type=bool, help='Whether to train the feature extractor')
+	parser.add_argument('--trainable-base', default=0, type=int, help='Whether to train the feature extractor')
 	parser.add_argument('--rnn-model', default='LSTM', type=str, help='RNN model at clasification')
 	parser.add_argument('--rnn-layers', default=2, type=int, help='number of rnn layers')
 	parser.add_argument('--hidden-size', default=16, type=int, help='output size of rnn hidden layers')
@@ -311,12 +301,16 @@ if __name__ == '__main__':
 	parser.add_argument('--seed', default=0, type=int)
 	
 	hparams = parser.parse_args()
+	if hparams.trainable_base == 1:
+		hparams.trainable_base = True
+	else:
+		hparams.trainable_base = False
+
 	random_crop = False if hparams.random_crop == 1 else True
 	if hparams.include_classes == '':
 		hparams.include_classes = ['01', '02', '03', '07', '13']
 	else:
 		hparams.include_classes = hparams.include_classes.split(' ')
-	
 	#####################################################################################
 	# Instantiate model
 	print("==> creating model FUSION '{}' ".format(hparams.arch))
@@ -325,14 +319,22 @@ if __name__ == '__main__':
 	logger = TensorBoardLogger("lightning_logs", name=hparams.datadir.split('/')[-1])
 	logger.log_hyperparams(hparams)
 	# Set default device
-	torch.cuda.set_device(hparams.gpu)
+	# torch.cuda.set_device(hparams.gpu)
 
-	kwargs = {'gpus': [hparams.gpu], 'logger':logger, 'check_val_every_n_epoch':5, 
+	# checkpoint_callback = ModelCheckpoint(
+    # filepath='/path/to/store/weights.ckpt',
+    # save_best_only=True,
+    # verbose=True,
+    # monitor='val_loss',
+    # mode='min')
+
+
+	kwargs = {'gpus': hparams.gpu, 'logger':logger, 'check_val_every_n_epoch':5, 
 				'accumulate_grad_batches':1, 'fast_dev_run' :False, 
 				'num_sanity_val_steps':0, 'reload_dataloaders_every_epoch':False, 
-				'max_epochs' : hparams.epochs, 'log_save_interval':200, 'profiler':True, 
+				'max_epochs' : hparams.epochs, 'log_save_interval':200, 'profiler':False, 
 				'gradient_clip_val':0, 'terminate_on_nan':True,  
-				'track_grad_norm': 2, 'overfit_pct': 0.1}# overfit_pct =0.01
+				'track_grad_norm': 2}# overfit_pct =0.01
 	if hparams.loadchk == '':
 		# trainer = Trainer(gpus = [hparams.gpu], logger = logger, check_val_every_n_epoch=10, accumulate_grad_batches=1, fast_dev_run = False, 
 		# 			num_sanity_val_steps=0, reload_dataloaders_every_epoch=False, 
