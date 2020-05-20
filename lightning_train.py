@@ -300,6 +300,8 @@ if __name__ == '__main__':
 	parser.add_argument('--random_crop', default=0, type=int, help='Whether or not to augment with random crops...')
 	parser.add_argument('--seed', default=0, type=int)
 	parser.add_argument('--weight_decay', default=0, type=float)
+	parser.add_argument('--accum_batches', default=1, type=int)
+	
 	
 	
 	hparams = parser.parse_args()
@@ -318,7 +320,7 @@ if __name__ == '__main__':
 	print("==> creating model FUSION '{}' ".format(hparams.arch))
 	model = FusionModel(hparams)
 	#####################################################################################
-	logger = TensorBoardLogger("lightning_logs", name='%s/%s_%s_%s' %(hparams.datadir.split('/')[-1], hparams.arch, hparams.trainable_base))
+	logger = TensorBoardLogger("lightning_logs", name='%s/%s_%s_%s' %(hparams.datadir.split('/')[-1], hparams.arch, hparams.trainable_base, hparams.rnn_model))
 	logger.log_hyperparams(hparams)
 	# Set default device
 	# torch.cuda.set_device(hparams.gpu)
@@ -332,7 +334,7 @@ if __name__ == '__main__':
 
 
 	kwargs = {'gpus': [hparams.gpu], 'logger':logger, 'check_val_every_n_epoch':1, 
-				'accumulate_grad_batches':1, 'fast_dev_run' :False, 
+				'accumulate_grad_batches':hparams.accum_batches, 'fast_dev_run' :False, 
 				'num_sanity_val_steps':0, 'reload_dataloaders_every_epoch':False, 
 				'max_epochs' : hparams.epochs, 'log_save_interval':200, 'profiler':False, 
 				'gradient_clip_val':0, 'terminate_on_nan':True,  
