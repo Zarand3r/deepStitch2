@@ -325,20 +325,20 @@ if __name__ == '__main__':
 	# Set default device
 	# torch.cuda.set_device(hparams.gpu)
 
-	# checkpoint_callback = ModelCheckpoint(
-    # filepath='/path/to/store/weights.ckpt',
-    # save_best_only=True,
-    # verbose=True,
-    # monitor='val_loss',
-    # mode='min')
-
+	checkpoint_callback = ModelCheckpoint(
+		filepath=os.path.join(logger.log_dir, 'checkpoints'),
+		save_top_k=2,
+		verbose=True,
+		monitor='val_acc',
+		mode='max',
+		prefix='')
 
 	kwargs = {'gpus': [hparams.gpu], 'logger':logger, 'check_val_every_n_epoch':1, 
 				'accumulate_grad_batches':hparams.accum_batches, 'fast_dev_run' :False, 
 				'num_sanity_val_steps':0, 'reload_dataloaders_every_epoch':False, 
 				'max_epochs' : hparams.epochs, 'log_save_interval':200, 'profiler':False, 
 				'gradient_clip_val':0, 'terminate_on_nan':True,  
-				'track_grad_norm': 2}# overfit_pct =0.01
+				'track_grad_norm': 2, 'checkpoint_callback':checkpoint_callback}# overfit_pct =0.01
 	if hparams.loadchk == '':
 		# trainer = Trainer(gpus = [hparams.gpu], logger = logger, check_val_every_n_epoch=10, accumulate_grad_batches=1, fast_dev_run = False, 
 		# 			num_sanity_val_steps=0, reload_dataloaders_every_epoch=False, 
