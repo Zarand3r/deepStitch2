@@ -176,7 +176,7 @@ class FusionModel(LightningModule):
 
 	def training_step(self, batch, batch_idx):
 		# Batch is already on GPU by now
-		input_cuda, target_cuda = self.apply_transforms_GPU(batch)
+		input_cuda, target_cuda = self.apply_transforms_GPU(batch, random_crop=self.hparams.random_crop)
 		output, _, _ = self(input_cuda)
 		output = output[:, -1, :]
 		loss = F.cross_entropy(output, target_cuda.type(torch.long))
@@ -186,7 +186,7 @@ class FusionModel(LightningModule):
 		return {'loss': loss, 'log': tensorboard_logs}
 
 	def validation_step(self, batch, batch_idx):
-		input_cuda, target_cuda = self.apply_transforms_GPU(batch)
+		input_cuda, target_cuda = self.apply_transforms_GPU(batch, random_crop=False)
 		output, _, _ = self(input_cuda)
 		output = output[:, -1, :]
 		loss = F.cross_entropy(output, target_cuda.type(torch.long))
@@ -238,18 +238,22 @@ class FusionModel(LightningModule):
 		val_dataloader 	= DataLoader(val_dataset, batch_size=self.batch_size, shuffle=False, num_workers=1)
 		return val_dataloader
 
-	def apply_transforms_GPU(self, batch):
+	def apply_transforms_GPU(self, batch, random_crop = False):
 		# Prepares the outputs
 		nB, nF, nH, nW, nC = batch[0].size()
-		rgb = self.augGPU_resize(batch[0][:, :, :, :int(nW/2), :].type(torch.float)/255., npix_resize = (224, 224))
+		if random_crop:
+			rgb = self.augGPU_resize(batch[0][:, :, :, :int(nW/2), :].type(torch.float)/255., npix_resize = (240, 280), random_crop = True)
+			of 	= self.augGPU_resize(batch[0][:, :, :, int(nW/2):, :].type(torch.float)/255., npix_resize = (240, 280), random_crop = True)
+		else:
+			rgb = self.augGPU_resize(batch[0][:, :, :, :int(nW/2), :].type(torch.float)/255., npix_resize = (224, 224))
+			of 	= self.augGPU_resize(batch[0][:, :, :, int(nW/2):, :].type(torch.float)/255., npix_resize = (224, 224))
+		#of = self.augGPU_normalize_inplace(of, mean = [0.01, 0.01, 0.01], std = [0.05, 0.05, 0.05])
 		#rgb = self.augGPU_normalize_inplace(rgb, mean = [0.3, 0.2, 0.2], std = [0.2, 0.2, 0.2])
 		rgb = self.augGPU_normalize_inplace(rgb, mean = [0.485, 0.456, 0.406], std = [0.229, 0.224, 0.225])
-		
-		of 	= self.augGPU_resize(batch[0][:, :, :, int(nW/2):, :].type(torch.float)/255., npix_resize = (224, 224))
-		#of = self.augGPU_normalize_inplace(of, mean = [0.01, 0.01, 0.01], std = [0.05, 0.05, 0.05])
 		of = self.augGPU_normalize_inplace(of, mean = [0.485, 0.456, 0.406], std = [0.229, 0.224, 0.225])
 
 		return [torch.stack([rgb, of], axis = -1), batch[1]]
+
 	def augGPU_resize(self, input, seed = None, npix_resize = (224, 224), random_crop = False):
 		""" Resizing operation using interp so it is done on the GPU"""
 		if len(input.size()) == 4: # Single batch
@@ -340,10 +344,6 @@ if __name__ == '__main__':
 				'gradient_clip_val':0, 'terminate_on_nan':True,  
 				'track_grad_norm': 2, 'checkpoint_callback':checkpoint_callback}# overfit_pct =0.01
 	if hparams.loadchk == '':
-		# trainer = Trainer(gpus = [hparams.gpu], logger = logger, check_val_every_n_epoch=10, accumulate_grad_batches=1, fast_dev_run = False, 
-		# 			num_sanity_val_steps=0, reload_dataloaders_every_epoch=False, 
-		# 			max_epochs = hparams.epochs, log_save_interval=200, profiler=True, gradient_clip_val=0, terminate_on_nan = True,  
-		# 			track_grad_norm = 2, overfit_pct = 0.05) # overfit_pct =0.01
 		trainer = Trainer(**kwargs)
 	else:
 		trainer = Trainer(resume_from_checkpoint = haparams.loadchk, **kwargs)
