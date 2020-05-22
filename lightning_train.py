@@ -19,7 +19,7 @@ from torch.utils.data import Dataset, DataLoader
 
 class CustomDataset(Dataset):
 	"""CustomDataset"""
-	def __init__(self, global_dir, idxs= None, include_classes = [], flow_method = 'dali', balance_classes = False):
+	def __init__(self, global_dir, idxs= None, include_classes = [], flow_method = 'dali', balance_classes = False, mode = 'train'):
 		self.global_dir = global_dir
 		if len(include_classes) == 0:
 			self.classes = os.listdir(global_dir)
@@ -56,10 +56,17 @@ class CustomDataset(Dataset):
 			video = torchvision.io.read_video(self.filtered_fns[idx][0], pts_unit = 'sec')[0]
 		label = self.filtered_fns[idx][1]
 		n_frames = video.size()[0]
-		if n_frames > 300: # Chop off to last 1000
-			video = video[-299:, :, :]
-		start_phase = random.choice([0, 1, 2])
-		video = video[list(range(start_phase, video.size()[0], 3)), :, :]
+		if mode == 'train':
+			if n_frames > 300: # Chop off to last 1000
+				video = video[-299:, :, :]
+			start_phase = random.choice([0, 1, 2])
+			video = video[list(range(start_phase, video.size()[0], 3)), :, :]
+		elif mode == 'test':
+			# On test do a dense load of the last N frames
+			if n_frames > 159: # Chop off to last 150
+				video = video[-150:, :, :]
+		else:
+			raise ValueError('not supported mode must be train or test')
 		return (video, label)
 
 class FusionModel(LightningModule):
@@ -111,11 +118,6 @@ class FusionModel(LightningModule):
 				param.requires_grad = self.trainable_base
 			self.fc_pre = nn.Sequential(nn.Linear(512, int(args.fc_size/2)), nn.Dropout())
 		elif args.arch.startswith('resnet50'):
-			self.features = nn.Sequential(*list(original_model.children())[:-1])
-			for i, param in enumerate(self.features.parameters()):
-				param.requires_grad = self.trainable_base
-			self.fc_pre = nn.Sequential(nn.Linear(2048, int(args.fc_size/2)), nn.Dropout())
-		elif args.arch.startswith('resnet101'):
 			self.features = nn.Sequential(*list(original_model.children())[:-1])
 			for i, param in enumerate(self.features.parameters()):
 				param.requires_grad = self.trainable_base
