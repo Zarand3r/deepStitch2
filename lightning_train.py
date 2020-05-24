@@ -19,8 +19,9 @@ from torch.utils.data import Dataset, DataLoader
 
 class CustomDataset(Dataset):
 	"""CustomDataset"""
-	def __init__(self, global_dir, idxs= None, include_classes = [], flow_method = 'dali', balance_classes = False, mode = 'train'):
+	def __init__(self, global_dir, idxs= None, include_classes = [], flow_method = 'flownet', balance_classes = False, mode = 'train'):
 		self.global_dir = global_dir
+		self.mode = mode
 		if len(include_classes) == 0:
 			self.classes = os.listdir(global_dir)
 			fns = glob.glob(os.path.join(global_dir, '*', 'flow%s*' % flow_method))
@@ -56,15 +57,15 @@ class CustomDataset(Dataset):
 			video = torchvision.io.read_video(self.filtered_fns[idx][0], pts_unit = 'sec')[0]
 		label = self.filtered_fns[idx][1]
 		n_frames = video.size()[0]
-		if mode == 'train':
+		if self.mode == 'train':
 			if n_frames > 300: # Chop off to last 1000
 				video = video[-299:, :, :]
-			start_phase = random.choice([0, 1, 2])
-			video = video[list(range(start_phase, video.size()[0], 3)), :, :]
-		elif mode == 'test':
+			start_phase = random.choice([0, 1])
+			video = video[list(range(start_phase, video.size()[0], 2)), :, :]
+		elif self.mode == 'val':
 			# On test do a dense load of the last N frames
-			if n_frames > 159: # Chop off to last 150
-				video = video[-150:, :, :]
+			if n_frames > 150: # Chop off to last 150
+				video = video[-149:, :, :]
 		else:
 			raise ValueError('not supported mode must be train or test')
 		return (video, label)
@@ -167,7 +168,6 @@ class FusionModel(LightningModule):
 
 			# Concat
 			f_cat = torch.cat(f_all, dim=-1)
-			#fs[:, kk, :] = self.bn(f_cat)
 			fs[:, kk, :] = f_cat
 
 		# Note that for the 2 layer network will output hidden state as
@@ -230,13 +230,15 @@ class FusionModel(LightningModule):
 		return optimizer
 
 	def train_dataloader(self):
-		train_dataset 	= CustomDataset(self.hparams.datadir, idxs = self.hparams.idx_train , include_classes = self.hparams.include_classes, flow_method = self.hparams.flow_method, balance_classes=True)
+		train_dataset 	= CustomDataset(self.hparams.datadir, idxs = self.hparams.idx_train , include_classes = self.hparams.include_classes, 
+							flow_method = self.hparams.flow_method, balance_classes=True, mode = 'train')
 		train_dataloader 	= DataLoader(train_dataset, batch_size=self.batch_size, shuffle=True, num_workers=1)
 		self.epoch_len = len(train_dataset)
 		return train_dataloader
 
 	def val_dataloader(self):
-		val_dataset 	= CustomDataset(self.hparams.datadir, idxs = self.hparams.idx_test , include_classes = self.hparams.include_classes, flow_method = self.hparams.flow_method)
+		val_dataset 	= CustomDataset(self.hparams.datadir, idxs = self.hparams.idx_test , include_classes = self.hparams.include_classes, 
+							flow_method = self.hparams.flow_method, balance_classes=False, mode = 'val')
 		val_dataloader 	= DataLoader(val_dataset, batch_size=self.batch_size, shuffle=False, num_workers=1)
 		return val_dataloader
 
@@ -305,10 +307,8 @@ if __name__ == '__main__':
 	parser.add_argument('--flow_method', default='flownet', type=str, help='Which flow method to use (flownet or dali)')
 	parser.add_argument('--random_crop', default=0, type=int, help='Whether or not to augment with random crops...')
 	parser.add_argument('--seed', default=0, type=int)
-	parser.add_argument('--weight_decay', default=0, type=float)
+	parser.add_argument('--weight_decay', default=0.01, type=float)
 	parser.add_argument('--accum_batches', default=1, type=int)
-	
-	
 	
 	hparams = parser.parse_args()
 	if hparams.trainable_base == 1:
