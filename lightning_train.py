@@ -309,6 +309,7 @@ if __name__ == '__main__':
 	parser.add_argument('--seed', default=0, type=int)
 	parser.add_argument('--weight_decay', default=0.01, type=float)
 	parser.add_argument('--accum_batches', default=1, type=int)
+	parser.add_argument('--overfit', default=0, type=int)
 	
 	hparams = parser.parse_args()
 	if hparams.trainable_base == 1:
@@ -344,7 +345,11 @@ if __name__ == '__main__':
 				'num_sanity_val_steps':0, 'reload_dataloaders_every_epoch':False, 
 				'max_epochs' : hparams.epochs, 'log_save_interval':200, 'profiler':False, 
 				'gradient_clip_val':0, 'terminate_on_nan':True,  
-				'track_grad_norm': 2, 'checkpoint_callback':checkpoint_callback}# overfit_pct =0.01
+				'track_grad_norm': 2, 'checkpoint_callback':checkpoint_callback} # overfit_pct =0.01
+	
+	if hparams.overfit == 1:
+		kwargs['overfit_pct'] = 0.05
+	
 	if hparams.loadchk == '':
 		trainer = Trainer(**kwargs)
 	else:
