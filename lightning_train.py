@@ -344,11 +344,12 @@ if __name__ == '__main__':
 				'accumulate_grad_batches':hparams.accum_batches, 'fast_dev_run' :False, 
 				'num_sanity_val_steps':0, 'reload_dataloaders_every_epoch':False, 
 				'max_epochs' : hparams.epochs, 'log_save_interval':200, 'profiler':False, 
-				'gradient_clip_val':0, 'terminate_on_nan':True,  
+				'gradient_clip_val':0, 'terminate_on_nan':True,  'auto_lr_find': False, 
 				'track_grad_norm': 2, 'checkpoint_callback':checkpoint_callback} # overfit_pct =0.01
 	
 	if hparams.overfit == 1:
 		kwargs['overfit_pct'] = 0.05
+
 	
 	if hparams.loadchk == '':
 		trainer = Trainer(**kwargs)
