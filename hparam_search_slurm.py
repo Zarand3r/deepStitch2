@@ -2,9 +2,7 @@
 This example shows how to use gpus on SLURM with PyTorch.
 """
 import torch
-
 from test_tube import Experiment, HyperOptArgumentParser, SlurmCluster
-
 
 def train(hparams, *args):
     """Train your awesome model.
@@ -53,26 +51,32 @@ if __name__ == '__main__':
     cluster.notify_job_status(
         email='fluongo@gmail.com', on_done=True, on_fail=True)
 
-    # SLURM Module to load.
-    cluster.load_modules([
-        'python-3',
-        'anaconda3'
-    ])
+    # # SLURM Module to load.
+    # cluster.load_modules([
+    #     'python-3',
+    #     'anaconda3'
+    # ])
 
     # Add commands to the non-SLURM portion.
-    cluster.add_command('source activate myCondaEnv')
+    cluster.add_command('source activate pytorch13_lightning')
+    cluster.add_command("echo 'Environment activated, running file....'")
 
     # Add custom SLURM commands which show up as:
     # #comment
     # #SBATCH --cmd=value
     # ############
-    # cluster.add_slurm_cmd(
-    #    cmd='cpus-per-task', value='1', comment='CPUS per task.')
+    cluster.add_slurm_cmd(cmd='time', value='00:05:00', comment='walltime')
+    cluster.add_slurm_cmd(cmd='ntasks', value='3', comment='number of processes')
+    cluster.add_slurm_cmd(cmd='nodes', value='1', comment='number of nodes')
+    cluster.add_slurm_cmd(cmd='gres', value='gpu:1', comment='number of gpus')
+    cluster.add_slurm_cmd(cmd='mem-per-cpu', value='4G', comment='memory per cpu')
+        
+
 
     # Set job compute details (this will apply PER set of hyperparameters.)
-    cluster.per_experiment_nb_gpus = 4
-    cluster.per_experiment_nb_nodes = 2
-    cluster.gpu_type = '1080ti'
+    #cluster.per_experiment_nb_gpus = 1
+    #cluster.per_experiment_nb_nodes = 1
+    #cluster.gpu_type = '1080ti'
 
     # Each hyperparameter combination will use 8 gpus.
     cluster.optimize_parallel_cluster_gpu(

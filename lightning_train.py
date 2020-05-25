@@ -206,7 +206,7 @@ class FusionModel(LightningModule):
 		
 		avg_loss = torch.stack([x['val_loss'] for x in outputs]).mean()
 		tensorboard_logs = {'val/loss': avg_loss, 'val/top1': top1_val, 'train/top1': top1_train, 'step': self.current_epoch}
-		return {'val_loss': avg_loss, 'val_acc':top1_val, 'log': tensorboard_logs}
+		return {'val_loss': avg_loss, 'val_acc':torch.tensor(top1_val), 'log': tensorboard_logs}
 	
 	def send_im_calculate_top1(self, actual, predicted, cmap_use = 'Blues', name = 'tmp/name'):
 		cm = confusion_matrix(actual, predicted)
@@ -227,7 +227,8 @@ class FusionModel(LightningModule):
 									{'params': self.rnn.parameters()},
 									{'params': self.fc.parameters()}],
 									lr=self.hparams.lr, betas=(0.9, 0.999), weight_decay = self.hparams.weight_decay)
-		return optimizer
+		scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=40, gamma = 0.1)
+		return [optimizer], [scheduler]
 
 	def train_dataloader(self):
 		train_dataset 	= CustomDataset(self.hparams.datadir, idxs = self.hparams.idx_train , include_classes = self.hparams.include_classes, 
@@ -334,7 +335,7 @@ if __name__ == '__main__':
 
 	checkpoint_callback = ModelCheckpoint(
 		filepath=os.path.join(logger.log_dir, 'checkpoints'),
-		save_top_k=2,
+		save_top_k=3,
 		verbose=True,
 		monitor='val_acc',
 		mode='max',
