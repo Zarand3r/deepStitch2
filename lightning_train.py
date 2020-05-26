@@ -79,13 +79,13 @@ class FusionModel(LightningModule):
 		self.batch_size = 1
 		############################################################################################
 		# Generate the train and test splits
-		train_proportion = 0.8; fns = []
+		fns = []
 		for class_curr in self.hparams.include_classes:
 			fns.extend(glob.glob(os.path.join(self.hparams.datadir, class_curr, 'flow%s*' % self.hparams.flow_method)))
 		idx = list(range(len(fns)))
-		random.seed(1); random.shuffle(idx)
-		self.hparams.idx_train 	= idx[:int(train_proportion*len(idx))].copy() # Save as hyperparams
-		self.hparams.idx_test 	= idx[int(train_proportion*len(idx)):].copy() # Save as hyperparams
+		random.seed(self.hparams.seed); random.shuffle(idx)
+		self.hparams.idx_train 	= idx[:int(self.hparams.train_proportion*len(idx))].copy() # Save as hyperparams
+		self.hparams.idx_test 	= idx[int(self.hparams.train_proportion*len(idx)):].copy() # Save as hyperparams
 		############################################################################################
 
 		# Model specific
@@ -227,7 +227,7 @@ class FusionModel(LightningModule):
 									{'params': self.rnn.parameters()},
 									{'params': self.fc.parameters()}],
 									lr=self.hparams.lr, betas=(0.9, 0.999), weight_decay = self.hparams.weight_decay)
-		scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=40, gamma = 0.1)
+		scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=20, gamma = 0.1)
 		return [optimizer], [scheduler]
 
 	def train_dataloader(self):
@@ -280,6 +280,7 @@ class FusionModel(LightningModule):
 			resized_rgb = resized_rgb[:, :, y0:y0+224, x0:x0+224, :]
 		
 		return resized_rgb
+	
 	def augGPU_normalize_inplace(self, input, mean = [0.3, 0.3, 0.3], std=[0.1, 0.1, 0.1]):
 		"""Does an in place normalization on GPU"""
 		mean = torch.as_tensor(mean).type_as(input)
@@ -301,24 +302,22 @@ if __name__ == '__main__':
 	parser.add_argument('--rnn_layers', default=2, type=int, help='number of rnn layers')
 	parser.add_argument('--hidden_size', default=16, type=int, help='output size of rnn hidden layers')
 	parser.add_argument('--fc_size', default=32, type=int, help='size of fully connected layer before rnn')
-	parser.add_argument('--epochs', default=30, type=int, help='manual epoch number')
+	parser.add_argument('--epochs', default=60, type=int, help='manual epoch number')
 	parser.add_argument('--lr', default=0.0001, type=float, help='initial learning rate')
 	parser.add_argument('--lr_lambdas', default=0.9, type=float, help='Schedulre hyperparam')
 	parser.add_argument('--include_classes', default='', type=str, help='Which classnames to include')
 	parser.add_argument('--flow_method', default='flownet', type=str, help='Which flow method to use (flownet or dali)')
 	parser.add_argument('--random_crop', default=0, type=int, help='Whether or not to augment with random crops...')
 	parser.add_argument('--seed', default=0, type=int)
+	parser.add_argument('--train_proportion', default=0.8, type=int)
 	parser.add_argument('--weight_decay', default=0.01, type=float)
 	parser.add_argument('--accum_batches', default=1, type=int)
 	parser.add_argument('--overfit', default=0, type=int)
 	
 	hparams = parser.parse_args()
-	if hparams.trainable_base == 1:
-		hparams.trainable_base = True
-	else:
-		hparams.trainable_base = False
-
-	random_crop = False if hparams.random_crop == 1 else True
+	hparams.trainable_base = True if hparams.trainable_base == 1 else False
+	hparams.random_crop = True if hparams.random_crop == 1 else False
+	
 	if hparams.include_classes == '':
 		hparams.include_classes = ['01', '02', '03', '07', '13']
 	else:
