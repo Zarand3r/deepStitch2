@@ -305,7 +305,7 @@ if __name__ == '__main__':
 	parser.add_argument('--epochs', default=60, type=int, help='manual epoch number')
 	parser.add_argument('--lr', default=0.0001, type=float, help='initial learning rate')
 	parser.add_argument('--lr_lambdas', default=0.9, type=float, help='Schedulre hyperparam')
-	parser.add_argument('--include_classes', default='', type=str, help='Which classnames to include')
+	parser.add_argument('--include_classes', default='', type=str, help='Which classnames to include seperated by _ e.g. 00_01')
 	parser.add_argument('--flow_method', default='flownet', type=str, help='Which flow method to use (flownet or dali)')
 	parser.add_argument('--random_crop', default=0, type=int, help='Whether or not to augment with random crops...')
 	parser.add_argument('--seed', default=0, type=int)
@@ -319,9 +319,9 @@ if __name__ == '__main__':
 	hparams.random_crop = True if hparams.random_crop == 1 else False
 	
 	if hparams.include_classes == '':
-		hparams.include_classes = ['01', '02', '03', '07', '13']
+		raise ValueError('Please define the classes to use using the 00_01 underscore notation')
 	else:
-		hparams.include_classes = hparams.include_classes.split(' ')
+		hparams.include_classes = hparams.include_classes.split('_')
 	#####################################################################################
 	# Instantiate model
 	print("==> creating model FUSION '{}' ".format(hparams.arch))
