@@ -1,9 +1,11 @@
 import os, argparse, glob, random, tempfile
 from collections import Counter
-from sklearn.metrics import confusion_matrix
+from sklearn.metrics import confusion_matrix, roc_auc_score
 import seaborn as sns
 import matplotlib.pyplot as plt
 from copy import deepcopy
+from scipy.special import softmax
+import numpy as np
 
 # Torch imports
 from pytorch_lightning.core.lightning import LightningModule
@@ -76,6 +78,7 @@ class FusionModel(LightningModule):
 		self.hparams = args
 		self.actual = []; self.actual_train = []
 		self.predicted = []; self.predicted_train = []
+		self.predicted_softmax = []; self.predicted_softmax_train = []
 		self.batch_size = 1
 		############################################################################################
 		# Generate the train and test splits
@@ -184,6 +187,7 @@ class FusionModel(LightningModule):
 		loss = F.cross_entropy(output, target_cuda.type(torch.long))
 		self.actual_train.append(target_cuda.item())
 		self.predicted_train.append(output.topk(1,1)[-1].item())
+		self.predicted_softmax_train.append(softmax(output.detach().cpu().numpy(), axis = -1)) # Save scores
 		tensorboard_logs = {'train/loss': loss}
 		return {'loss': loss, 'log': tensorboard_logs}
 
@@ -194,18 +198,31 @@ class FusionModel(LightningModule):
 		loss = F.cross_entropy(output, target_cuda.type(torch.long))
 		self.actual.append(target_cuda.item())
 		self.predicted.append(output.topk(1,1)[-1].item())
+		self.predicted_softmax.append(softmax(output.detach().cpu().numpy(), axis = -1)) # Save scores
+
 		return {'val_loss': loss}
 
 	def validation_end(self, outputs):
 		########### Log to tensorboard#######################################################
+		if self.trainer.overfit_pct==0: # Not a debug loop, otherwise roc_auc can throw errors
+			if self.num_classes ==2:
+				auc_train 	= roc_auc_score(self.actual_train, np.vstack(self.predicted_softmax_train)[:, 1])
+				auc_val 	= roc_auc_score(self.actual, np.vstack(self.predicted_softmax)[:, 1])
+			else:
+				auc_train 	= roc_auc_score(self.actual_train, np.vstack(self.predicted_softmax_train), multi_class = 'ovr')
+				auc_val 	= roc_auc_score(self.actual, np.vstack(self.predicted_softmax), multi_class = 'ovr')
+		else:
+			auc_train, auc_val = 0, 0
+		
 		top1_val = self.send_im_calculate_top1(self.actual, self.predicted, cmap_use = 'Blues', name = 'val/conf_mat')
 		top1_train = self.send_im_calculate_top1(self.actual_train, self.predicted_train, cmap_use = 'Oranges', name = 'train/conf_mat')
 		#####################################################################################
 		self.actual = []; self.actual_train = []
 		self.predicted = []; self.predicted_train = []
+		self.predicted_softmax = []; self.predicted_softmax_train = []
 		
 		avg_loss = torch.stack([x['val_loss'] for x in outputs]).mean()
-		tensorboard_logs = {'val/loss': avg_loss, 'val/top1': top1_val, 'train/top1': top1_train, 'step': self.current_epoch}
+		tensorboard_logs = {'val/loss': avg_loss, 'val/top1': top1_val, 'val/auc': auc_val, 'train/top1': top1_train, 'train/auc': auc_train, 'step': self.current_epoch}
 		return {'val_loss': avg_loss, 'val_acc':torch.tensor(top1_val), 'log': tensorboard_logs}
 	
 	def send_im_calculate_top1(self, actual, predicted, cmap_use = 'Blues', name = 'tmp/name'):
@@ -295,7 +312,7 @@ if __name__ == '__main__':
 	parser = argparse.ArgumentParser(description='Training')
 	parser.add_argument('--loadchk', default='', help='Pass through to load training from a checkpoint')
 	parser.add_argument('--datadir', default='/home/fluongo/code/usc_project/usc_data/balint/training_ready/cfr_cut_mov', help='train directory')
-	parser.add_argument('--gpu', default=1, type=int, help='GPU device number')
+	parser.add_argument('--gpu', default=0, type=int, help='GPU device number')
 	parser.add_argument('--arch', default='alexnet', help='model architecture')
 	parser.add_argument('--trainable_base', default=0, type=int, help='Whether to train the feature extractor')
 	parser.add_argument('--rnn_model', default='LSTM', type=str, help='RNN model at clasification')
@@ -305,11 +322,11 @@ if __name__ == '__main__':
 	parser.add_argument('--epochs', default=60, type=int, help='manual epoch number')
 	parser.add_argument('--lr', default=0.0001, type=float, help='initial learning rate')
 	parser.add_argument('--lr_lambdas', default=0.9, type=float, help='Schedulre hyperparam')
-	parser.add_argument('--include_classes', default='', type=str, help='Which classnames to include seperated by _ e.g. 00_01')
+	parser.add_argument('--include_classes', default='01_02', type=str, help='Which classnames to include seperated by _ e.g. 00_01')
 	parser.add_argument('--flow_method', default='flownet', type=str, help='Which flow method to use (flownet or dali)')
 	parser.add_argument('--random_crop', default=0, type=int, help='Whether or not to augment with random crops...')
 	parser.add_argument('--seed', default=0, type=int)
-	parser.add_argument('--train_proportion', default=0.8, type=int)
+	parser.add_argument('--train_proportion', default=0.8, type=float)
 	parser.add_argument('--weight_decay', default=0.01, type=float)
 	parser.add_argument('--accum_batches', default=1, type=int)
 	parser.add_argument('--overfit', default=0, type=int)
@@ -348,7 +365,7 @@ if __name__ == '__main__':
 				'track_grad_norm': 2, 'checkpoint_callback':checkpoint_callback} # overfit_pct =0.01
 	
 	if hparams.overfit == 1:
-		kwargs['overfit_pct'] = 0.05
+		kwargs['overfit_pct'] = 0.1
 
 	
 	if hparams.loadchk == '':
