@@ -330,11 +330,14 @@ if __name__ == '__main__':
 	parser.add_argument('--weight_decay', default=0.01, type=float)
 	parser.add_argument('--accum_batches', default=1, type=int)
 	parser.add_argument('--overfit', default=0, type=int)
+	parser.add_argument('--auto_lr', default=0, type=int)
+	
 	
 	hparams = parser.parse_args()
 	hparams.trainable_base = True if hparams.trainable_base == 1 else False
 	hparams.random_crop = True if hparams.random_crop == 1 else False
-	
+	hparams.auto_lr = True if hparams.auto_lr == 1 else False
+
 	if hparams.include_classes == '':
 		raise ValueError('Please define the classes to use using the 00_01 underscore notation')
 	else:
@@ -344,8 +347,8 @@ if __name__ == '__main__':
 	print("==> creating model FUSION '{}' ".format(hparams.arch))
 	model = FusionModel(hparams)
 	#####################################################################################
-	logger = TensorBoardLogger("lightning_logs", name='%s/%s_%s_%s' %(hparams.datadir.split('/')[-1], hparams.arch, hparams.trainable_base, hparams.rnn_model))
-	logger.log_hyperparams(hparams)
+	logger = TensorBoardLogger("lightning_logs_experiments", name='%s/%s_%s_%s' %(hparams.datadir.split('/')[-1], hparams.arch, hparams.trainable_base, hparams.rnn_model))
+	logger.log_hyperparams(hparams) # Log the hyperparameters
 	# Set default device
 	# torch.cuda.set_device(hparams.gpu)
 
@@ -361,7 +364,7 @@ if __name__ == '__main__':
 				'accumulate_grad_batches':hparams.accum_batches, 'fast_dev_run' :False, 
 				'num_sanity_val_steps':0, 'reload_dataloaders_every_epoch':False, 
 				'max_epochs' : hparams.epochs, 'log_save_interval':200, 'profiler':False, 
-				'gradient_clip_val':0, 'terminate_on_nan':True,  'auto_lr_find': False, 
+				'gradient_clip_val':0, 'terminate_on_nan':True,  'auto_lr_find': hparams.auto_lr, 
 				'track_grad_norm': 2, 'checkpoint_callback':checkpoint_callback} # overfit_pct =0.01
 	
 	if hparams.overfit == 1:
