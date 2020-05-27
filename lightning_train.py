@@ -131,7 +131,6 @@ class FusionModel(LightningModule):
 			for i, param in enumerate(self.features.parameters()):
 				param.requires_grad = self.trainable_base
 			self.fc_pre = nn.Sequential(nn.Linear(512*7*7, int(args.fc_size/2)), nn.Dropout()) if 'conv' not in args.rnn_model else None
-			self.final_channels = 512
 		else:
 			raise ValueError('architecture base model not yet implemented choices: alexnet, vgg16, ResNet 18/34')
 		# Select an RNN
