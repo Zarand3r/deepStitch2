@@ -73,7 +73,7 @@ if __name__ == '__main__':
     [nY, nX, nC] = mp4_ims[0].shape
 
     #frame_ints = list(range(n_im))
-    div_flow = 10
+    div_flow = 2
     max_flow = 20
     outs = []
 
@@ -87,9 +87,9 @@ if __name__ == '__main__':
         input_var = torch.cat([img1, img2]).unsqueeze(0)
 
         # if args.bidirectional:
-        #     # feed inverted pair along with normal pair
-        #     inverted_input_var = torch.cat([img2, img1]).unsqueeze(0)
-        #     input_var = torch.cat([input_var, inverted_input_var])
+        # feed inverted pair along with normal pair
+        inverted_input_var = torch.cat([img2, img1]).unsqueeze(0)
+        input_var = torch.cat([input_var, inverted_input_var])
 
         input_var = input_var.cuda()
         # compute output
