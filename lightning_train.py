@@ -60,14 +60,17 @@ class CustomDataset(Dataset):
 		label = self.filtered_fns[idx][1]
 		n_frames = video.size()[0]
 		if self.mode == 'train':
-			if n_frames > 300: # Chop off to last 1000
-				video = video[-299:, :, :]
+			if n_frames > 200: # Sample random 200 frames
+				start_ii = random.choice(list(range(0, n_frames-200)))
+				video = video[start_ii:start_ii+199, :, :]
 			start_phase = random.choice([0, 1])
 			video = video[list(range(start_phase, video.size()[0], 2)), :, :]
 		elif self.mode == 'val':
-			# On test do a dense load of the last N frames
-			if n_frames > 150: # Chop off to last 150
-				video = video[-149:, :, :]
+			if n_frames > 200: # Sample random 200 frames
+				start_ii = random.choice(list(range(0, n_frames-200)))
+				video = video[start_ii:start_ii+199, :, :]
+			start_phase = random.choice([0, 1])
+			video = video[list(range(start_phase, video.size()[0], 2)), :, :]
 		else:
 			raise ValueError('not supported mode must be train or test')
 		return (video, label)
