@@ -60,8 +60,8 @@ def flow2rgb_torch(input):
 
     rgb_optic_flow = torch.zeros(nB, nF, nH, nW, 3)
     for bb in range(nB):
-        u = torch.clamp(input[bb, :, :, :, 0], -20, 20)/ 20. # Clip
-        v = torch.clamp(input[bb, :, :, :, 1], -20, 20)/ 20. # Clip
+        u = torch.clamp(input[bb, :, :, :, 0], -100, 100)/ 100. # Clip
+        v = torch.clamp(input[bb, :, :, :, 1], -100, 100)/ 100. # Clip
         rgb_optic_flow[bb, :, :, :, 0] = u
         rgb_optic_flow[bb, :, :, :, 1] = 0.5 * (u + v)
         rgb_optic_flow[bb, :, :, :, 2] = v
