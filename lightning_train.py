@@ -64,15 +64,15 @@ class CustomDataset(Dataset):
 		label = self.filtered_fns[idx][1]
 		n_frames = video.size()[0]
 		if self.mode == 'train':
-			if n_frames > 200: # Sample random 200 frames
-				start_ii = random.choice(list(range(0, n_frames-200)))
-				video = video[start_ii:start_ii+199, :, :]
+			if n_frames > 300: # Sample random 200 frames
+				start_ii = random.choice(list(range(0, n_frames-300)))
+				video = video[start_ii:start_ii+399, :, :]
 			start_phase = random.choice([0, 1])
 			video = video[list(range(start_phase, video.size()[0], 2)), :, :]
 		elif self.mode == 'val':
-			if n_frames > 200: # Sample random 200 frames
-				start_ii = random.choice(list(range(0, n_frames-200)))
-				video = video[start_ii:start_ii+199, :, :]
+			if n_frames > 300: # Sample random 200 frames
+				start_ii = random.choice(list(range(0, n_frames-300)))
+				video = video[start_ii:start_ii+299, :, :]
 			start_phase = random.choice([0, 1])
 			video = video[list(range(start_phase, video.size()[0], 2)), :, :]
 		else:
@@ -154,7 +154,7 @@ class FusionModel(LightningModule):
 			nF = 6 if args.arch.startswith('alexnet') else 7
 			self.fc = nn.Linear(self.final_channels*2*nF*nF, self.num_classes)
 		else:
-			raise ValueError('Not implemented, choose RNN/LSTM/GRU or convLSTM type')
+			raise ValueError('Not implemented, choose LSTM, convLSTM, convttLSTM type')
 		
 		self.modelName = '%s_%s_latefusion_trainbaseparams_%s' % (args.arch, args.rnn_model, args.trainable_base)
 	
