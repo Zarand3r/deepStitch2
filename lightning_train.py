@@ -37,7 +37,7 @@ class CustomDataset(Dataset):
 			for class_curr in include_classes:
 				fns.extend(glob.glob(os.path.join(global_dir, class_curr, 'flow%s*' % flow_method)))
 		if len(fns) == 0:
-			raise ValueError('Likely that you have not pre-computed the optical flow')
+			raise ValueError('Likely that you have not pre-computed the optical flow or data directory is wrong!')
 		if idxs == None: # load all
 			idxs = list(range(len(fns)))
 		self.filtered_fns = [[f, self.classes.index(f.split('/')[-2]) ] for i, f in enumerate(fns) if i in idxs]
@@ -131,10 +131,11 @@ class FusionModel(LightningModule):
 			for i, param in enumerate(self.features.parameters()):
 				param.requires_grad = self.trainable_base
 			self.fc_pre = nn.Sequential(nn.Linear(512*7*7, int(args.fc_size/2)), nn.Dropout()) if 'conv' not in args.rnn_model else None
+			self.final_channels = 512
 		else:
 			raise ValueError('architecture base model not yet implemented choices: alexnet, vgg16, ResNet 18/34')
 		# Select an RNN
-		print(self.features)
+		#print(self.features)
 		if args.rnn_model == 'LSTM':
 			self.rnn = nn.LSTM(input_size = args.fc_size,
 						hidden_size = args.hidden_size,
@@ -275,7 +276,7 @@ class FusionModel(LightningModule):
 								lr=self.hparams.lr, betas=(0.9, 0.999), 
 								weight_decay = self.hparams.weight_decay)
 	
-		scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=20, gamma = 0.1)
+		scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=10, gamma = 0.1)
 		return [optimizer], [scheduler]
 
 	def train_dataloader(self):
@@ -362,7 +363,7 @@ if __name__ == '__main__':
 	parser.add_argument('--accum_batches', default=1, type=int)
 	parser.add_argument('--overfit', default=0, type=int)
 	parser.add_argument('--auto_lr', default=0, type=int)
-	
+	parser.add_argument('--logging_dir', default='lightning_logs', type=str)
 	
 	hparams = parser.parse_args()
 	hparams.trainable_base = True if hparams.trainable_base == 1 else False
@@ -378,7 +379,8 @@ if __name__ == '__main__':
 	print("==> creating model FUSION '{}' ".format(hparams.arch))
 	model = FusionModel(hparams)
 	#####################################################################################
-	logger = TensorBoardLogger("lightning_logs_experiments", name='%s/%s_%s_%s' %(hparams.datadir.split('/')[-1], hparams.arch, hparams.trainable_base, hparams.rnn_model))
+	print('Logging to: % s' % hparams.logging_dir)
+	logger = TensorBoardLogger(hparams.logging_dir, name='%s/%s_%s_%s' %(hparams.datadir.split('/')[-1], hparams.arch, hparams.trainable_base, hparams.rnn_model))
 	logger.log_hyperparams(hparams) # Log the hyperparameters
 	# Set default device
 	# torch.cuda.set_device(hparams.gpu)
