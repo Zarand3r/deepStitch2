@@ -25,9 +25,10 @@ from convlstmcells import ConvLSTMCell, ConvTTLSTMCell
 
 class CustomDataset(Dataset):
 	"""CustomDataset"""
-	def __init__(self, global_dir, idxs= None, include_classes = [], flow_method = 'flownet', balance_classes = False, mode = 'train'):
+	def __init__(self, global_dir, idxs= None, include_classes = [], flow_method = 'flownet', balance_classes = False, mode = 'train', max_frames = 300):
 		self.global_dir = global_dir
 		self.mode = mode
+		self.max_frames = max_frames
 		if len(include_classes) == 0:
 			self.classes = os.listdir(global_dir)
 			fns = glob.glob(os.path.join(global_dir, '*', 'flow%s*' % flow_method))
@@ -64,15 +65,15 @@ class CustomDataset(Dataset):
 		label = self.filtered_fns[idx][1]
 		n_frames = video.size()[0]
 		if self.mode == 'train':
-			if n_frames > 300: # Sample random 200 frames
-				start_ii = random.choice(list(range(0, n_frames-300)))
-				video = video[start_ii:start_ii+299, :, :]
+			if n_frames > self.max_frames: # Sample random 200 frames
+				start_ii = random.choice(list(range(0, n_frames-self.max_frames)))
+				video = video[start_ii:start_ii+(self.max_frames-1), :, :]
 			start_phase = random.choice([0, 1])
 			video = video[list(range(start_phase, video.size()[0], 2)), :, :]
 		elif self.mode == 'val':
-			if n_frames > 300: # Sample random 200 frames
-				start_ii = random.choice(list(range(0, n_frames-300)))
-				video = video[start_ii:start_ii+299, :, :]
+			if n_frames > self.max_frames: # Sample random 200 frames
+				start_ii = random.choice(list(range(0, n_frames-self.max_frames)))
+				video = video[start_ii:start_ii+(self.max_frames-1), :, :]
 			start_phase = random.choice([0, 1])
 			video = video[list(range(start_phase, video.size()[0], 2)), :, :]
 		else:
@@ -364,6 +365,8 @@ if __name__ == '__main__':
 	parser.add_argument('--overfit', default=0, type=int)
 	parser.add_argument('--auto_lr', default=0, type=int)
 	parser.add_argument('--logging_dir', default='lightning_logs', type=str)
+	parser.add_argument('--n_max_frames', default=300, type=int, help='How many frames to load at stride 2')
+	
 	
 	hparams = parser.parse_args()
 	hparams.trainable_base = True if hparams.trainable_base == 1 else False
