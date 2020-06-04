@@ -25,10 +25,11 @@ from convlstmcells import ConvLSTMCell, ConvTTLSTMCell
 
 class CustomDataset(Dataset):
 	"""CustomDataset"""
-	def __init__(self, global_dir, idxs= None, include_classes = [], flow_method = 'flownet', balance_classes = False, mode = 'train', max_frames = 300):
+	def __init__(self, global_dir, idxs= None, include_classes = [], flow_method = 'flownet', balance_classes = False, mode = 'train', max_frames = 150, stride = 2):
 		self.global_dir = global_dir
 		self.mode = mode
-		self.max_frames = max_frames
+		self.max_frames = stride*max_frames
+		self.stride = stride
 		if len(include_classes) == 0:
 			self.classes = os.listdir(global_dir)
 			fns = glob.glob(os.path.join(global_dir, '*', 'flow%s*' % flow_method))
@@ -68,14 +69,14 @@ class CustomDataset(Dataset):
 			if n_frames > self.max_frames: # Sample random 200 frames
 				start_ii = random.choice(list(range(0, n_frames-self.max_frames)))
 				video = video[start_ii:start_ii+(self.max_frames-1), :, :]
-			start_phase = random.choice([0, 1])
-			video = video[list(range(start_phase, video.size()[0], 2)), :, :]
+			start_phase = random.choice(list(range(self.stride)))
+			video = video[list(range(start_phase, video.size()[0], self.stride)), :, :]
 		elif self.mode == 'val':
 			if n_frames > self.max_frames: # Sample random 200 frames
 				start_ii = random.choice(list(range(0, n_frames-self.max_frames)))
 				video = video[start_ii:start_ii+(self.max_frames-1), :, :]
-			start_phase = random.choice([0, 1])
-			video = video[list(range(start_phase, video.size()[0], 2)), :, :]
+			start_phase = random.choice(list(range(self.stride)))
+			video = video[list(range(start_phase, video.size()[0], self.stride)), :, :]
 		else:
 			raise ValueError('not supported mode must be train or test')
 		return (video, label)
@@ -145,16 +146,16 @@ class FusionModel(LightningModule):
 			self.fc = nn.Linear(args.hidden_size, self.num_classes)
 		elif args.rnn_model == 'convLSTM': 
 			# Twice number of channels for RGB and OF which are concat
-			self.rnn = ConvLSTMCell(input_channels = self.final_channels*2, hidden_channels = self.final_channels*2, kernel_size = 3, bias = True)
+			self.rnn = ConvLSTMCell(input_channels = self.final_channels*2, hidden_channels = self.final_channels, kernel_size = 3, bias = True)
 			
 			nF = 6 if args.arch.startswith('alexnet') else 7
-			self.fc = nn.Linear(self.final_channels*2*nF*nF, self.num_classes)
+			self.fc = nn.Linear(self.final_channels*nF*nF, self.num_classes)
 		elif args.rnn_model == 'convttLSTM': 
 			# Twice number of channels for RGB and OF which are concat
-			self.rnn = ConvTTLSTMCell(input_channels = self.final_channels*2, hidden_channels = self.final_channels*2, order = 3, steps = 5, ranks = 16, kernel_size = 3, bias = True)
+			self.rnn = ConvTTLSTMCell(input_channels = self.final_channels*2, hidden_channels = self.final_channels, order = 3, steps = 5, ranks = 16, kernel_size = 3, bias = True)
 			
 			nF = 6 if args.arch.startswith('alexnet') else 7
-			self.fc = nn.Linear(self.final_channels*2*nF*nF, self.num_classes)
+			self.fc = nn.Linear(self.final_channels*nF*nF, self.num_classes)
 		else:
 			raise ValueError('Not implemented, choose LSTM, convLSTM, convttLSTM type')
 		
@@ -282,14 +283,14 @@ class FusionModel(LightningModule):
 
 	def train_dataloader(self):
 		train_dataset 	= CustomDataset(self.hparams.datadir, idxs = self.hparams.idx_train , include_classes = self.hparams.include_classes, 
-							flow_method = self.hparams.flow_method, balance_classes=True, mode = 'train')
+							flow_method = self.hparams.flow_method, balance_classes=True, mode = 'train', max_frames = self.hparams.loader_nframes, stride = self.hparams.loader_stride)
 		train_dataloader 	= DataLoader(train_dataset, batch_size=self.batch_size, shuffle=True, num_workers=1)
 		self.epoch_len = len(train_dataset)
 		return train_dataloader
 
 	def val_dataloader(self):
 		val_dataset 	= CustomDataset(self.hparams.datadir, idxs = self.hparams.idx_test , include_classes = self.hparams.include_classes, 
-							flow_method = self.hparams.flow_method, balance_classes=False, mode = 'val')
+							flow_method = self.hparams.flow_method, balance_classes=False, mode = 'val', max_frames = self.hparams.loader_nframes, stride = self.hparams.loader_stride)
 		val_dataloader 	= DataLoader(val_dataset, batch_size=self.batch_size, shuffle=False, num_workers=1)
 		return val_dataloader
 
@@ -304,8 +305,9 @@ class FusionModel(LightningModule):
 			of 	= self.augGPU_resize(batch[0][:, :, :, int(nW/2):, :].type(torch.float)/255., npix_resize = (224, 224))
 		#of = self.augGPU_normalize_inplace(of, mean = [0.01, 0.01, 0.01], std = [0.05, 0.05, 0.05])
 		#rgb = self.augGPU_normalize_inplace(rgb, mean = [0.3, 0.2, 0.2], std = [0.2, 0.2, 0.2])
-		rgb = self.augGPU_normalize_inplace(rgb, mean = [0.485, 0.456, 0.406], std = [0.229, 0.224, 0.225])
-		of = self.augGPU_normalize_inplace(of, mean = [0.485, 0.456, 0.406], std = [0.229, 0.224, 0.225])
+		rgb = self.augGPU_normalize_inplace(rgb, mean = [0.3, 0.2, 0.2], std = [0.2, 0.2, 0.2])
+		of = self.augGPU_normalize_inplace(of, mean = [0.01, 0.01, 0.01], std = [0.05, 0.05, 0.05])
+		print(of.size())
 
 		return [torch.stack([rgb, of], axis = -1), batch[1]]
 
@@ -338,7 +340,6 @@ class FusionModel(LightningModule):
 		input = input.sub_(mean[None, None, None, None, :]).div_(std[None, None, None, None, :])
 		return input
 
-
 if __name__ == '__main__':
 	###########################################################################################
 	# ARGS
@@ -365,8 +366,8 @@ if __name__ == '__main__':
 	parser.add_argument('--overfit', default=0, type=int)
 	parser.add_argument('--auto_lr', default=0, type=int)
 	parser.add_argument('--logging_dir', default='lightning_logs', type=str)
-	parser.add_argument('--n_max_frames', default=300, type=int, help='How many frames to load at stride 2')
-	
+	parser.add_argument('--loader_nframes', default=300, type=int, help='How many frames to load at stride 2')
+	parser.add_argument('--loader_stride', default=2, type=int, help='stride for dataloader')
 	
 	hparams = parser.parse_args()
 	hparams.trainable_base = True if hparams.trainable_base == 1 else False
@@ -379,7 +380,8 @@ if __name__ == '__main__':
 		hparams.include_classes = hparams.include_classes.split('_')
 	#####################################################################################
 	# Instantiate model
-	print("==> creating model FUSION '{}' ".format(hparams.arch))
+	torch.backends.cudnn.deterministic=True
+	print("==> creating model FUSION '{}' '{}'".format(hparams.arch, hparams.rnn_model))
 	model = FusionModel(hparams)
 	#####################################################################################
 	print('Logging to: % s' % hparams.logging_dir)
