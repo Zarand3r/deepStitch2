@@ -19,11 +19,17 @@ import torch.nn.functional as F
 import torchvision
 from torch.utils.data import Dataset, DataLoader
 
+# Custom imports
+from convlstmcells import ConvLSTMCell, ConvTTLSTMCell
+
+
 class CustomDataset(Dataset):
 	"""CustomDataset"""
-	def __init__(self, global_dir, idxs= None, include_classes = [], flow_method = 'flownet', balance_classes = False, mode = 'train'):
+	def __init__(self, global_dir, idxs= None, include_classes = [], flow_method = 'flownet', balance_classes = False, mode = 'train', max_frames = 150, stride = 2):
 		self.global_dir = global_dir
 		self.mode = mode
+		self.max_frames = stride*max_frames
+		self.stride = stride
 		if len(include_classes) == 0:
 			self.classes = os.listdir(global_dir)
 			fns = glob.glob(os.path.join(global_dir, '*', 'flow%s*' % flow_method))
@@ -33,7 +39,7 @@ class CustomDataset(Dataset):
 			for class_curr in include_classes:
 				fns.extend(glob.glob(os.path.join(global_dir, class_curr, 'flow%s*' % flow_method)))
 		if len(fns) == 0:
-			raise ValueError('Likely that you have not pre-computed the optical flow')
+			raise ValueError('Likely that you have not pre-computed the optical flow or data directory is wrong!')
 		if idxs == None: # load all
 			idxs = list(range(len(fns)))
 		self.filtered_fns = [[f, self.classes.index(f.split('/')[-2]) ] for i, f in enumerate(fns) if i in idxs]
@@ -60,14 +66,17 @@ class CustomDataset(Dataset):
 		label = self.filtered_fns[idx][1]
 		n_frames = video.size()[0]
 		if self.mode == 'train':
-			if n_frames > 300: # Chop off to last 1000
-				video = video[-299:, :, :]
-			start_phase = random.choice([0, 1])
-			video = video[list(range(start_phase, video.size()[0], 2)), :, :]
+			if n_frames > self.max_frames: # Sample random 200 frames
+				start_ii = random.choice(list(range(0, n_frames-self.max_frames)))
+				video = video[start_ii:start_ii+(self.max_frames-1), :, :]
+			start_phase = random.choice(list(range(self.stride)))
+			video = video[list(range(start_phase, video.size()[0], self.stride)), :, :]
 		elif self.mode == 'val':
-			# On test do a dense load of the last N frames
-			if n_frames > 150: # Chop off to last 150
-				video = video[-149:, :, :]
+			if n_frames > self.max_frames: # Sample random 200 frames
+				start_ii = random.choice(list(range(0, n_frames-self.max_frames)))
+				video = video[start_ii:start_ii+(self.max_frames-1), :, :]
+			start_phase = random.choice(list(range(self.stride)))
+			video = video[list(range(start_phase, video.size()[0], self.stride)), :, :]
 		else:
 			raise ValueError('not supported mode must be train or test')
 		return (video, label)
@@ -104,50 +113,52 @@ class FusionModel(LightningModule):
 			for i, param in enumerate(self.features.parameters()):
 				param.requires_grad = self.trainable_base
 			# Make the output of each one be to fc_size/2 so that we cooncat the two fc outputs
-			self.fc_pre = nn.Sequential(nn.Linear(9216, int(args.fc_size/2) ), nn.Dropout())
+			self.fc_pre = nn.Sequential(nn.Linear(256*6*6, int(args.fc_size/2) ), nn.Dropout()) if 'conv' not in args.rnn_model else None
+			self.final_channels = 256
 		elif args.arch.startswith('vgg16'):
 			self.features = original_model.features
 			for i, param in enumerate(self.features.parameters()):
 				param.requires_grad = self.trainable_base
 			# Make the output of each one be to fc_size/2 so that we cooncat the two fc outputs
-			self.fc_pre = nn.Sequential(nn.Linear(25088, int(args.fc_size/2) ), nn.Dropout())
+			self.fc_pre = nn.Sequential(nn.Linear(512*7*7, int(args.fc_size/2) ), nn.Dropout()) if 'conv' not in args.rnn_model else None
+			self.final_channels = 512
 		elif args.arch.startswith('resnet18'):
-			self.features = nn.Sequential(*list(original_model.children())[:-1])
+			self.features = nn.Sequential(*list(original_model.children())[:-2])
 			for i, param in enumerate(self.features.parameters()):
 				param.requires_grad = self.trainable_base
-			self.fc_pre = nn.Sequential(nn.Linear(512, int(args.fc_size/2)), nn.Dropout())
+			self.fc_pre = nn.Sequential(nn.Linear(512*7*7, int(args.fc_size/2)), nn.Dropout()) if 'conv' not in args.rnn_model else None
+			self.final_channels = 512
 		elif args.arch.startswith('resnet34'):
-			self.features = nn.Sequential(*list(original_model.children())[:-1])
+			self.features = nn.Sequential(*list(original_model.children())[:-2])
 			for i, param in enumerate(self.features.parameters()):
 				param.requires_grad = self.trainable_base
-			self.fc_pre = nn.Sequential(nn.Linear(512, int(args.fc_size/2)), nn.Dropout())
-		elif args.arch.startswith('resnet50'):
-			self.features = nn.Sequential(*list(original_model.children())[:-1])
-			for i, param in enumerate(self.features.parameters()):
-				param.requires_grad = self.trainable_base
-			self.fc_pre = nn.Sequential(nn.Linear(2048, int(args.fc_size/2)), nn.Dropout())
+			self.fc_pre = nn.Sequential(nn.Linear(512*7*7, int(args.fc_size/2)), nn.Dropout()) if 'conv' not in args.rnn_model else None
+			self.final_channels = 512
 		else:
-			raise ValueError('architecture base model not yet implemented choices: alexnet, ResNet 18/34/50')
+			raise ValueError('architecture base model not yet implemented choices: alexnet, vgg16, ResNet 18/34')
 		# Select an RNN
+		#print(self.features)
 		if args.rnn_model == 'LSTM':
 			self.rnn = nn.LSTM(input_size = args.fc_size,
 						hidden_size = args.hidden_size,
 						num_layers = args.rnn_layers,
 						batch_first = True)
-		elif args.rnn_model == 'RNN':
-			self.rnn = nn.RNN(input_size = args.fc_size,
-						hidden_size = args.hidden_size,
-						num_layers = args.rnn_layers,
-						batch_first = True)
-		elif args.rnn_model == 'GRU':
-			self.rnn = nn.RNN(input_size = args.fc_size,
-						hidden_size = args.hidden_size,
-						num_layers = args.rnn_layers,
-						batch_first = True)
+			self.fc = nn.Linear(args.hidden_size, self.num_classes)
+		elif args.rnn_model == 'convLSTM': 
+			# Twice number of channels for RGB and OF which are concat
+			self.rnn = ConvLSTMCell(input_channels = self.final_channels*2, hidden_channels = self.final_channels, kernel_size = 3, bias = True)
+			
+			nF = 6 if args.arch.startswith('alexnet') else 7
+			self.fc = nn.Linear(self.final_channels*nF*nF, self.num_classes)
+		elif args.rnn_model == 'convttLSTM': 
+			# Twice number of channels for RGB and OF which are concat
+			self.rnn = ConvTTLSTMCell(input_channels = self.final_channels*2, hidden_channels = self.final_channels, order = 3, steps = 5, ranks = 16, kernel_size = 3, bias = True)
+			
+			nF = 6 if args.arch.startswith('alexnet') else 7
+			self.fc = nn.Linear(self.final_channels*nF*nF, self.num_classes)
 		else:
-			raise ValueError('Not implemented, choose RNN/LSTM/GRU')
+			raise ValueError('Not implemented, choose LSTM, convLSTM, convttLSTM type')
 		
-		self.fc = nn.Linear(args.hidden_size, self.num_classes)
 		self.modelName = '%s_%s_latefusion_trainbaseparams_%s' % (args.arch, args.rnn_model, args.trainable_base)
 	
 	def init_hidden(self, num_layers, batch_size):
@@ -156,27 +167,51 @@ class FusionModel(LightningModule):
 
 	def forward(self, inputs, hidden=None, steps=0):
 		nBatch, nFrames, ofH, ofW, nChannels, _ = inputs.shape
-		fs = torch.zeros(nBatch, nFrames, self.rnn.input_size).cuda()
+		
+		#########################################################################################
+		# Non convolutional (old way)
+		if 'conv' not in self.hparams.rnn_model:
+			fs = torch.zeros(nBatch, nFrames, self.rnn.input_size).cuda()
+			for kk in range(nFrames):
+				f_all = []
+				f = self.features(inputs[:, kk, :, :, :, 0].permute(0, 3, 1, 2)) # permute to nB x nC x H x W
+				f = f.reshape(f.size(0), -1)
+				f = self.fc_pre(f)
+				f_all.append(f)
 
-		for kk in range(nFrames):
-			f_all = []
-			f = self.features(inputs[:, kk, :, :, :, 0].permute(0, 3, 1, 2)) # permute to nB x nC x H x W
-			f = f.reshape(f.size(0), -1)
-			f = self.fc_pre(f)
-			f_all.append(f)
-			f_of = self.features(inputs[:, kk, :, :, :, 1].permute(0, 3, 1, 2))  # permute to nB x nC x H x W
-			f_of = f_of.reshape(f_of.size(0), -1)
-			f_of = self.fc_pre(f_of)
-			f_all.append(f_of)
+				f_of = self.features(inputs[:, kk, :, :, :, 1].permute(0, 3, 1, 2))  # permute to nB x nC x H x W
+				f_of = f_of.reshape(f_of.size(0), -1)
+				f_of = self.fc_pre(f_of)
+				f_all.append(f_of)
 
-			# Concat
-			f_cat = torch.cat(f_all, dim=-1)
-			fs[:, kk, :] = f_cat
+				# Concat
+				f_cat = torch.cat(f_all, dim=-1)
+				fs[:, kk, :] = f_cat
 
-		# Note that for the 2 layer network will output hidden state as
-		outputs, (hidden, cell)  = self.rnn(fs, hidden)
-		outputs = self.fc(outputs)
+			# Note that for the 2 layer network will output hidden state as
+			outputs, (hidden, cell)  = self.rnn(fs, hidden)
+			outputs = self.fc(outputs)
+		else:
+			#########################################################################################
+			# Convolutional flavors
+			for kk in range(nFrames):
+				f = self.features(inputs[:, kk, :, :, :, 0].permute(0, 3, 1, 2)) # permute to nB x nC x H x W
+				f_of = self.features(inputs[:, kk, :, :, :, 1].permute(0, 3, 1, 2))  # permute to nB x nC x H x W
+				
+				# Size nBatch x nChannels x H x W
+				if kk == 0:
+					outputs = self.rnn(torch.cat([f, f_of], dim = 1), first_step=True)
+				else:
+					outputs = self.rnn(torch.cat([f, f_of], dim = 1), first_step=False)
+				
+			outputs = outputs.reshape(outputs.size(0), -1)
+			outputs = self.fc(outputs)
+			# Add a dimension to make the size consistent with old rnn
+			outputs = outputs.unsqueeze(1)
 
+			hidden, cell = _, _ # Implement how to do this later...
+			#########################################################################################
+		
 		return outputs, hidden, cell
 
 	def training_step(self, batch, batch_idx):
@@ -233,30 +268,29 @@ class FusionModel(LightningModule):
 		return top1
 		
 	def configure_optimizers(self):
+		self.layers_to_fit = [{'params': self.fc.parameters()}, {'params': self.rnn.parameters()}]
+		if self.fc_pre != None:
+			self.layers_to_fit.append({'params': self.fc_pre.parameters()})
 		if self.trainable_base:
-			optimizer = torch.optim.Adam([{'params': self.features.parameters()},
-									{'params': self.fc_pre.parameters()},
-									{'params': self.rnn.parameters()},
-									{'params': self.fc.parameters()}],
-									lr=self.hparams.lr, betas=(0.9, 0.999), weight_decay = self.hparams.weight_decay)
-		else:
-			optimizer = torch.optim.Adam([{'params': self.fc_pre.parameters()},
-									{'params': self.rnn.parameters()},
-									{'params': self.fc.parameters()}],
-									lr=self.hparams.lr, betas=(0.9, 0.999), weight_decay = self.hparams.weight_decay)
-		scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=20, gamma = 0.1)
+			self.layers_to_fit.append({'params': self.features.parameters()})
+		
+		optimizer = torch.optim.Adam(self.layers_to_fit,
+								lr=self.hparams.lr, betas=(0.9, 0.999), 
+								weight_decay = self.hparams.weight_decay)
+	
+		scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=10, gamma = 0.1)
 		return [optimizer], [scheduler]
 
 	def train_dataloader(self):
 		train_dataset 	= CustomDataset(self.hparams.datadir, idxs = self.hparams.idx_train , include_classes = self.hparams.include_classes, 
-							flow_method = self.hparams.flow_method, balance_classes=True, mode = 'train')
+							flow_method = self.hparams.flow_method, balance_classes=True, mode = 'train', max_frames = self.hparams.loader_nframes, stride = self.hparams.loader_stride)
 		train_dataloader 	= DataLoader(train_dataset, batch_size=self.batch_size, shuffle=True, num_workers=1)
 		self.epoch_len = len(train_dataset)
 		return train_dataloader
 
 	def val_dataloader(self):
 		val_dataset 	= CustomDataset(self.hparams.datadir, idxs = self.hparams.idx_test , include_classes = self.hparams.include_classes, 
-							flow_method = self.hparams.flow_method, balance_classes=False, mode = 'val')
+							flow_method = self.hparams.flow_method, balance_classes=False, mode = 'val', max_frames = self.hparams.loader_nframes, stride = self.hparams.loader_stride)
 		val_dataloader 	= DataLoader(val_dataset, batch_size=self.batch_size, shuffle=False, num_workers=1)
 		return val_dataloader
 
@@ -271,8 +305,9 @@ class FusionModel(LightningModule):
 			of 	= self.augGPU_resize(batch[0][:, :, :, int(nW/2):, :].type(torch.float)/255., npix_resize = (224, 224))
 		#of = self.augGPU_normalize_inplace(of, mean = [0.01, 0.01, 0.01], std = [0.05, 0.05, 0.05])
 		#rgb = self.augGPU_normalize_inplace(rgb, mean = [0.3, 0.2, 0.2], std = [0.2, 0.2, 0.2])
-		rgb = self.augGPU_normalize_inplace(rgb, mean = [0.485, 0.456, 0.406], std = [0.229, 0.224, 0.225])
-		of = self.augGPU_normalize_inplace(of, mean = [0.485, 0.456, 0.406], std = [0.229, 0.224, 0.225])
+		rgb = self.augGPU_normalize_inplace(rgb, mean = [0.3, 0.2, 0.2], std = [0.2, 0.2, 0.2])
+		of = self.augGPU_normalize_inplace(of, mean = [0.01, 0.01, 0.01], std = [0.05, 0.05, 0.05])
+		print(of.size())
 
 		return [torch.stack([rgb, of], axis = -1), batch[1]]
 
@@ -305,7 +340,6 @@ class FusionModel(LightningModule):
 		input = input.sub_(mean[None, None, None, None, :]).div_(std[None, None, None, None, :])
 		return input
 
-
 if __name__ == '__main__':
 	###########################################################################################
 	# ARGS
@@ -331,9 +365,15 @@ if __name__ == '__main__':
 	parser.add_argument('--accum_batches', default=1, type=int)
 	parser.add_argument('--overfit', default=0, type=int)
 	parser.add_argument('--auto_lr', default=0, type=int)
+<<<<<<< HEAD
 	parser.add_argument('--use_pretrained', default=1, type=int, help='whether or not to load pretrained weights')
 	
 	
+=======
+	parser.add_argument('--logging_dir', default='lightning_logs', type=str)
+	parser.add_argument('--loader_nframes', default=300, type=int, help='How many frames to load at stride 2')
+	parser.add_argument('--loader_stride', default=2, type=int, help='stride for dataloader')
+>>>>>>> 344e1d2df5237a5eb2183085ceae90a136794623
 	
 	hparams = parser.parse_args()
 	hparams.trainable_base = True if hparams.trainable_base == 1 else False
@@ -347,10 +387,12 @@ if __name__ == '__main__':
 		hparams.include_classes = hparams.include_classes.split('_')
 	#####################################################################################
 	# Instantiate model
-	print("==> creating model FUSION '{}' ".format(hparams.arch))
+	torch.backends.cudnn.deterministic=True
+	print("==> creating model FUSION '{}' '{}'".format(hparams.arch, hparams.rnn_model))
 	model = FusionModel(hparams)
 	#####################################################################################
-	logger = TensorBoardLogger("lightning_logs_experiments", name='%s/%s_%s_%s' %(hparams.datadir.split('/')[-1], hparams.arch, hparams.trainable_base, hparams.rnn_model))
+	print('Logging to: % s' % hparams.logging_dir)
+	logger = TensorBoardLogger(hparams.logging_dir, name='%s/%s_%s_%s' %(hparams.datadir.split('/')[-1], hparams.arch, hparams.trainable_base, hparams.rnn_model))
 	logger.log_hyperparams(hparams) # Log the hyperparameters
 	# Set default device
 	# torch.cuda.set_device(hparams.gpu)
@@ -371,7 +413,7 @@ if __name__ == '__main__':
 				'track_grad_norm': 2, 'checkpoint_callback':checkpoint_callback} # overfit_pct =0.01
 	
 	if hparams.overfit == 1:
-		kwargs['overfit_pct'] = 0.1
+		kwargs['overfit_pct'] = 0.05
 
 	
 	if hparams.loadchk == '':
