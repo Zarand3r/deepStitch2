@@ -303,10 +303,10 @@ class FusionModel(LightningModule):
 		else:
 			rgb = self.augGPU_resize(batch[0][:, :, :, :int(nW/2), :].type(torch.float)/255., npix_resize = (224, 224))
 			of 	= self.augGPU_resize(batch[0][:, :, :, int(nW/2):, :].type(torch.float)/255., npix_resize = (224, 224))
-		#of = self.augGPU_normalize_inplace(of, mean = [0.01, 0.01, 0.01], std = [0.05, 0.05, 0.05])
+		of = self.augGPU_normalize_inplace(of, mean = [0.485, 0.456, 0.406], std = [0.229, 0.224, 0.225])
+		rgb = self.augGPU_normalize_inplace(rgb, mean = [0.485, 0.456, 0.406], std = [0.229, 0.224, 0.225])
 		#rgb = self.augGPU_normalize_inplace(rgb, mean = [0.3, 0.2, 0.2], std = [0.2, 0.2, 0.2])
-		rgb = self.augGPU_normalize_inplace(rgb, mean = [0.3, 0.2, 0.2], std = [0.2, 0.2, 0.2])
-		of = self.augGPU_normalize_inplace(of, mean = [0.01, 0.01, 0.01], std = [0.05, 0.05, 0.05])
+		#of = self.augGPU_normalize_inplace(of, mean = [0.01, 0.01, 0.01], std = [0.05, 0.05, 0.05])
 		print(of.size())
 
 		return [torch.stack([rgb, of], axis = -1), batch[1]]
@@ -365,15 +365,10 @@ if __name__ == '__main__':
 	parser.add_argument('--accum_batches', default=1, type=int)
 	parser.add_argument('--overfit', default=0, type=int)
 	parser.add_argument('--auto_lr', default=0, type=int)
-<<<<<<< HEAD
 	parser.add_argument('--use_pretrained', default=1, type=int, help='whether or not to load pretrained weights')
-	
-	
-=======
 	parser.add_argument('--logging_dir', default='lightning_logs', type=str)
 	parser.add_argument('--loader_nframes', default=300, type=int, help='How many frames to load at stride 2')
 	parser.add_argument('--loader_stride', default=2, type=int, help='stride for dataloader')
->>>>>>> 344e1d2df5237a5eb2183085ceae90a136794623
 	
 	hparams = parser.parse_args()
 	hparams.trainable_base = True if hparams.trainable_base == 1 else False
