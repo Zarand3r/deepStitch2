@@ -92,7 +92,7 @@ class FusionModel(LightningModule):
 		############################################################################################
 
 		# Model specific
-		original_model = models.__dict__[args.arch](pretrained=True)
+		original_model = models.__dict__[args.arch](pretrained=self.hparams.use_pretrained)
 		self.hidden_size = args.hidden_size
 		self.num_classes = len(args.include_classes)
 		self.fc_size = args.fc_size
@@ -331,12 +331,15 @@ if __name__ == '__main__':
 	parser.add_argument('--accum_batches', default=1, type=int)
 	parser.add_argument('--overfit', default=0, type=int)
 	parser.add_argument('--auto_lr', default=0, type=int)
+	parser.add_argument('--use_pretrained', default=1, type=int, help='whether or not to load pretrained weights')
+	
 	
 	
 	hparams = parser.parse_args()
 	hparams.trainable_base = True if hparams.trainable_base == 1 else False
 	hparams.random_crop = True if hparams.random_crop == 1 else False
 	hparams.auto_lr = True if hparams.auto_lr == 1 else False
+	hparams.use_pretrained = True if hparams.use_pretrained == 1 else False
 
 	if hparams.include_classes == '':
 		raise ValueError('Please define the classes to use using the 00_01 underscore notation')
