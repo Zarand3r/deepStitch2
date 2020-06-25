@@ -2,13 +2,9 @@
 
 ## Overview
 
-
-
-
-
 The goal of this project is to apply computer vision techniques (standard two-stream action recogntiion models) towards the goal of
 
-1. Stitch type recognition according to the following defined taxonomy (courtesy of USC neuro-robotic group)
+1. Stitch type recognition according to the following defined taxonomy (courtesy of USC CSRE)
 
 <p align="center">
   <img width="400" src=assets/gesture_types.png>
