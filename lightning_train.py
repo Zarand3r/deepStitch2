@@ -284,14 +284,14 @@ class FusionModel(LightningModule):
 	def train_dataloader(self):
 		train_dataset 	= CustomDataset(self.hparams.datadir, idxs = self.hparams.idx_train , include_classes = self.hparams.include_classes, 
 							flow_method = self.hparams.flow_method, balance_classes=True, mode = 'train', max_frames = self.hparams.loader_nframes, stride = self.hparams.loader_stride)
-		train_dataloader 	= DataLoader(train_dataset, batch_size=self.batch_size, shuffle=True, num_workers=1)
+		train_dataloader 	= DataLoader(train_dataset, batch_size=self.batch_size, shuffle=True, num_workers=0)
 		self.epoch_len = len(train_dataset)
 		return train_dataloader
 
 	def val_dataloader(self):
 		val_dataset 	= CustomDataset(self.hparams.datadir, idxs = self.hparams.idx_test , include_classes = self.hparams.include_classes, 
 							flow_method = self.hparams.flow_method, balance_classes=False, mode = 'val', max_frames = self.hparams.loader_nframes, stride = self.hparams.loader_stride)
-		val_dataloader 	= DataLoader(val_dataset, batch_size=self.batch_size, shuffle=False, num_workers=1)
+		val_dataloader 	= DataLoader(val_dataset, batch_size=self.batch_size, shuffle=False, num_workers=0)
 		return val_dataloader
 
 	def apply_transforms_GPU(self, batch, random_crop = False):
@@ -307,7 +307,7 @@ class FusionModel(LightningModule):
 		rgb = self.augGPU_normalize_inplace(rgb, mean = [0.485, 0.456, 0.406], std = [0.229, 0.224, 0.225])
 		#rgb = self.augGPU_normalize_inplace(rgb, mean = [0.3, 0.2, 0.2], std = [0.2, 0.2, 0.2])
 		#of = self.augGPU_normalize_inplace(of, mean = [0.01, 0.01, 0.01], std = [0.05, 0.05, 0.05])
-		print(of.size())
+		#print(of.size())
 
 		return [torch.stack([rgb, of], axis = -1), batch[1]]
 
