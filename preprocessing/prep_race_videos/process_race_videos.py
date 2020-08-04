@@ -5,7 +5,7 @@ from tqdm import tqdm
 import datetime
 import os
 
-df = pd.read_excel('/home/fluongo/code/usc_project/USC_lightning/preprocessing/prep_race_videos/RACE score_IT format.xlsx')
+df = pd.read_excel('RACE score_IT format.xlsx')
 
 # Convert the strings to lists and none literals
 for ii in range(len(df)):

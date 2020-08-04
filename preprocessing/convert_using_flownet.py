@@ -19,6 +19,11 @@ import os
 import glob
 from PIL import Image
 
+import git
+import sys
+repo = git.Repo("./", search_parent_directories=True)
+homedir = repo.working_dir
+
 
 def mp4_load(fn):
     # Take an MP4 video and return a list of frames
@@ -41,7 +46,7 @@ parser.add_argument('--mp4_fn', default='',type=str, help='input path')
 parser.add_argument('--gpu_id', default=1,type=int, help='which gpu')
 args = parser.parse_args()
 
-model_dir = '/home/fluongo/code/usc_project/FlowNetPytorch/flownets_EPE1.951.pth.tar'
+model_dir = '/central/groups/tensorlab/rbao/flownets_EPE1.951.pth.tar'
 mp4_fn = args.mp4_fn
 gpu_id = args.gpu_id
 torch.cuda.set_device(gpu_id) 
