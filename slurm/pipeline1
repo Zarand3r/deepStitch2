@@ -1,10 +1,7 @@
 
 te: max number of frames for single batch is 70
-pythonfn="/home/fluongo/usc_code/deepStitch/lightning_train.py"
-#datadir="/central/groups/tsaolab/fluongo/usc_data/training_ready_updated/cutting_model_allExamps"
-#inc_classes="00_01"
-
-datadir="/central/groups/tsaolab/fluongo/usc_data/training_ready_updated/cfr_cut_mov_v2"
+pythonfn="/central/groups/tensorlab/rbao/deepStitch/lightning_train.py"
+datadir="/central/groups/tensorlab/rbao/usc_data/classification_data"
 inc_classes="01_02_03_07_13"
 trainable_base='1'
 log_dir='/central/groups/tsaolab/fluongo/master_logs/large_experiment4'
@@ -18,7 +15,7 @@ for seed in '1';
     for rnn in 'LSTM', 'convLSTM' 'convttLSTM';
       do
         echo $arch $seed $rnn
-        sbatch parametric_sub.sh "python $pythonfn --loader_nframes 140 --loader_stride $stride --datadir $datadir --logging_dir $log_dir --arch $arch --seed $seed --epochs $n_ep --lr 1e-5 --gpu 0 --random_crop 1 --rnn_layers 1 --weight_decay 0 --include_classes $inc_classes --trainable_base $trainable_base --accum_batches 10 --rnn_model $rnn --hidden_size 64 --fc_size 128"
+        sbatch train1.sh "python $pythonfn --loader_nframes 140 --loader_stride $stride --datadir $datadir --logging_dir $log_dir --arch $arch --seed $seed --epochs $n_ep --lr 1e-5 --gpu 0 --random_crop 1 --rnn_layers 1 --weight_decay 0 --include_classes $inc_classes --trainable_base $trainable_base --accum_batches 10 --rnn_model $rnn --hidden_size 64 --fc_size 128"
         sleep 10
       done
     done

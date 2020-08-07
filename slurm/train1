@@ -10,9 +10,11 @@ BATCH --time=30:00:00   # walltime
 
 #Submit this script with: sbatch thefilename
 
-# Activate conda env
-source activate pytorch13_lightning
+#Activate conda env
+conda activate tensor1
 nvidia-smi
 echo "Environment activated, running file...."
 
-$1
+python lightning_train.py
+#python lightning_train.py --datadir /central/groups/tensorlab/rbao/usc_data/classification_data --include_classes "01_02_03_07_13"
+

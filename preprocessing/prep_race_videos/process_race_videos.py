@@ -30,8 +30,8 @@ for ii in range(len(df)):
 nn = 0
 all_timepoints = ['A', 'B', 'C', 'D', 'E', 'F', 'G']
 
-input_dir = '/home/fluongo/Dropbox/balint_data/caltech_format'
-output_dir = '/home/fluongo/Dropbox/balint_data/caltech_format/cuts'
+input_dir = '/central/groups/tensorlab/rbao/balint_data/caltech_format'
+output_dir = '/central/groups/tensorlab/rbao/balint_data/caltech_format/cuts'
 
 for xx in range(6):
     df['meta_cut_%s%s' % (all_timepoints[xx], all_timepoints[xx+1])] = None
@@ -79,8 +79,8 @@ for nn in tqdm(range(len(df))):
 # Now do the CC and DD versions
 nn = 0
 
-input_dir = '/home/fluongo/Dropbox/balint_data/caltech_format'
-output_dir = '/home/fluongo/Dropbox/balint_data/caltech_format/cuts'
+input_dir = '/central/groups/tensorlab/rbao/balint_data/caltech_format'
+output_dir = '/central/groups/tensorlab/rbao/balint_data/caltech_format/cuts'
 
 df['meta_cut_CC'] = None
 df['meta_cut_DD'] = None
