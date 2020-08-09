@@ -1,6 +1,6 @@
 
 import sys
-sys.path.append('/home/fluongo/code/usc_project/FlowNetPytorch')
+sys.path.append('/central/groups/tensorlab/rbao/FlowNetPytorch')
 
 import argparse
 
