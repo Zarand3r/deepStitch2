@@ -1,5 +1,5 @@
 import sys
-sys.path.append('/central/groups/tensorlab/rbao/flownet')
+sys.path.append('/central/groups/tensorlab/rbao/FlowNetPytorch') #This should include the modules from https://github.com/ClementPinard/FlowNetPytorch so import models works
 import argparse
 
 import torch
@@ -46,7 +46,7 @@ parser.add_argument('--mp4_fn', default='',type=str, help='input path')
 parser.add_argument('--gpu_id', default=1,type=int, help='which gpu')
 args = parser.parse_args()
 
-model_dir = '/central/groups/tensorlab/rbao/flownet/flownets_EPE1.951.pth.tar'
+model_dir = '/central/groups/tensorlab/rbao/FlowNetPytorch/trained_models/flownets_EPE1.951.pth.tar'
 mp4_fn = args.mp4_fn
 gpu_id = args.gpu_id
 torch.cuda.set_device(gpu_id) 
