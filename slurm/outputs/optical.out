@@ -1,0 +1,92 @@
+Tue Aug 11 16:04:40 2020       
++-----------------------------------------------------------------------------+
+| NVIDIA-SMI 440.33.01    Driver Version: 440.33.01    CUDA Version: 10.2     |
+|-------------------------------+----------------------+----------------------+
+| GPU  Name        Persistence-M| Bus-Id        Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp  Perf  Pwr:Usage/Cap|         Memory-Usage | GPU-Util  Compute M. |
+|===============================+======================+======================|
+|   0  Tesla P100-PCIE...  Off  | 00000000:04:00.0 Off |                    0 |
+| N/A   23C    P0    27W / 250W |      0MiB / 16280MiB |      0%      Default |
++-------------------------------+----------------------+----------------------+
+                                                                               
++-----------------------------------------------------------------------------+
+| Processes:                                                       GPU Memory |
+|  GPU       PID   Type   Process name                             Usage      |
+|=============================================================================|
+|  No running processes found                                                 |
++-----------------------------------------------------------------------------+
+Environment activated, running file....
+/central/groups/tensorlab/rbao/usc_data/classification_data/02/gesture02_stitch0706_cfr.mp4
+/central/groups/tensorlab/rbao/usc_data/classification_data/02/gesture02_stitch0706_cfr.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/usc_data/classification_data/02/gesture02_stitch0967_cfr.mp4
+/central/groups/tensorlab/rbao/usc_data/classification_data/02/gesture02_stitch0967_cfr.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/usc_data/classification_data/02/gesture02_stitch1098_cfr.mp4
+/central/groups/tensorlab/rbao/usc_data/classification_data/02/gesture02_stitch1098_cfr.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/usc_data/classification_data/02/gesture02_stitch0940_cfr.mp4
+/central/groups/tensorlab/rbao/usc_data/classification_data/02/gesture02_stitch0940_cfr.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/usc_data/classification_data/02/gesture02_stitch1026_cfr.mp4
+/central/groups/tensorlab/rbao/usc_data/classification_data/02/gesture02_stitch1026_cfr.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/usc_data/classification_data/02/gesture02_stitch1437_cfr.mp4
+/central/groups/tensorlab/rbao/usc_data/classification_data/02/gesture02_stitch1437_cfr.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/usc_data/classification_data/02/gesture02_stitch1686_cfr.mp4
+/central/groups/tensorlab/rbao/usc_data/classification_data/02/gesture02_stitch1686_cfr.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/usc_data/classification_data/02/gesture02_stitch1012_cfr.mp4
+/central/groups/tensorlab/rbao/usc_data/classification_data/02/gesture02_stitch1012_cfr.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/usc_data/classification_data/02/gesture02_stitch0670_cfr.mp4
+/central/groups/tensorlab/rbao/usc_data/classification_data/02/gesture02_stitch0670_cfr.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/usc_data/classification_data/02/gesture02_stitch0415_cfr.mp4
+/central/groups/tensorlab/rbao/usc_data/classification_data/02/gesture02_stitch0415_cfr.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/usc_data/classification_data/02/gesture02_stitch0715_cfr.mp4
+/central/groups/tensorlab/rbao/usc_data/classification_data/02/gesture02_stitch0715_cfr.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/usc_data/classification_data/02/gesture02_stitch0190_cfr.mp4
+/central/groups/tensorlab/rbao/usc_data/classification_data/02/gesture02_stitch0190_cfr.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/usc_data/classification_data/02/gesture02_stitch0585_cfr.mp4
+/central/groups/tensorlab/rbao/usc_data/classification_data/02/gesture02_stitch0585_cfr.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/usc_data/classification_data/02/gesture02_stitch0127_cfr.mp4
+/central/groups/tensorlab/rbao/usc_data/classification_data/02/gesture02_stitch0127_cfr.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/usc_data/classification_data/02/gesture02_stitch1468_cfr.mp4
+/central/groups/tensorlab/rbao/usc_data/classification_data/02/gesture02_stitch1468_cfr.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/usc_data/classification_data/02/gesture02_stitch0955_cfr.mp4
+/central/groups/tensorlab/rbao/usc_data/classification_data/02/gesture02_stitch0955_cfr.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/usc_data/classification_data/02/gesture02_stitch0768_cfr.mp4
+/central/groups/tensorlab/rbao/usc_data/classification_data/02/gesture02_stitch0768_cfr.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/usc_data/classification_data/02/gesture02_stitch1106_cfr.mp4
+/central/groups/tensorlab/rbao/usc_data/classification_data/02/gesture02_stitch1106_cfr.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/usc_data/classification_data/02/gesture02_stitch0640_cfr.mp4
+/central/groups/tensorlab/rbao/usc_data/classification_data/02/gesture02_stitch0640_cfr.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/usc_data/classification_data/02/flowflownet_gesture02_stitch1026_cfr.mp4
+/central/groups/tensorlab/rbao/usc_data/classification_data/02/flowflownet_gesture02_stitch1026_cfr.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/usc_data/classification_data/02/gesture02_stitch1122_cfr.mp4
+/central/groups/tensorlab/rbao/usc_data/classification_data/02/gesture02_stitch1122_cfr.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/usc_data/classification_data/02/gesture02_stitch1112_cfr.mp4
+/central/groups/tensorlab/rbao/usc_data/classification_data/02/gesture02_stitch1112_cfr.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/usc_data/classification_data/02/gesture02_stitch0907_cfr.mp4
+/central/groups/tensorlab/rbao/usc_data/classification_data/02/gesture02_stitch0907_cfr.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/usc_data/classification_data/02/gesture02_stitch1696_cfr.mp4
+/central/groups/tensorlab/rbao/usc_data/classification_data/02/gesture02_stitch1696_cfr.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/usc_data/classification_data/02/gesture02_stitch0694_cfr.mp4
+/central/groups/tensorlab/rbao/usc_data/classification_data/02/gesture02_stitch0694_cfr.mp4
