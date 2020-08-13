@@ -1,5 +1,4 @@
-#!/bin/bash
-#SBATCH --time=24:00:00   # walltime
+BATCH --time=24:00:00   # walltime
 #SBATCH --ntasks=1   # number of processor cores (i.e. tasks)
 #SBATCH --nodes=1   # number of nodes
 #SBATCH --gres=gpu:1
@@ -7,8 +6,8 @@
 #SBATCH --mail-type=BEGIN
 #SBATCH --mail-type=END
 #SBATCH --mail-type=FAIL
-#SBATCH --error=errors/optical.err 
-#SBATCH --output=outputs/optical.out
+#SBATCH --error=errors/balint_optical.err 
+#SBATCH --output=outputs/balint_optical.out
 
 #Submit this script with: sbatch thefilename
 
@@ -22,7 +21,7 @@ cd ../
 cd preprocessing
 cd optical_flow
 
-for D in $(find /central/groups/tensorlab/rbao/usc_data/classification_data -mindepth 2 -maxdepth 3) ; do
+for D in $(find /central/groups/tensorlab/rbao/balint_data/caltech_format_cuts -mindepth 2 -maxdepth 3) ; do
     echo $D 
     # python convert_using_dali.py --mp4_fn $D --gpu_id 0
     python convert_using_flownet.py --mp4_fn $D --gpu_id 0
