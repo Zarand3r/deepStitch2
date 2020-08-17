@@ -16,6 +16,9 @@ nvidia-smi
 echo "Environment activated, running file...."
 
 cd ../
+cd models
+cd task1
+
 python lightning_train.py
 #python lightning_train.py --datadir /central/groups/tensorlab/rbao/usc_data/classification_data --include_classes "01_02_03_07_13"
 

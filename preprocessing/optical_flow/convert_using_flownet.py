@@ -23,6 +23,8 @@ import git
 import sys
 repo = git.Repo("./", search_parent_directories=True)
 homedir = repo.working_dir
+sys.path.insert(1, f"{homedir}" + '/utils')
+import settings
 
 
 def mp4_load(fn):
