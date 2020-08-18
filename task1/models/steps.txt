@@ -1,0 +1,28 @@
+STEP 1:
+=======
+Rawdata is /central/groups/tensorlab/rbao/balint_data/caltech_format
+Split videos into classes, using the time stamps provided
+Populate a balint_data/classification_data/task1 repository with subfolders corresponding to classes
+Retain the name of the class in the filename
+
+STEP 2:
+=======
+In each class folder, compute optical flow for all videos, populate an optical_flow subfolder 
+This is the last preprocessing step
+
+Step 3:
+=======
+Datadir is /central/groups/tensorlab/rbao/balint_data/classification_data
+Find flow files in optical_flow subfolders of each class folder
+
+Step 4:
+=======
+Train model to classify videos
+Checkpoint is saved to checkpoints folder
+Tensorboard logs are saved to lightning_logs folder
+
+
+Step 5:
+=======
+View the tensorboard UI locally after pushing to github and pulling on remote
+Tensorboard --logdir log_dir

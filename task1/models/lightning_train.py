@@ -39,12 +39,12 @@ class CustomDataset(Dataset):
 		self.stride = stride
 		if len(include_classes) == 0:
 			self.classes = os.listdir(global_dir)
-			fns = glob.glob(os.path.join(global_dir, '*', 'flow%s*' % flow_method))
+			fns = glob.glob(os.path.join(global_dir, '*', '%s*' % flow_method))
 		else:
 			self.classes = include_classes
 			fns = []
 			for class_curr in include_classes:
-				fns.extend(glob.glob(os.path.join(global_dir, class_curr, 'flow%s*' % flow_method)))
+				fns.extend(glob.glob(os.path.join(global_dir, class_curr, "optical_flow", '%s*' % flow_method)))
 		if len(fns) == 0:
 			raise ValueError('Likely that you have not pre-computed the optical flow or data directory is wrong!')
 		if idxs == None: # load all
@@ -100,7 +100,7 @@ class FusionModel(LightningModule):
 		# Generate the train and test splits
 		fns = []
 		for class_curr in self.hparams.include_classes:
-			fns.extend(glob.glob(os.path.join(self.hparams.datadir, class_curr, 'flow%s*' % self.hparams.flow_method)))
+			fns.extend(glob.glob(os.path.join(self.hparams.datadir, class_curr, "optical_flow", '%s*' % self.hparams.flow_method)))
 		idx = list(range(len(fns)))
 		random.seed(self.hparams.seed); random.shuffle(idx)
 		self.hparams.idx_train 	= idx[:int(self.hparams.train_proportion*len(idx))].copy() # Save as hyperparams
@@ -352,7 +352,7 @@ if __name__ == '__main__':
 	# ARGS
 	parser = argparse.ArgumentParser(description='Training')
 	parser.add_argument('--loadchk', default='', help='Pass through to load training from a checkpoint')
-	parser.add_argument('--datadir', default='/central/groups/tensorlab/rbao/usc_data/classification_data', help='train directory')
+	parser.add_argument('--datadir', default='/central/groups/tensorlab/rbao/balint_data/classification', help='train directory')
 	parser.add_argument('--gpu', default=0, type=int, help='GPU device number')
 	parser.add_argument('--arch', default='alexnet', help='model architecture')
 	parser.add_argument('--trainable_base', default=0, type=int, help='Whether to train the feature extractor')
@@ -400,7 +400,8 @@ if __name__ == '__main__':
 	# torch.cuda.set_device(hparams.gpu)
 
 	checkpoint_callback = ModelCheckpoint(
-		filepath=os.path.join(logger.log_dir, 'checkpoints'),
+		# filepath=os.path.join(logger.log_dir, 'checkpoints'),
+		filepath='checkpoints/',
 		save_top_k=3,
 		verbose=True,
 		monitor='val_acc',

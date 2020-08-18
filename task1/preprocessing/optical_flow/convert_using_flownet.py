@@ -119,7 +119,7 @@ if __name__ == '__main__':
 
     # Write out the MP4
 
-    fn_out = os.path.join('/'.join(mp4_fn.split('/')[:-1]), 'flowflownet_'+ mp4_fn.split('/')[-1])
+    fn_out = os.path.join('/'.join(mp4_fn.split('/')[:-1]), "optical_flow", 'flownet_'+ mp4_fn.split('/')[-1])
 
     fourcc = cv2.VideoWriter_fourcc(*'mp4v')
     out = cv2.VideoWriter(fn_out,fourcc, 30.0, (int(2*nX),int(nY)))

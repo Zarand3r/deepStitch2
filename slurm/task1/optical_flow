@@ -16,12 +16,14 @@
 conda activate tensor
 nvidia-smi
 echo "Environment activated, running file...."
+datadir = "/central/groups/tensorlab/rbao/balint_data/classification_data"
 
-cd ../
+cd ../../
+cd task1
 cd preprocessing
 cd optical_flow
 
-for D in $(find /central/groups/tensorlab/rbao/usc_data/classification_data -mindepth 2 -maxdepth 3) ; do
+for D in $(find $datadir -mindepth 2 -maxdepth 3) ; do
     echo $D 
     # python convert_using_dali.py --mp4_fn $D --gpu_id 0
     python convert_using_flownet.py --mp4_fn $D --gpu_id 0

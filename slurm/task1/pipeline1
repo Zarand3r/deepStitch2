@@ -8,6 +8,10 @@ log_dir='/central/groups/tsaolab/fluongo/master_logs/large_experiment4'
 n_ep='50'
 stride='2'
 
+cd ../../
+cd models
+cd task1
+
 for seed in '1';
   do
   for arch in 'alexnet';

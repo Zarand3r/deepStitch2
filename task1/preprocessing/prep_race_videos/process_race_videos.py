@@ -31,13 +31,13 @@ nn = 0
 all_timepoints = ['A', 'B', 'C', 'D', 'E', 'F', 'G']
 
 input_dir = '/central/groups/tensorlab/rbao/balint_data/caltech_format'
-output_dir = '/central/groups/tensorlab/rbao/balint_data/caltech_format/cuts'
+output_dir = '/central/groups/tensorlab/rbao/balint_data/classification_data/task1'
 
 for xx in range(6):
     df['meta_cut_%s%s' % (all_timepoints[xx], all_timepoints[xx+1])] = None
 
 
-# First do all the nonletter cuts
+# First do all the cuts between different letters
 for nn in tqdm(range(len(df))):
     kk = 0
     while kk < 6:
@@ -62,7 +62,8 @@ for nn in tqdm(range(len(df))):
             video_input_fn = os.path.join(input_dir, video_input_fn)
             video_output_fn = '%s_%s%s_%02d.mp4' % (df.iloc[nn]['meta_video_file_name'][:-4], all_timepoints[kk], all_timepoints[kk+1], df.iloc[nn]['meta_position_nn'])
             df.at[nn, 'meta_cut_%s%s' % (all_timepoints[kk], all_timepoints[kk+1])] = video_output_fn
-            video_output_fn = os.path.join(output_dir, video_output_fn)
+            # video_output_fn = os.path.join(output_dir, video_output_fn)
+            video_output_fn = os.path.join(output_dir, f"{all_timepoints[kk]}{all_timepoints[kk+1]}", video_output_fn)
 
             if not os.path.exists(video_input_fn):
                 raise ValueError('The file you are trying to chop does not exist')
