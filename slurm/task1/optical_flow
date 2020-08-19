@@ -13,7 +13,8 @@
 #Submit this script with: sbatch thefilename
 
 #Activate conda env
-conda activate tensor
+#conda activate tensor
+source activate /central/groups/tensorlab/rbao/anaconda/tensor
 nvidia-smi
 echo "Environment activated, running file...."
 datadir = "/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data"
