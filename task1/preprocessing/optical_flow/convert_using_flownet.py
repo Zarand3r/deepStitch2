@@ -1,11 +1,16 @@
+import git
 import sys
-sys.path.append('/central/groups/tensorlab/rbao/FlowNetPytorch') #This should include the modules from https://github.com/ClementPinard/FlowNetPytorch so import models works
-import argparse
+repo = git.Repo("./", search_parent_directories=True)
+homedir = repo.working_dir
+sys.path.insert(1, f"{homedir}" + '/utils')
+import settings1
+sys.path.append(settings1.flownet_dir) #This should include the modules from https://github.com/ClementPinard/FlowNetPytorch so import models works
+import models
 
+import argparse
 import torch
 import torch.backends.cudnn as cudnn
 import torch.nn.functional as F
-import models
 from tqdm import tqdm
 
 import torchvision.transforms as transforms
@@ -18,13 +23,6 @@ import cv2
 import os
 import glob
 from PIL import Image
-
-import git
-import sys
-repo = git.Repo("./", search_parent_directories=True)
-homedir = repo.working_dir
-sys.path.insert(1, f"{homedir}" + '/utils')
-import settings
 
 
 def mp4_load(fn):
@@ -44,11 +42,11 @@ def mp4_load(fn):
 
 ##############################################################
 parser = argparse.ArgumentParser(description='Conversion')
-parser.add_argument('--mp4_fn', default='',type=str, help='input path')
+parser.add_argument('--mp4_fn', default=settings1.raw_directory,type=str, help='input path')
 parser.add_argument('--gpu_id', default=1,type=int, help='which gpu')
 args = parser.parse_args()
 
-model_dir = '/central/groups/tensorlab/rbao/FlowNetPytorch/trained_models/flownets_EPE1.951.pth.tar'
+model_dir = settings1.flownet_model
 mp4_fn = args.mp4_fn
 gpu_id = args.gpu_id
 torch.cuda.set_device(gpu_id) 
@@ -118,8 +116,11 @@ if __name__ == '__main__':
         export_ims.append(combined) # Save for list
 
     # Write out the MP4
+    subdir_out = os.path.join('/'.join(mp4_fn.split('/')[:-1]), "optical_flow")
+    if not os.path.exists(output_subdir):
+        os.makedirs(subdir_out)
 
-    fn_out = os.path.join('/'.join(mp4_fn.split('/')[:-1]), "optical_flow", 'flownet_'+ mp4_fn.split('/')[-1])
+    fn_out = os.path.join(subdir_out, 'flownet_'+ mp4_fn.split('/')[-1])
 
     fourcc = cv2.VideoWriter_fourcc(*'mp4v')
     out = cv2.VideoWriter(fn_out,fourcc, 30.0, (int(2*nX),int(nY)))

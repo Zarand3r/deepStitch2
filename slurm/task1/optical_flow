@@ -16,7 +16,7 @@
 conda activate tensor
 nvidia-smi
 echo "Environment activated, running file...."
-datadir = "/central/groups/tensorlab/rbao/balint_data/classification_data"
+datadir = "/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data"
 
 cd ../../
 cd task1

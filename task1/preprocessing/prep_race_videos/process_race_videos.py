@@ -5,7 +5,16 @@ from tqdm import tqdm
 import datetime
 import os
 
-df = pd.read_excel('RACE score_IT format.xlsx')
+# Custom imports
+import git
+import sys
+repo = git.Repo("./", search_parent_directories=True)
+homedir = repo.working_dir
+sys.path.insert(1, f"{homedir}" + '/utils')
+import settings1
+
+
+df = pd.read_excel(settings1.data_labels)
 
 # Convert the strings to lists and none literals
 for ii in range(len(df)):
@@ -30,8 +39,11 @@ for ii in range(len(df)):
 nn = 0
 all_timepoints = ['A', 'B', 'C', 'D', 'E', 'F', 'G']
 
-input_dir = '/central/groups/tensorlab/rbao/balint_data/caltech_format'
-output_dir = '/central/groups/tensorlab/rbao/balint_data/classification_data/task1'
+input_dir = settings1.raw_directory
+output_dir = settings1.data_directory
+
+if not os.path.exists(output_dir):
+    os.makedirs(output_dir)
 
 for xx in range(6):
     df['meta_cut_%s%s' % (all_timepoints[xx], all_timepoints[xx+1])] = None
@@ -63,7 +75,10 @@ for nn in tqdm(range(len(df))):
             video_output_fn = '%s_%s%s_%02d.mp4' % (df.iloc[nn]['meta_video_file_name'][:-4], all_timepoints[kk], all_timepoints[kk+1], df.iloc[nn]['meta_position_nn'])
             df.at[nn, 'meta_cut_%s%s' % (all_timepoints[kk], all_timepoints[kk+1])] = video_output_fn
             # video_output_fn = os.path.join(output_dir, video_output_fn)
-            video_output_fn = os.path.join(output_dir, f"{all_timepoints[kk]}{all_timepoints[kk+1]}", video_output_fn)
+            output_subdir = os.path.join(output_dir, f"{all_timepoints[kk]}{all_timepoints[kk+1]}")
+            if not os.path.exists(output_subdir):
+                os.makedirs(output_subdir)
+            video_output_fn = os.path.join(output_subdir, video_output_fn)
 
             if not os.path.exists(video_input_fn):
                 raise ValueError('The file you are trying to chop does not exist')
@@ -77,50 +92,47 @@ for nn in tqdm(range(len(df))):
                 #print(cmd)
                 kk+=1
 
-# Now do the CC and DD versions
-nn = 0
+# # Now do the CC and DD versions
+# nn = 0
 
-input_dir = '/central/groups/tensorlab/rbao/balint_data/caltech_format'
-output_dir = '/central/groups/tensorlab/rbao/balint_data/caltech_format/cuts'
+# df['meta_cut_CC'] = None
+# df['meta_cut_DD'] = None
 
-df['meta_cut_CC'] = None
-df['meta_cut_DD'] = None
+# for nn in range(len(df)):
+#     for tp_letter in ['C', 'D']:
+#         curr_entry = df.iloc[nn]['timepoint_%s' % tp_letter]
+#         if type(curr_entry) == list:
+#             if len(curr_entry) > 1:
+#                 fns = []
+#                 for cnt, kk in enumerate(range(len(curr_entry)-1)):
 
-for nn in range(len(df)):
-    for tp_letter in ['C', 'D']:
-        curr_entry = df.iloc[nn]['timepoint_%s' % tp_letter]
-        if type(curr_entry) == list:
-            if len(curr_entry) > 1:
-                fns = []
-                for cnt, kk in enumerate(range(len(curr_entry)-1)):
+#                     start_time = '0' + str(datetime.timedelta(seconds=curr_entry[kk]))
+#                     n_frames = round(30.*(curr_entry[kk+1]-curr_entry[kk]))
 
-                    start_time = '0' + str(datetime.timedelta(seconds=curr_entry[kk]))
-                    n_frames = round(30.*(curr_entry[kk+1]-curr_entry[kk]))
+#                     video_input_fn = df.iloc[nn]['meta_video_file_name']
+#                     video_input_fn = os.path.join(input_dir, video_input_fn)
+#                     video_output_fn = '%s_%s%s%d_%02d.mp4' % (df.iloc[nn]['meta_video_file_name'][:-4], tp_letter, tp_letter, cnt, df.iloc[nn]['meta_position_nn'])
+#                     fns.append(video_output_fn) # Add to the list for later
+#                     video_output_fn = os.path.join(output_dir, video_output_fn)
 
-                    video_input_fn = df.iloc[nn]['meta_video_file_name']
-                    video_input_fn = os.path.join(input_dir, video_input_fn)
-                    video_output_fn = '%s_%s%s%d_%02d.mp4' % (df.iloc[nn]['meta_video_file_name'][:-4], tp_letter, tp_letter, cnt, df.iloc[nn]['meta_position_nn'])
-                    fns.append(video_output_fn) # Add to the list for later
-                    video_output_fn = os.path.join(output_dir, video_output_fn)
+#                     if not os.path.exists(video_input_fn):
+#                         raise ValueError('The file you are trying to chop does not exist')
+#                     else:
+#                         if not os.path.exists(video_output_fn):
+#                             cmd = 'ffmpeg -ss %s -i %s -an -vcodec h264 -r 30 -vframes %d %s' % (start_time, video_input_fn, n_frames, video_output_fn)
+#                             #print(cmd)
+#                             os.system(cmd)
+#                         else:
+#                             print('already exists so skipping...')
+#                         #print(cmd)
+#                         kk+=1
+#                 df.at[nn, 'meta_cut_%s%s' % (tp_letter, tp_letter)] = fns
 
-                    if not os.path.exists(video_input_fn):
-                        raise ValueError('The file you are trying to chop does not exist')
-                    else:
-                        if not os.path.exists(video_output_fn):
-                            cmd = 'ffmpeg -ss %s -i %s -an -vcodec h264 -r 30 -vframes %d %s' % (start_time, video_input_fn, n_frames, video_output_fn)
-                            #print(cmd)
-                            os.system(cmd)
-                        else:
-                            print('already exists so skipping...')
-                        #print(cmd)
-                        kk+=1
-                df.at[nn, 'meta_cut_%s%s' % (tp_letter, tp_letter)] = fns
-
-# Add an existing column for first and last for all Cs and Ds
-'label_needle_entry_angleC'
-'label_hitmiss_timepointC'
-'label_hitmissD'
-'label_needle_driving_1D'
+# # Add an existing column for first and last for all Cs and Ds
+# 'label_needle_entry_angleC'
+# 'label_hitmiss_timepointC'
+# 'label_hitmissD'
+# 'label_needle_driving_1D'
 
 
 
@@ -130,33 +142,33 @@ for nn in range(len(df)):
 #df.to_excel('/home/fluongo/code/usc_project/USC_lightning/preprocessing/prep_race_videos/RACE_francisco_export.xlsx')
 
 
-# %%
-from collections import Counter
+# # %%
+# from collections import Counter
 
 
-# Go through and if its a list assign the first one as the label
-tps = ['AB', 'BC', 'CD', 'DE', 'EF', 'FG']
-lbs = ['needle_positionB', 'needle_entry_angleC', 'hitmiss_timepointC', 'hitmissD', 'needle_driving_1D', 'needle_driving_2FG']
+# # Go through and if its a list assign the first one as the label
+# tps = ['AB', 'BC', 'CD', 'DE', 'EF', 'FG']
+# lbs = ['needle_positionB', 'needle_entry_angleC', 'hitmiss_timepointC', 'hitmissD', 'needle_driving_1D', 'needle_driving_2FG']
 
-df_count = pd.DataFrame(index = tps, columns = pd.MultiIndex.from_product([tuple(lbs), (0, 1)],
-                           names=['name', 'val']))
+# df_count = pd.DataFrame(index = tps, columns = pd.MultiIndex.from_product([tuple(lbs), (0, 1)],
+#                            names=['name', 'val']))
 
-for a in tps:
-    for b in lbs:
-        label_name = 'label_%s' %b
-        cut_name = 'meta_cut_%s' % a
-        df_sub = df[[cut_name, label_name]].dropna()
-        # Do the long way of counting
-        cnts = []
-        for ii in range(len(df_sub)):
-            if type(df_sub.iloc[ii][label_name]) != list:
-                cnts.append(df_sub.iloc[ii][label_name])
-            else:
-                cnts.append(df_sub.iloc[ii][label_name][0])
+# for a in tps:
+#     for b in lbs:
+#         label_name = 'label_%s' %b
+#         cut_name = 'meta_cut_%s' % a
+#         df_sub = df[[cut_name, label_name]].dropna()
+#         # Do the long way of counting
+#         cnts = []
+#         for ii in range(len(df_sub)):
+#             if type(df_sub.iloc[ii][label_name]) != list:
+#                 cnts.append(df_sub.iloc[ii][label_name])
+#             else:
+#                 cnts.append(df_sub.iloc[ii][label_name][0])
         
-        c_cnt = Counter(cnts)
-        for k in [0, 1]:
-            df_count.at[a, (b, k)] = c_cnt[k]
+#         c_cnt = Counter(cnts)
+#         for k in [0, 1]:
+#             df_count.at[a, (b, k)] = c_cnt[k]
         
 
 

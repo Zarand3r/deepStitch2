@@ -17,8 +17,7 @@ echo "Environment activated, running file...."
 
 cd ../../
 cd task1
-cd models
+cd preprocessing
+cd optical_flow
 
-python lightning_train.py
-#python lightning_train.py --datadir /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data --include_classes "AB_BC"
-
+python process_race_videos.py

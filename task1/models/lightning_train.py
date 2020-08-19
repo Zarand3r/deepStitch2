@@ -27,7 +27,7 @@ repo = git.Repo("./", search_parent_directories=True)
 homedir = repo.working_dir
 sys.path.insert(1, f"{homedir}" + '/utils')
 from convlstmcells import ConvLSTMCell, ConvTTLSTMCell
-import settings
+import settings1
 
 
 class CustomDataset(Dataset):
@@ -352,7 +352,7 @@ if __name__ == '__main__':
 	# ARGS
 	parser = argparse.ArgumentParser(description='Training')
 	parser.add_argument('--loadchk', default='', help='Pass through to load training from a checkpoint')
-	parser.add_argument('--datadir', default='/central/groups/tensorlab/rbao/balint_data/classification', help='train directory')
+	parser.add_argument('--datadir', default=settings1.data_directory, help='train directory')
 	parser.add_argument('--gpu', default=0, type=int, help='GPU device number')
 	parser.add_argument('--arch', default='alexnet', help='model architecture')
 	parser.add_argument('--trainable_base', default=0, type=int, help='Whether to train the feature extractor')
