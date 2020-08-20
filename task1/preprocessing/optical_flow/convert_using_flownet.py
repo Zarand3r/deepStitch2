@@ -117,7 +117,7 @@ if __name__ == '__main__':
 
     # Write out the MP4
     subdir_out = os.path.join('/'.join(mp4_fn.split('/')[:-1]), "optical_flow")
-    if not os.path.exists(output_subdir):
+    if not os.path.exists(subdir_out):
         os.makedirs(subdir_out)
 
     fn_out = os.path.join(subdir_out, 'flownet_'+ mp4_fn.split('/')[-1])
