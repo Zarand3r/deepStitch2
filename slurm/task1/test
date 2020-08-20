@@ -1,1 +1,2 @@
-source activate tensor
+python first.py
+python second.py
