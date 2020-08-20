@@ -4,11 +4,12 @@
 #SBATCH --nodes=1   # number of nodes
 #SBATCH --gres=gpu:1
 #SBATCH --mem-per-cpu=16G   # memory per CPU core
-#SBATCH --mail-user=fluongo@gmail.com   # email address
+#SBATCH --mail-user=rbao@caltech.edu   # email address
 #SBATCH --mail-type=BEGIN
 #SBATCH --mail-type=END
 #SBATCH --mail-type=FAIL
-
+#SBATCH --error=errors/train.err 
+#SBATCH --output=outputs/train.out
 #Submit this script with: sbatch thefilename
 
 #Activate conda env

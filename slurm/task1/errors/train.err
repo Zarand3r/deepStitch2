@@ -1,0 +1,4 @@
+Traceback (most recent call last):
+  File "lightning_train.py", line 4, in <module>
+    import seaborn as sns
+ModuleNotFoundError: No module named 'seaborn'

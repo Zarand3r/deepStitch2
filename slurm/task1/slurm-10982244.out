@@ -1,0 +1,22 @@
+Thu Aug 20 03:11:09 2020       
++-----------------------------------------------------------------------------+
+| NVIDIA-SMI 440.33.01    Driver Version: 440.33.01    CUDA Version: 10.2     |
+|-------------------------------+----------------------+----------------------+
+| GPU  Name        Persistence-M| Bus-Id        Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp  Perf  Pwr:Usage/Cap|         Memory-Usage | GPU-Util  Compute M. |
+|===============================+======================+======================|
+|   0  Tesla P100-PCIE...  Off  | 00000000:04:00.0 Off |                    0 |
+| N/A   24C    P0    26W / 250W |      0MiB / 16280MiB |      0%      Default |
++-------------------------------+----------------------+----------------------+
+                                                                               
++-----------------------------------------------------------------------------+
+| Processes:                                                       GPU Memory |
+|  GPU       PID   Type   Process name                             Usage      |
+|=============================================================================|
+|  No running processes found                                                 |
++-----------------------------------------------------------------------------+
+Environment activated, running file....
+Traceback (most recent call last):
+  File "lightning_train.py", line 4, in <module>
+    import seaborn as sns
+ModuleNotFoundError: No module named 'seaborn'
