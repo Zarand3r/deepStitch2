@@ -11,7 +11,7 @@ BATCH --time=30:00:00   # walltime
 #Submit this script with: sbatch thefilename
 
 #Activate conda env
-conda activate tensor
+source activate tensor
 nvidia-smi
 echo "Environment activated, running file...."
 
