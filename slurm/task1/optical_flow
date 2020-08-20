@@ -21,6 +21,9 @@ echo "Environment activated, running file...."
 cd ../../
 cd task1
 cd preprocessing
+# cd prep_race_videos
+# python process_race_videos.py
+# cd ../
 cd optical_flow
 
 for D in $(find /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data -mindepth 2 -maxdepth 3) ; do
