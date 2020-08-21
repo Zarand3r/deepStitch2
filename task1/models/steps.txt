@@ -15,6 +15,12 @@ Step 3:
 Datadir is /central/groups/tensorlab/rbao/balint_data/classification_data
 Find flow files in optical_flow subfolders of each class folder
 
+find . -mindepth 2 -type f -print -exec mv {} . \;
+rm -rf */;
+mkdir optical_flow
+find . -name 'flownet*' -exec mv {} optical_flow/ \;
+
+
 Step 4:
 =======
 Train model to classify videos

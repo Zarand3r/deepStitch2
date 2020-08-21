@@ -1,2 +1,2 @@
-python first.py
-python second.py
+source activate tensor
+conda env list
