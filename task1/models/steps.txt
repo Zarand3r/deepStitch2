@@ -15,6 +15,8 @@ Step 3:
 Datadir is /central/groups/tensorlab/rbao/balint_data/classification_data
 Find flow files in optical_flow subfolders of each class folder
 
+
+Do this to reformat the positive and negative directories
 find . -mindepth 2 -type f -print -exec mv {} . \;
 rm -rf */;
 mkdir optical_flow
