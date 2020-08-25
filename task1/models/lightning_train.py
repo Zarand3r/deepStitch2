@@ -19,7 +19,6 @@ import torch.nn.functional as F
 import torchvision
 from torch.utils.data import Dataset, DataLoader
 
-
 # Custom imports
 import git
 import sys
@@ -49,7 +48,7 @@ class CustomDataset(Dataset):
 			raise ValueError('Likely that you have not pre-computed the optical flow or data directory is wrong!')
 		if idxs == None: # load all
 			idxs = list(range(len(fns)))
-		self.filtered_fns = [[f, self.classes.index(f.split('/')[-3]) ] for i, f in enumerate(fns) if i in idxs] # Changed from -2 to -3 because added optical_flow subfolder
+		self.filtered_fns = [[f, self.classes.index(f.split('/')[-2]) ] for i, f in enumerate(fns) if i in idxs]
 		if balance_classes:
 			class_counter = Counter([f[1] for f in self.filtered_fns])
 			print(class_counter)
@@ -97,7 +96,7 @@ class FusionModel(LightningModule):
 		self.predicted_softmax = []; self.predicted_softmax_train = []
 		self.batch_size = 1
 		############################################################################################
-		# Generate the train and test splits
+		# Generate the tra300in and test splits
 		fns = []
 		for class_curr in self.hparams.include_classes:
 			fns.extend(glob.glob(os.path.join(self.hparams.datadir, class_curr, "optical_flow", '%s*' % self.hparams.flow_method)))
@@ -108,7 +107,9 @@ class FusionModel(LightningModule):
 		############################################################################################
 
 		# Model specific
-		original_model = models.__dict__[args.arch](pretrained=self.hparams.use_pretrained)
+		original_model_rgb = models.__dict__[args.arch](pretrained=self.hparams.use_pretrained)
+		original_model_of = models.__dict__[args.arch](pretrained=self.hparams.use_pretrained)
+		
 		self.hidden_size = args.hidden_size
 		self.num_classes = len(args.include_classes)
 		self.fc_size = args.fc_size
@@ -116,31 +117,35 @@ class FusionModel(LightningModule):
 
 		# select a base model
 		if args.arch.startswith('alexnet'):
-			self.features = original_model.features
-			for i, param in enumerate(self.features.parameters()):
+			self.features_rgb = original_model_rgb.features
+			for i, param in enumerate(self.features_rgb.parameters()):
 				param.requires_grad = self.trainable_base
+			self.features_of = original_model_of.features
+			for i, param in enumerate(self.features_of.parameters()):
+				param.requires_grad = self.trainable_base
+			
 			# Make the output of each one be to fc_size/2 so that we cooncat the two fc outputs
-			self.fc_pre = nn.Sequential(nn.Linear(256*6*6, int(args.fc_size/2) ), nn.Dropout()) if 'conv' not in args.rnn_model else None
+			self.fc_pre_rgb = nn.Sequential(nn.Linear(256*6*6, int(args.fc_size/2) ), nn.Dropout()) if 'conv' not in args.rnn_model else None
+			self.fc_pre_of = nn.Sequential(nn.Linear(256*6*6, int(args.fc_size/2) ), nn.Dropout()) if 'conv' not in args.rnn_model else None
 			self.final_channels = 256
-		elif args.arch.startswith('vgg16'):
-			self.features = original_model.features
-			for i, param in enumerate(self.features.parameters()):
-				param.requires_grad = self.trainable_base
-			# Make the output of each one be to fc_size/2 so that we cooncat the two fc outputs
-			self.fc_pre = nn.Sequential(nn.Linear(512*7*7, int(args.fc_size/2) ), nn.Dropout()) if 'conv' not in args.rnn_model else None
-			self.final_channels = 512
+
 		elif args.arch.startswith('resnet18'):
-			self.features = nn.Sequential(*list(original_model.children())[:-2])
-			for i, param in enumerate(self.features.parameters()):
+			# self.features = nn.Sequential(*list(original_model.children())[:-2])
+			# for i, param in enumerate(self.features.parameters()):
+			# 	param.requires_grad = self.trainable_base
+			# self.fc_pre = nn.Sequential(nn.Linear(512*7*7, int(args.fc_size/2)), nn.Dropout()) if 'conv' not in args.rnn_model else None
+			# self.final_channels = 512
+			self.features_rgb = nn.Sequential(*list(original_model_rgb.children())[:-2])
+			for i, param in enumerate(self.features_rgb.parameters()):
 				param.requires_grad = self.trainable_base
-			self.fc_pre = nn.Sequential(nn.Linear(512*7*7, int(args.fc_size/2)), nn.Dropout()) if 'conv' not in args.rnn_model else None
-			self.final_channels = 512
-		elif args.arch.startswith('resnet34'):
-			self.features = nn.Sequential(*list(original_model.children())[:-2])
-			for i, param in enumerate(self.features.parameters()):
+			self.features_of = nn.Sequential(*list(original_model_of.children())[:-2])
+			for i, param in enumerate(self.features_of.parameters()):
 				param.requires_grad = self.trainable_base
-			self.fc_pre = nn.Sequential(nn.Linear(512*7*7, int(args.fc_size/2)), nn.Dropout()) if 'conv' not in args.rnn_model else None
+			
+			self.fc_pre_rgb = nn.Sequential(nn.Linear(512*7*7, int(args.fc_size/2) ), nn.Dropout()) if 'conv' not in args.rnn_model else None
+			self.fc_pre_of = nn.Sequential(nn.Linear(512*7*7, int(args.fc_size/2) ), nn.Dropout()) if 'conv' not in args.rnn_model else None
 			self.final_channels = 512
+
 		else:
 			raise ValueError('architecture base model not yet implemented choices: alexnet, vgg16, ResNet 18/34')
 		# Select an RNN
@@ -181,14 +186,14 @@ class FusionModel(LightningModule):
 			fs = torch.zeros(nBatch, nFrames, self.rnn.input_size).cuda()
 			for kk in range(nFrames):
 				f_all = []
-				f = self.features(inputs[:, kk, :, :, :, 0].permute(0, 3, 1, 2)) # permute to nB x nC x H x W
+				f = self.features_rgb(inputs[:, kk, :, :, :, 0].permute(0, 3, 1, 2)) # permute to nB x nC x H x W
 				f = f.reshape(f.size(0), -1)
-				f = self.fc_pre(f)
+				f = self.fc_pre_rgb(f)
 				f_all.append(f)
 
-				f_of = self.features(inputs[:, kk, :, :, :, 1].permute(0, 3, 1, 2))  # permute to nB x nC x H x W
+				f_of = self.features_of(inputs[:, kk, :, :, :, 1].permute(0, 3, 1, 2))  # permute to nB x nC x H x W
 				f_of = f_of.reshape(f_of.size(0), -1)
-				f_of = self.fc_pre(f_of)
+				f_of = self.fc_pre_of(f_of)
 				f_all.append(f_of)
 
 				# Concat
@@ -202,8 +207,8 @@ class FusionModel(LightningModule):
 			#########################################################################################
 			# Convolutional flavors
 			for kk in range(nFrames):
-				f = self.features(inputs[:, kk, :, :, :, 0].permute(0, 3, 1, 2)) # permute to nB x nC x H x W
-				f_of = self.features(inputs[:, kk, :, :, :, 1].permute(0, 3, 1, 2))  # permute to nB x nC x H x W
+				f = self.features_rgb(inputs[:, kk, :, :, :, 0].permute(0, 3, 1, 2)) # permute to nB x nC x H x W
+				f_of = self.features_of(inputs[:, kk, :, :, :, 1].permute(0, 3, 1, 2))  # permute to nB x nC x H x W
 				
 				# Size nBatch x nChannels x H x W
 				if kk == 0:
@@ -276,10 +281,12 @@ class FusionModel(LightningModule):
 		
 	def configure_optimizers(self):
 		self.layers_to_fit = [{'params': self.fc.parameters()}, {'params': self.rnn.parameters()}]
-		if self.fc_pre != None:
-			self.layers_to_fit.append({'params': self.fc_pre.parameters()})
+		if self.fc_pre_rgb != None:
+			self.layers_to_fit.append({'params': self.fc_pre_rgb.parameters()})
+			self.layers_to_fit.append({'params': self.fc_pre_of.parameters()})
 		if self.trainable_base:
-			self.layers_to_fit.append({'params': self.features.parameters()})
+			self.layers_to_fit.append({'params': self.features_rgb.parameters()})
+			self.layers_to_fit.append({'params': self.features_of.parameters()})
 		
 		optimizer = torch.optim.Adam(self.layers_to_fit,
 								lr=self.hparams.lr, betas=(0.9, 0.999), 
@@ -310,11 +317,14 @@ class FusionModel(LightningModule):
 		else:
 			rgb = self.augGPU_resize(batch[0][:, :, :, :int(nW/2), :].type(torch.float)/255., npix_resize = (224, 224))
 			of 	= self.augGPU_resize(batch[0][:, :, :, int(nW/2):, :].type(torch.float)/255., npix_resize = (224, 224))
-		of = self.augGPU_normalize_inplace(of, mean = [0.485, 0.456, 0.406], std = [0.229, 0.224, 0.225])
-		rgb = self.augGPU_normalize_inplace(rgb, mean = [0.485, 0.456, 0.406], std = [0.229, 0.224, 0.225])
-		#rgb = self.augGPU_normalize_inplace(rgb, mean = [0.3, 0.2, 0.2], std = [0.2, 0.2, 0.2])
-		#of = self.augGPU_normalize_inplace(of, mean = [0.01, 0.01, 0.01], std = [0.05, 0.05, 0.05])
-		#print(of.size())
+
+		#of = self.augGPU_normalize_inplace(of, mean = [0.485, 0.456, 0.406], std = [0.229, 0.224, 0.225])
+		#rgb = self.augGPU_normalize_inplace(rgb, mean = [0.485, 0.456, 0.406], std = [0.229, 0.224, 0.225])
+		#print(of.reshape(-1, 3).mean(0))
+		rgb = self.augGPU_normalize_inplace(rgb, mean = [0.3, 0.2, 0.2], std = [0.2, 0.2, 0.2])
+		of = self.augGPU_normalize_inplace(of, mean = [0.99, 0.99, 0.99], std = [0.005, 0.005, 0.005])
+		#print(of.reshape(-1, 3).mean(0))
+		#print(of.reshape(-1, 3).var(0))
 
 		return [torch.stack([rgb, of], axis = -1), batch[1]]
 
@@ -383,9 +393,11 @@ if __name__ == '__main__':
 	hparams.auto_lr = True if hparams.auto_lr == 1 else False
 	hparams.use_pretrained = True if hparams.use_pretrained == 1 else False
 
+	classification_name = "positive_negative"
 	if hparams.include_classes == '':
 		raise ValueError('Please define the classes to use using the 00_01 underscore notation')
 	else:
+		classification_name = hparams.include_classes
 		hparams.include_classes = hparams.include_classes.split('_')
 	#####################################################################################
 	# Instantiate model
@@ -394,14 +406,14 @@ if __name__ == '__main__':
 	model = FusionModel(hparams)
 	#####################################################################################
 	print('Logging to: % s' % hparams.logging_dir)
-	logger = TensorBoardLogger(hparams.logging_dir, name='%s/%s_%s_%s' %(hparams.include_classes, hparams.arch, hparams.trainable_base, hparams.rnn_model))
+	logger = TensorBoardLogger(hparams.logging_dir, name='%s/%s_%s_%s' %(classification_name, hparams.arch, hparams.trainable_base, hparams.rnn_model))
 	logger.log_hyperparams(hparams) # Log the hyperparameters
 	# Set default device
 	# torch.cuda.set_device(hparams.gpu)
 
 	checkpoint_callback = ModelCheckpoint(
 		# filepath=os.path.join(logger.log_dir, 'checkpoints'),
-		filepath=os.path.join('checkpoints', 'hparams.include_classes', f'{hparams.arch}_{hparams.trainable_base}_{hparams.rnn_model}'),
+		filepath=os.path.join('checkpoints', classification_name, f'{hparams.arch}_{hparams.trainable_base}_{hparams.rnn_model}'),
 		save_top_k=3,
 		verbose=True,
 		monitor='val_acc',
