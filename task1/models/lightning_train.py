@@ -151,7 +151,7 @@ class FusionModel(LightningModule):
 		# Select an RNN
 		#print(self.features)
 		if args.rnn_model == 'LSTM':
-			self.rnn = nn.LSTM(input_size = args.fc_size/2,
+			self.rnn = nn.LSTM(input_size = int(args.fc_size/2),
 						hidden_size = args.hidden_size,
 						num_layers = args.rnn_layers,
 						batch_first = True)
