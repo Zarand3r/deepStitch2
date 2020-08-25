@@ -19,7 +19,6 @@ import torch.nn.functional as F
 import torchvision
 from torch.utils.data import Dataset, DataLoader
 
-
 # Custom imports
 import git
 import sys

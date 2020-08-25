@@ -48,7 +48,7 @@ class CustomDataset(Dataset):
 			raise ValueError('Likely that you have not pre-computed the optical flow or data directory is wrong!')
 		if idxs == None: # load all
 			idxs = list(range(len(fns)))
-		self.filtered_fns = [[f, self.classes.index(f.split('/')[-2]) ] for i, f in enumerate(fns) if i in idxs]
+		self.filtered_fns = [[f, self.classes.index(f.split('/')[-3]) ] for i, f in enumerate(fns) if i in idxs]
 		if balance_classes:
 			class_counter = Counter([f[1] for f in self.filtered_fns])
 			print(class_counter)
