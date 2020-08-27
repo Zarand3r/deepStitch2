@@ -44,11 +44,13 @@ def mp4_load(fn):
 parser = argparse.ArgumentParser(description='Conversion')
 parser.add_argument('--mp4_fn', default=settings1.raw_directory,type=str, help='input path')
 parser.add_argument('--gpu_id', default=1,type=int, help='which gpu')
+parser.add_argument('--window', default=1,type=int, help='sliding window for smoothing frames')
 args = parser.parse_args()
 
 model_dir = settings1.flownet_model
 mp4_fn = args.mp4_fn
 gpu_id = args.gpu_id
+window = args.window
 torch.cuda.set_device(gpu_id) 
 
 
@@ -82,10 +84,10 @@ if __name__ == '__main__':
     max_flow = 20
     outs = []
 
-    for ii in tqdm(range(n_im-1)):
+    for ii in tqdm(range(n_im-window)):
         
         aa=ii
-        bb=ii+1
+        bb=ii+window
 
         img1 = input_transform(mp4_ims[aa])
         img2 = input_transform(mp4_ims[bb])
