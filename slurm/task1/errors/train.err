@@ -16,15 +16,15 @@ Set SLURM handle signals.
 /central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/utilities/distributed.py:25: UserWarning: The dataloader, val dataloader 0, does not have many workers which may be a bottleneck. Consider increasing the value of the `num_workers` argument` (try 28 which is the number of cpus on this machine) in the `DataLoader` init to improve performance.
   warnings.warn(*args, **kwargs)
 
-Epoch 00000: val_acc reached 0.88000 (best 0.88000), saving model to /central/groups/tensorlab/rbao/robosurgery/deepStitch/task1/models/checkpoints/positive_negative/_ckpt_epoch_0.ckpt as top 3
+Epoch 00000: val_acc reached 0.84444 (best 0.84444), saving model to /central/groups/tensorlab/rbao/robosurgery/deepStitch/task1/models/checkpoints/positive_negative/_ckpt_epoch_0.ckpt as top 3
 
-Epoch 00001: val_acc reached 0.88000 (best 0.88000), saving model to /central/groups/tensorlab/rbao/robosurgery/deepStitch/task1/models/checkpoints/positive_negative/_ckpt_epoch_1.ckpt as top 3
+Epoch 00001: val_acc reached 0.95556 (best 0.95556), saving model to /central/groups/tensorlab/rbao/robosurgery/deepStitch/task1/models/checkpoints/positive_negative/_ckpt_epoch_1.ckpt as top 3
 
-Epoch 00002: val_acc reached 0.88000 (best 0.88000), saving model to /central/groups/tensorlab/rbao/robosurgery/deepStitch/task1/models/checkpoints/positive_negative/_ckpt_epoch_2.ckpt as top 3
+Epoch 00002: val_acc reached 0.86667 (best 0.95556), saving model to /central/groups/tensorlab/rbao/robosurgery/deepStitch/task1/models/checkpoints/positive_negative/_ckpt_epoch_2.ckpt as top 3
 
-Epoch 00003: val_acc  was not in top 3
+Epoch 00003: val_acc reached 0.95556 (best 0.95556), saving model to /central/groups/tensorlab/rbao/robosurgery/deepStitch/task1/models/checkpoints/positive_negative/_ckpt_epoch_3.ckpt as top 3
 
-Epoch 00004: val_acc  was not in top 3
+Epoch 00004: val_acc reached 0.97778 (best 0.97778), saving model to /central/groups/tensorlab/rbao/robosurgery/deepStitch/task1/models/checkpoints/positive_negative/_ckpt_epoch_4.ckpt as top 3
 
 Epoch 00005: val_acc  was not in top 3
 
@@ -34,11 +34,11 @@ Epoch 00007: val_acc  was not in top 3
 
 Epoch 00008: val_acc  was not in top 3
 
-Epoch 00009: val_acc  was not in top 3
+Epoch 00009: val_acc reached 0.97778 (best 0.97778), saving model to /central/groups/tensorlab/rbao/robosurgery/deepStitch/task1/models/checkpoints/positive_negative/_ckpt_epoch_9.ckpt as top 3
 lightning_train.py:281: RuntimeWarning: More than 20 figures have been opened. Figures created through the pyplot interface (`matplotlib.pyplot.figure`) are retained until explicitly closed and may consume too much memory. (To control this warning, see the rcParam `figure.max_open_warning`).
   fig = plt.figure(); sns.heatmap(cm, cmap = cmap_use, ax =plt.gca(), annot = True, xticklabels = self.hparams.include_classes, yticklabels = self.hparams.include_classes)
 
-Epoch 00010: val_acc  was not in top 3
+Epoch 00010: val_acc reached 0.97778 (best 0.97778), saving model to /central/groups/tensorlab/rbao/robosurgery/deepStitch/task1/models/checkpoints/positive_negative/_ckpt_epoch_10.ckpt as top 3
 
 Epoch 00011: val_acc  was not in top 3
 
