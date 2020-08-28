@@ -1,12 +1,12 @@
-Thu Aug 27 13:28:00 2020       
+Thu Aug 27 23:25:02 2020       
 +-----------------------------------------------------------------------------+
 | NVIDIA-SMI 440.33.01    Driver Version: 440.33.01    CUDA Version: 10.2     |
 |-------------------------------+----------------------+----------------------+
 | GPU  Name        Persistence-M| Bus-Id        Disp.A | Volatile Uncorr. ECC |
 | Fan  Temp  Perf  Pwr:Usage/Cap|         Memory-Usage | GPU-Util  Compute M. |
 |===============================+======================+======================|
-|   0  Tesla P100-PCIE...  Off  | 00000000:05:00.0 Off |                  Off |
-| N/A   24C    P0    29W / 250W |      0MiB / 16280MiB |      0%      Default |
+|   0  Tesla P100-PCIE...  Off  | 00000000:85:00.0 Off |                    0 |
+| N/A   23C    P0    29W / 250W |      0MiB / 16280MiB |      0%      Default |
 +-------------------------------+----------------------+----------------------+
                                                                                
 +-----------------------------------------------------------------------------+
@@ -64,6 +64,8 @@ Environment activated, running file....
 => using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/positive/optical_flow/flownet_00010110_BSP_3_CD_01.mp4
 => using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/positive/optical_flow/optical_flow
+=> using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/positive/optical_flow/flownet_01111000_BSP_2_CD_04.mp4
 => using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/positive/optical_flow/flownet_01111000_BSP_2_CD_02.mp4
@@ -101,6 +103,418 @@ Environment activated, running file....
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/positive/00010110_BSP_3_CD_05.mp4
 => using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/positive/01111000_BSP_3_CD_05.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/00010110_BSP_3_BC_04.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/01111000_BSP_3_DE_01.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/01111000_BSP_3_DE_06.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/01111000_BSP_2_EF_03.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/01111000_BSP_2_FG_01.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/01111000_BSP_3_AB_04.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/00010110_BSP_3_FG_02.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/01111000_BSP_2_EF_05.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/01111000_BSP_3_BC_02.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/01011111_BSP_2_FG_01.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/01111000_BSP_2_AB_02.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/01111000_BSP_2_BC_06.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/01011111_BSP_2_BC_01.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/01111000_BSP_3_EF_06.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/01111000_BSP_2_AB_06.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/01111000_BSP_2_EF_06.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/00010110_BSP_3_AB_06.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/01111000_BSP_3_AB_01.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/00010110_BSP_3_BC_03.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/01111000_BSP_3_EF_05.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/00010110_BSP_3_EF_02.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/00010110_BSP_3_AB_05.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/01011111_BSP_2_BC_03.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/01111000_BSP_2_AB_03.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/00010110_BSP_3_FG_04.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/00010110_BSP_3_DE_01.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/00010110_BSP_3_DE_06.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/00010110_BSP_3_FG_03.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/01111000_BSP_3_AB_02.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/01111000_BSP_3_BC_03.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/01111000_BSP_3_BC_01.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/01111000_BSP_3_FG_04.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/01111000_BSP_2_AB_04.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/00010110_BSP_3_FG_01.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/00010110_BSP_3_FG_05.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/01111000_BSP_3_EF_03.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/01011111_BSP_2_EF_02.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/01111000_BSP_2_DE_02.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/01111000_BSP_3_EF_01.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/01111000_BSP_2_DE_05.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/01011111_BSP_2_EF_01.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/01111000_BSP_2_FG_03.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/01111000_BSP_3_FG_02.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/01111000_BSP_3_DE_03.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/00010110_BSP_3_EF_03.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/00010110_BSP_3_AB_01.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/01111000_BSP_3_FG_01.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/01111000_BSP_2_EF_04.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/01111000_BSP_3_FG_05.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/01111000_BSP_2_BC_05.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/01111000_BSP_3_AB_03.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/optical_flow
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/optical_flow/flownet_01111000_BSP_3_FG_05.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/optical_flow/flownet_00010110_BSP_3_EF_02.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/optical_flow/flownet_01111000_BSP_2_EF_04.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/optical_flow/flownet_00010110_BSP_3_BC_06.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/optical_flow/flownet_01111000_BSP_3_EF_05.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/optical_flow/flownet_01111000_BSP_3_AB_03.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/optical_flow/flownet_00010110_BSP_3_EF_03.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/optical_flow/flownet_01011111_BSP_2_EF_02.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/optical_flow/flownet_01111000_BSP_3_EF_03.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/optical_flow/flownet_00010110_BSP_3_DE_01.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/optical_flow/flownet_01111000_BSP_3_EF_04.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/optical_flow/flownet_01111000_BSP_2_DE_04.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/optical_flow/flownet_01111000_BSP_3_FG_04.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/optical_flow/flownet_01011111_BSP_2_BC_02.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/optical_flow/flownet_01011111_BSP_2_BC_01.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/optical_flow/flownet_01111000_BSP_3_BC_03.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/optical_flow/flownet_00010110_BSP_3_AB_05.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/optical_flow/flownet_01111000_BSP_2_DE_02.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/optical_flow/flownet_00010110_BSP_3_FG_01.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/optical_flow/flownet_01111000_BSP_2_BC_06.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/optical_flow/flownet_01011111_BSP_2_AB_02.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/optical_flow/flownet_01111000_BSP_3_EF_06.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/optical_flow/flownet_00010110_BSP_3_AB_04.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/optical_flow/flownet_01111000_BSP_2_AB_02.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/optical_flow/flownet_01111000_BSP_3_AB_04.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/optical_flow/flownet_01111000_BSP_3_EF_02.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/optical_flow/flownet_00010110_BSP_3_EF_05.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/optical_flow/flownet_01011111_BSP_2_FG_01.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/optical_flow/flownet_01111000_BSP_2_BC_01.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/optical_flow/flownet_01111000_BSP_2_FG_02.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/optical_flow/flownet_00010110_BSP_3_FG_05.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/optical_flow/flownet_01111000_BSP_3_FG_03.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/optical_flow/flownet_01111000_BSP_2_EF_05.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/optical_flow/flownet_00010110_BSP_3_FG_02.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/optical_flow/flownet_01011111_BSP_2_EF_01.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/optical_flow/flownet_00010110_BSP_3_DE_04.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/optical_flow/flownet_00010110_BSP_3_AB_01.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/optical_flow/flownet_01111000_BSP_2_BC_03.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/optical_flow/flownet_01111000_BSP_3_DE_01.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/optical_flow/flownet_01011111_BSP_2_AB_03.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/optical_flow/flownet_01111000_BSP_3_FG_01.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/optical_flow/flownet_01111000_BSP_2_FG_05.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/optical_flow/flownet_01111000_BSP_3_BC_05.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/optical_flow/flownet_01111000_BSP_3_DE_06.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/optical_flow/flownet_01111000_BSP_3_FG_02.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/optical_flow/optical_flow
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/optical_flow/flownet_00010110_BSP_3_DE_03.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/optical_flow/flownet_00010110_BSP_3_BC_05.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/optical_flow/flownet_01011111_BSP_2_DE_02.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/optical_flow/flownet_01111000_BSP_2_FG_03.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/optical_flow/flownet_01111000_BSP_2_EF_03.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/optical_flow/flownet_01111000_BSP_2_FG_04.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/optical_flow/flownet_01111000_BSP_2_FG_06.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/optical_flow/flownet_01111000_BSP_2_EF_02.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/optical_flow/flownet_01011111_BSP_2_FG_02.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/optical_flow/flownet_01111000_BSP_3_AB_02.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/optical_flow/flownet_01111000_BSP_2_DE_05.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/optical_flow/flownet_01111000_BSP_3_FG_06.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/optical_flow/flownet_01111000_BSP_3_DE_05.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/optical_flow/flownet_00010110_BSP_3_BC_03.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/optical_flow/flownet_01111000_BSP_2_FG_01.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/optical_flow/flownet_01111000_BSP_2_BC_05.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/optical_flow/flownet_01111000_BSP_2_EF_06.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/optical_flow/flownet_01111000_BSP_2_AB_06.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/optical_flow/flownet_01111000_BSP_3_DE_02.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/optical_flow/flownet_01111000_BSP_2_DE_03.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/optical_flow/flownet_01111000_BSP_3_BC_06.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/optical_flow/flownet_01111000_BSP_3_BC_02.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/optical_flow/flownet_01111000_BSP_2_DE_06.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/optical_flow/flownet_00010110_BSP_3_BC_04.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/optical_flow/flownet_01111000_BSP_3_AB_06.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/optical_flow/flownet_00010110_BSP_3_AB_06.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/optical_flow/flownet_01111000_BSP_2_BC_02.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/optical_flow/flownet_01111000_BSP_2_AB_05.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/optical_flow/flownet_00010110_BSP_3_DE_06.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/optical_flow/flownet_01111000_BSP_3_BC_01.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/optical_flow/flownet_01111000_BSP_3_BC_04.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/optical_flow/flownet_01111000_BSP_2_AB_01.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/optical_flow/flownet_00010110_BSP_3_EF_01.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/optical_flow/flownet_00010110_BSP_3_EF_06.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/optical_flow/flownet_01111000_BSP_2_EF_01.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/optical_flow/flownet_01111000_BSP_3_DE_03.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/optical_flow/flownet_00010110_BSP_3_BC_02.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/optical_flow/flownet_00010110_BSP_3_DE_02.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/optical_flow/flownet_00010110_BSP_3_EF_04.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/optical_flow/flownet_00010110_BSP_3_BC_01.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/optical_flow/flownet_01111000_BSP_3_DE_04.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/optical_flow/flownet_01011111_BSP_2_BC_03.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/optical_flow/flownet_01111000_BSP_2_BC_04.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/optical_flow/flownet_00010110_BSP_3_FG_04.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/optical_flow/flownet_00010110_BSP_3_FG_03.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/optical_flow/flownet_01111000_BSP_2_DE_01.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/optical_flow/flownet_01111000_BSP_3_AB_05.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/optical_flow/flownet_01011111_BSP_2_DE_01.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/optical_flow/flownet_01111000_BSP_3_AB_01.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/optical_flow/flownet_00010110_BSP_3_AB_02.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/optical_flow/flownet_01011111_BSP_2_AB_01.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/optical_flow/flownet_01111000_BSP_2_AB_04.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/optical_flow/flownet_00010110_BSP_3_AB_03.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/optical_flow/flownet_01111000_BSP_3_EF_01.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/optical_flow/flownet_00010110_BSP_3_DE_05.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/optical_flow/flownet_01111000_BSP_2_AB_03.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/optical_flow/flownet_00010110_BSP_3_FG_06.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/01111000_BSP_2_AB_01.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/01111000_BSP_2_BC_02.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/01111000_BSP_2_BC_04.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/01111000_BSP_3_BC_06.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/01111000_BSP_2_FG_02.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/01111000_BSP_3_DE_02.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/00010110_BSP_3_BC_05.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/01111000_BSP_2_DE_06.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/01111000_BSP_2_EF_02.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/00010110_BSP_3_DE_05.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/00010110_BSP_3_BC_06.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/01111000_BSP_3_DE_05.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/01011111_BSP_2_BC_02.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/00010110_BSP_3_EF_01.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/00010110_BSP_3_DE_04.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/00010110_BSP_3_BC_02.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/01011111_BSP_2_AB_01.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/01111000_BSP_2_FG_04.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/01111000_BSP_2_FG_05.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/01011111_BSP_2_FG_02.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/01111000_BSP_3_BC_04.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/01111000_BSP_2_EF_01.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/00010110_BSP_3_AB_04.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/01111000_BSP_3_AB_06.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/01111000_BSP_2_BC_01.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/01111000_BSP_2_FG_06.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/01111000_BSP_3_FG_06.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/00010110_BSP_3_EF_05.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/01011111_BSP_2_DE_01.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/01111000_BSP_3_AB_05.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/00010110_BSP_3_EF_06.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/00010110_BSP_3_DE_02.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/01111000_BSP_2_DE_03.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/00010110_BSP_3_AB_03.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/00010110_BSP_3_EF_04.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/01011111_BSP_2_AB_03.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/01111000_BSP_3_EF_02.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/01111000_BSP_3_DE_04.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/00010110_BSP_3_AB_02.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/01011111_BSP_2_DE_02.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/01111000_BSP_2_DE_04.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/01011111_BSP_2_AB_02.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/01111000_BSP_2_AB_05.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/01111000_BSP_3_FG_03.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/01111000_BSP_3_BC_05.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/00010110_BSP_3_FG_06.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/00010110_BSP_3_DE_03.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/01111000_BSP_2_DE_01.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/01111000_BSP_2_BC_03.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/01111000_BSP_3_EF_04.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative_old/00010110_BSP_3_BC_01.mp4
 => using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/FG/01111000_BSP_2_FG_01.mp4
 => using pre-trained model 'flownets'
@@ -150,6 +564,8 @@ Environment activated, running file....
 => using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/FG/optical_flow/flownet_01111000_BSP_3_FG_02.mp4
 => using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/FG/optical_flow/optical_flow
+=> using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/FG/optical_flow/flownet_01111000_BSP_2_FG_03.mp4
 => using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/FG/optical_flow/flownet_01111000_BSP_2_FG_04.mp4
@@ -183,6 +599,94 @@ Environment activated, running file....
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/FG/01111000_BSP_3_FG_03.mp4
 => using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/FG/00010110_BSP_3_FG_06.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/positive_old/00010110_BSP_3_CD_06.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/positive_old/01111000_BSP_2_CD_04.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/positive_old/01111000_BSP_2_CD_03.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/positive_old/01011111_BSP_2_CD_03.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/positive_old/01111000_BSP_3_CD_03.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/positive_old/01011111_BSP_2_CD_01.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/positive_old/01111000_BSP_2_CD_02.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/positive_old/01111000_BSP_2_CD_06.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/positive_old/01011111_BSP_2_CD_02.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/positive_old/01111000_BSP_3_CD_01.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/positive_old/optical_flow
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/positive_old/optical_flow/flownet_01111000_BSP_3_CD_06.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/positive_old/optical_flow/flownet_00010110_BSP_3_CD_04.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/positive_old/optical_flow/flownet_01111000_BSP_2_CD_06.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/positive_old/optical_flow/flownet_00010110_BSP_3_CD_06.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/positive_old/optical_flow/flownet_00010110_BSP_3_CD_02.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/positive_old/optical_flow/flownet_01011111_BSP_2_CD_02.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/positive_old/optical_flow/flownet_01111000_BSP_3_CD_03.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/positive_old/optical_flow/flownet_01011111_BSP_2_CD_01.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/positive_old/optical_flow/flownet_01011111_BSP_2_CD_03.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/positive_old/optical_flow/flownet_01111000_BSP_2_CD_03.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/positive_old/optical_flow/flownet_01111000_BSP_2_CD_05.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/positive_old/optical_flow/flownet_01111000_BSP_3_CD_05.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/positive_old/optical_flow/flownet_00010110_BSP_3_CD_01.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/positive_old/optical_flow/optical_flow
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/positive_old/optical_flow/flownet_01111000_BSP_2_CD_04.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/positive_old/optical_flow/flownet_01111000_BSP_2_CD_02.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/positive_old/optical_flow/flownet_00010110_BSP_3_CD_03.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/positive_old/optical_flow/flownet_01111000_BSP_3_CD_02.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/positive_old/optical_flow/flownet_01111000_BSP_3_CD_04.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/positive_old/optical_flow/flownet_01111000_BSP_2_CD_01.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/positive_old/optical_flow/flownet_01111000_BSP_3_CD_01.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/positive_old/optical_flow/flownet_00010110_BSP_3_CD_05.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/positive_old/00010110_BSP_3_CD_04.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/positive_old/01111000_BSP_2_CD_05.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/positive_old/01111000_BSP_3_CD_06.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/positive_old/00010110_BSP_3_CD_01.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/positive_old/01111000_BSP_3_CD_02.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/positive_old/01111000_BSP_2_CD_01.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/positive_old/01111000_BSP_3_CD_04.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/positive_old/00010110_BSP_3_CD_03.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/positive_old/00010110_BSP_3_CD_02.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/positive_old/00010110_BSP_3_CD_05.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/positive_old/01111000_BSP_3_CD_05.mp4
 => using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/AB/01111000_BSP_3_AB_04.mp4
 => using pre-trained model 'flownets'
@@ -223,6 +727,8 @@ Environment activated, running file....
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/AB/optical_flow/flownet_00010110_BSP_3_AB_01.mp4
 => using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/AB/optical_flow/flownet_01011111_BSP_2_AB_03.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/AB/optical_flow/optical_flow
 => using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/AB/optical_flow/flownet_01111000_BSP_3_AB_02.mp4
 => using pre-trained model 'flownets'
@@ -318,6 +824,8 @@ Environment activated, running file....
 => using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/CD/optical_flow/flownet_00010110_BSP_3_CD_01.mp4
 => using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/CD/optical_flow/optical_flow
+=> using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/CD/optical_flow/flownet_01111000_BSP_2_CD_04.mp4
 => using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/CD/optical_flow/flownet_01111000_BSP_2_CD_02.mp4
@@ -406,6 +914,8 @@ Environment activated, running file....
 => using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/EF/optical_flow/flownet_01011111_BSP_2_EF_01.mp4
 => using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/EF/optical_flow/optical_flow
+=> using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/EF/optical_flow/flownet_01111000_BSP_2_EF_03.mp4
 => using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/EF/optical_flow/flownet_01111000_BSP_2_EF_02.mp4
@@ -473,6 +983,8 @@ Environment activated, running file....
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/BC/optical_flow/flownet_01111000_BSP_2_BC_03.mp4
 => using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/BC/optical_flow/flownet_01111000_BSP_3_BC_05.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/BC/optical_flow/optical_flow
 => using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/BC/optical_flow/flownet_00010110_BSP_3_BC_05.mp4
 => using pre-trained model 'flownets'
@@ -634,19 +1146,47 @@ Environment activated, running file....
 => using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_01111000_BSP_2_EF_04.mp4
 => using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_flownet_00010110_BSP_3_BC_01.mp4
+=> using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_00010110_BSP_3_BC_06.mp4
 => using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_01111000_BSP_3_EF_05.mp4
 => using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_01111000_BSP_3_AB_03.mp4
 => using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_flownet_01111000_BSP_2_DE_05.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_flownet_01111000_BSP_3_DE_06.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_flownet_01111000_BSP_2_FG_06.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_flownet_01111000_BSP_3_EF_06.mp4
+=> using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_00010110_BSP_3_EF_03.mp4
 => using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_flownet_01111000_BSP_2_EF_05.mp4
+=> using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_01011111_BSP_2_EF_02.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_flownet_01111000_BSP_3_EF_04.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_flownet_01111000_BSP_2_BC_03.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_flownet_01011111_BSP_2_EF_02.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_flownet_01111000_BSP_3_FG_04.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_flownet_00010110_BSP_3_DE_04.mp4
 => using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_01111000_BSP_3_EF_03.mp4
 => using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_00010110_BSP_3_DE_01.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_flownet_00010110_BSP_3_BC_03.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_flownet_01011111_BSP_2_AB_01.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_flownet_01111000_BSP_3_FG_03.mp4
 => using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_01111000_BSP_3_EF_04.mp4
 => using pre-trained model 'flownets'
@@ -655,6 +1195,8 @@ Environment activated, running file....
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_01111000_BSP_3_FG_04.mp4
 => using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_01011111_BSP_2_BC_02.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_flownet_00010110_BSP_3_AB_03.mp4
 => using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_01011111_BSP_2_BC_01.mp4
 => using pre-trained model 'flownets'
@@ -666,11 +1208,23 @@ Environment activated, running file....
 => using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_00010110_BSP_3_FG_01.mp4
 => using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_flownet_01011111_BSP_2_AB_03.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_flownet_01111000_BSP_2_FG_03.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_flownet_00010110_BSP_3_EF_05.mp4
+=> using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_01111000_BSP_2_BC_06.mp4
 => using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_01011111_BSP_2_AB_02.mp4
 => using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_01111000_BSP_3_EF_06.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_flownet_01111000_BSP_2_DE_03.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_flownet_01011111_BSP_2_FG_01.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_flownet_01111000_BSP_2_FG_05.mp4
 => using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_00010110_BSP_3_AB_04.mp4
 => using pre-trained model 'flownets'
@@ -680,31 +1234,69 @@ Environment activated, running file....
 => using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_01111000_BSP_3_EF_02.mp4
 => using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_flownet_01111000_BSP_3_DE_05.mp4
+=> using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_00010110_BSP_3_EF_05.mp4
 => using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_01011111_BSP_2_FG_01.mp4
 => using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_flownet_01111000_BSP_2_BC_01.mp4
+=> using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_01111000_BSP_2_BC_01.mp4
 => using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_flownet_00010110_BSP_3_FG_01.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_flownet_00010110_BSP_3_BC_04.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_flownet_01111000_BSP_2_BC_02.mp4
+=> using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_01111000_BSP_2_FG_02.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_flownet_01011111_BSP_2_DE_02.mp4
 => using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_00010110_BSP_3_FG_05.mp4
 => using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_01111000_BSP_3_FG_03.mp4
 => using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_flownet_00010110_BSP_3_AB_06.mp4
+=> using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_01111000_BSP_2_EF_05.mp4
 => using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_flownet_01111000_BSP_2_DE_02.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_flownet_01111000_BSP_3_BC_06.mp4
+=> using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_00010110_BSP_3_FG_02.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_flownet_01111000_BSP_2_EF_02.mp4
 => using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_01011111_BSP_2_EF_01.mp4
 => using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_00010110_BSP_3_DE_04.mp4
 => using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_flownet_01111000_BSP_2_EF_06.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_flownet_01111000_BSP_2_BC_05.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_flownet_01011111_BSP_2_AB_02.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_flownet_01111000_BSP_2_AB_06.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_flownet_00010110_BSP_3_EF_04.mp4
+=> using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_00010110_BSP_3_AB_01.mp4
 => using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_01111000_BSP_2_BC_03.mp4
 => using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_flownet_01111000_BSP_2_AB_02.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_flownet_01111000_BSP_3_BC_02.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_flownet_00010110_BSP_3_FG_05.mp4
+=> using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_01111000_BSP_3_DE_01.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_flownet_01111000_BSP_2_AB_03.mp4
 => using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_01011111_BSP_2_AB_03.mp4
 => using pre-trained model 'flownets'
@@ -714,11 +1306,27 @@ Environment activated, running file....
 => using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_01111000_BSP_3_BC_05.mp4
 => using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_flownet_01111000_BSP_3_FG_02.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_flownet_00010110_BSP_3_EF_02.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_flownet_01111000_BSP_3_FG_01.mp4
+=> using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_01111000_BSP_3_DE_06.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_flownet_01111000_BSP_2_DE_06.mp4
 => using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_01111000_BSP_3_FG_02.mp4
 => using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_flownet_01111000_BSP_2_DE_04.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_flownet_01111000_BSP_3_EF_03.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_flownet_01011111_BSP_2_BC_01.mp4
+=> using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_00010110_BSP_3_DE_03.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_flownet_01111000_BSP_3_BC_01.mp4
 => using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_00010110_BSP_3_BC_05.mp4
 => using pre-trained model 'flownets'
@@ -728,25 +1336,65 @@ Environment activated, running file....
 => using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_01111000_BSP_2_EF_03.mp4
 => using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_flownet_01011111_BSP_2_EF_01.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_flownet_00010110_BSP_3_AB_04.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_flownet_00010110_BSP_3_EF_01.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_flownet_01111000_BSP_3_AB_05.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_flownet_01011111_BSP_2_BC_03.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_flownet_01111000_BSP_3_AB_01.mp4
+=> using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_01111000_BSP_2_FG_04.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_flownet_00010110_BSP_3_AB_02.mp4
 => using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_01111000_BSP_2_FG_06.mp4
 => using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_01111000_BSP_2_EF_02.mp4
 => using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_flownet_00010110_BSP_3_DE_01.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_flownet_01111000_BSP_3_DE_02.mp4
+=> using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_01011111_BSP_2_FG_02.mp4
 => using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_01111000_BSP_3_AB_02.mp4
 => using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_flownet_00010110_BSP_3_BC_05.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_flownet_00010110_BSP_3_FG_06.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_flownet_00010110_BSP_3_DE_02.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_flownet_01111000_BSP_3_BC_05.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_flownet_01111000_BSP_3_BC_03.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_flownet_00010110_BSP_3_FG_03.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_flownet_00010110_BSP_3_AB_01.mp4
+=> using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_01111000_BSP_2_DE_05.mp4
 => using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_flownet_01111000_BSP_3_EF_01.mp4
+=> using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_01111000_BSP_3_FG_06.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_flownet_01111000_BSP_3_FG_05.mp4
 => using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_01111000_BSP_3_DE_05.mp4
 => using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_00010110_BSP_3_BC_03.mp4
 => using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_01111000_BSP_2_FG_01.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_flownet_01011111_BSP_2_DE_01.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_flownet_01111000_BSP_2_FG_02.mp4
 => using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_01111000_BSP_2_BC_05.mp4
 => using pre-trained model 'flownets'
@@ -758,25 +1406,55 @@ Environment activated, running file....
 => using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_01111000_BSP_2_DE_03.mp4
 => using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_flownet_01111000_BSP_3_EF_05.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_flownet_01111000_BSP_3_AB_02.mp4
+=> using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_01111000_BSP_3_BC_06.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_flownet_00010110_BSP_3_EF_06.mp4
 => using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_01111000_BSP_3_BC_02.mp4
 => using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_01111000_BSP_2_DE_06.mp4
 => using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_flownet_01111000_BSP_2_AB_05.mp4
+=> using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_00010110_BSP_3_BC_04.mp4
 => using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_01111000_BSP_3_AB_06.mp4
 => using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_flownet_01111000_BSP_3_DE_01.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_flownet_01111000_BSP_2_EF_04.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_flownet_01111000_BSP_2_AB_01.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_flownet_01111000_BSP_2_BC_04.mp4
+=> using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_00010110_BSP_3_AB_06.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_flownet_00010110_BSP_3_DE_05.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_flownet_01111000_BSP_3_EF_02.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_flownet_01111000_BSP_2_FG_04.mp4
 => using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_01111000_BSP_2_BC_02.mp4
 => using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_flownet_00010110_BSP_3_DE_06.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_flownet_01111000_BSP_2_BC_06.mp4
+=> using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_01111000_BSP_2_AB_05.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_flownet_01111000_BSP_3_AB_04.mp4
 => using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_00010110_BSP_3_DE_06.mp4
 => using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_01111000_BSP_3_BC_01.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_flownet_01111000_BSP_3_AB_06.mp4
 => using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_01111000_BSP_3_BC_04.mp4
 => using pre-trained model 'flownets'
@@ -790,7 +1468,11 @@ Environment activated, running file....
 => using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_01111000_BSP_3_DE_03.mp4
 => using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_flownet_01111000_BSP_3_FG_06.mp4
+=> using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_00010110_BSP_3_BC_02.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_flownet_00010110_BSP_3_FG_04.mp4
 => using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_00010110_BSP_3_DE_02.mp4
 => using pre-trained model 'flownets'
@@ -798,9 +1480,21 @@ Environment activated, running file....
 => using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_00010110_BSP_3_BC_01.mp4
 => using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_flownet_01111000_BSP_3_DE_03.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_flownet_00010110_BSP_3_AB_05.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_flownet_01111000_BSP_2_EF_01.mp4
+=> using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_01111000_BSP_3_DE_04.mp4
 => using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_flownet_01111000_BSP_2_FG_01.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_flownet_00010110_BSP_3_BC_06.mp4
+=> using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_01011111_BSP_2_BC_03.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_flownet_00010110_BSP_3_BC_02.mp4
 => using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_01111000_BSP_2_BC_04.mp4
 => using pre-trained model 'flownets'
@@ -810,9 +1504,29 @@ Environment activated, running file....
 => using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_01111000_BSP_2_DE_01.mp4
 => using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_flownet_01111000_BSP_3_AB_03.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_flownet_00010110_BSP_3_DE_03.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_flownet_01111000_BSP_3_DE_04.mp4
+=> using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_01111000_BSP_3_AB_05.mp4
 => using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_flownet_01111000_BSP_2_AB_04.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_flownet_01111000_BSP_2_DE_01.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_flownet_00010110_BSP_3_FG_02.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_flownet_01011111_BSP_2_BC_02.mp4
+=> using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_01011111_BSP_2_DE_01.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_flownet_01111000_BSP_2_EF_03.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_flownet_00010110_BSP_3_EF_03.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_flownet_01111000_BSP_3_BC_04.mp4
 => using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_01111000_BSP_3_AB_01.mp4
 => using pre-trained model 'flownets'
@@ -831,6 +1545,8 @@ Environment activated, running file....
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_01111000_BSP_2_AB_03.mp4
 => using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_00010110_BSP_3_FG_06.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/optical_flow/flownet_flownet_01011111_BSP_2_FG_02.mp4
 => using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/negative/01111000_BSP_2_AB_01.mp4
 => using pre-trained model 'flownets'
@@ -961,6 +1677,8 @@ Environment activated, running file....
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/DE/optical_flow/flownet_01111000_BSP_3_DE_01.mp4
 => using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/DE/optical_flow/flownet_01111000_BSP_3_DE_06.mp4
+=> using pre-trained model 'flownets'
+/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/DE/optical_flow/optical_flow
 => using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/DE/optical_flow/flownet_00010110_BSP_3_DE_03.mp4
 => using pre-trained model 'flownets'
