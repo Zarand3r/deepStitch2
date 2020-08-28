@@ -384,7 +384,7 @@ if __name__ == '__main__':
 	parser.add_argument('--auto_lr', default=0, type=int)
 	parser.add_argument('--use_pretrained', default=1, type=int, help='whether or not to load pretrained weights')
 	parser.add_argument('--logging_dir', default='lightning_logs', type=str)
-	parser.add_argument('--loader_nframes', default=300, type=int, help='How many frames to load at stride 2')
+	parser.add_argument('--loader_nframes', default=140, type=int, help='How many frames to load at stride 2')
 	parser.add_argument('--loader_stride', default=2, type=int, help='stride for dataloader')
 	
 	hparams = parser.parse_args()

@@ -44,13 +44,15 @@ def mp4_load(fn):
 parser = argparse.ArgumentParser(description='Conversion')
 parser.add_argument('--mp4_fn', default=settings1.raw_directory,type=str, help='input path')
 parser.add_argument('--gpu_id', default=1,type=int, help='which gpu')
-parser.add_argument('--window', default=1,type=int, help='sliding window for smoothing frames')
+parser.add_argument('--window', default=4,type=int, help='sliding window for smoothing frames')
+parser.add_argument('--join', default=True,type=int, help='write optical flow side by side to original')
 args = parser.parse_args()
 
 model_dir = settings1.flownet_model
 mp4_fn = args.mp4_fn
 gpu_id = args.gpu_id
 window = args.window
+join = args.join
 torch.cuda.set_device(gpu_id) 
 
 
@@ -112,9 +114,14 @@ if __name__ == '__main__':
             rgb_flow = flow2rgb(div_flow * flow_output, max_value=max_flow)
             to_save = (rgb_flow * 255).astype(np.uint8).transpose(1,2,0)
 
-        combined = np.zeros([nY, nX*2, nC], dtype=np.uint8)
-        combined[:, :nX, :] = mp4_ims[aa][:, :, [2,1,0]] # Invert back for BGR
-        combined[:, nX:, :] = to_save
+        if join:
+            combined = np.zeros([nY, nX*2, nC], dtype=np.uint8)
+            combined[:, :nX, :] = mp4_ims[aa][:, :, [2,1,0]] # Invert back for BGR
+            combined[:, nX:, :] = to_save
+        else:
+            combined = np.zeros([nY, nX, nC], dtype=np.uint8)
+            combined[:, :, :] = to_save
+
         export_ims.append(combined) # Save for list
 
     # Write out the MP4
