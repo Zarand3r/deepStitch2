@@ -45,7 +45,7 @@ parser = argparse.ArgumentParser(description='Conversion')
 parser.add_argument('--mp4_fn', default=settings1.raw_directory,type=str, help='input path')
 parser.add_argument('--gpu_id', default=1,type=int, help='which gpu')
 parser.add_argument('--window', default=4,type=int, help='sliding window for smoothing frames')
-parser.add_argument('--join', default=1,type=int, help='write optical flow side by side to original')
+parser.add_argument('--join', default=2,type=int, help='write optical flow side by side to original if 2')
 args = parser.parse_args()
 
 model_dir = settings1.flownet_model
@@ -114,12 +114,11 @@ if __name__ == '__main__':
             rgb_flow = flow2rgb(div_flow * flow_output, max_value=max_flow)
             to_save = (rgb_flow * 255).astype(np.uint8).transpose(1,2,0)
 
-        if join > 0:
-            combined = np.zeros([nY, nX*2, nC], dtype=np.uint8)
+        combined = np.zeros([nY, join*nX, nC], dtype=np.uint8)
+        if join == 2:
             combined[:, :nX, :] = mp4_ims[aa][:, :, [2,1,0]] # Invert back for BGR
             combined[:, nX:, :] = to_save
         else:
-            combined = np.zeros([nY, nX, nC], dtype=np.uint8)
             combined[:, :, :] = to_save
 
         export_ims.append(combined) # Save for list
@@ -132,7 +131,7 @@ if __name__ == '__main__':
     fn_out = os.path.join(subdir_out, 'flownet_'+ mp4_fn.split('/')[-1])
 
     fourcc = cv2.VideoWriter_fourcc(*'mp4v')
-    out = cv2.VideoWriter(fn_out,fourcc, 30.0, (int(2*nX),int(nY)))
+    out = cv2.VideoWriter(fn_out,fourcc, 30.0, (int(join*nX),int(nY)))
 
     for frame in export_ims:
         out.write(frame)

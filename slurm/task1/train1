@@ -21,6 +21,6 @@ cd ../../
 cd task1
 cd models
 
-python lightning_train.py
+python single_stream_lightning_train.py
 #python lightning_train.py --datadir /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data --include_classes "AB_BC"
 
