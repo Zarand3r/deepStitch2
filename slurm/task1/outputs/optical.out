@@ -1,4 +1,4 @@
-Fri Aug 28 20:00:06 2020       
+Sat Aug 29 02:41:26 2020       
 +-----------------------------------------------------------------------------+
 | NVIDIA-SMI 440.33.01    Driver Version: 440.33.01    CUDA Version: 10.2     |
 |-------------------------------+----------------------+----------------------+
@@ -6,7 +6,7 @@ Fri Aug 28 20:00:06 2020
 | Fan  Temp  Perf  Pwr:Usage/Cap|         Memory-Usage | GPU-Util  Compute M. |
 |===============================+======================+======================|
 |   0  Tesla P100-PCIE...  Off  | 00000000:04:00.0 Off |                    0 |
-| N/A   27C    P0    27W / 250W |      0MiB / 16280MiB |      0%      Default |
+| N/A   20C    P0    28W / 250W |      0MiB / 16280MiB |      0%      Default |
 +-------------------------------+----------------------+----------------------+
                                                                                
 +-----------------------------------------------------------------------------+
@@ -39,8 +39,6 @@ Environment activated, running file....
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/FG/01111000_BSP_3_FG_01.mp4
 => using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/FG/01111000_BSP_3_FG_05.mp4
-=> using pre-trained model 'flownets'
-/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/FG/optical_flow
 => using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/FG/01111000_BSP_2_FG_02.mp4
 => using pre-trained model 'flownets'
@@ -79,8 +77,6 @@ Environment activated, running file....
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/AB/00010110_BSP_3_AB_01.mp4
 => using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/AB/01111000_BSP_3_AB_03.mp4
-=> using pre-trained model 'flownets'
-/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/AB/optical_flow
 => using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/AB/01111000_BSP_2_AB_01.mp4
 => using pre-trained model 'flownets'
@@ -121,8 +117,6 @@ Environment activated, running file....
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/CD/01011111_BSP_2_CD_02.mp4
 => using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/CD/01111000_BSP_3_CD_01.mp4
-=> using pre-trained model 'flownets'
-/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/CD/optical_flow
 => using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/CD/00010110_BSP_3_CD_04.mp4
 => using pre-trained model 'flownets'
@@ -170,8 +164,6 @@ Environment activated, running file....
 => using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/EF/01111000_BSP_2_EF_04.mp4
 => using pre-trained model 'flownets'
-/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/EF/optical_flow
-=> using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/EF/01111000_BSP_2_EF_02.mp4
 => using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/EF/00010110_BSP_3_EF_01.mp4
@@ -205,8 +197,6 @@ Environment activated, running file....
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/BC/01111000_BSP_3_BC_01.mp4
 => using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/BC/01111000_BSP_2_BC_05.mp4
-=> using pre-trained model 'flownets'
-/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/BC/optical_flow
 => using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/BC/01111000_BSP_2_BC_02.mp4
 => using pre-trained model 'flownets'
@@ -245,8 +235,6 @@ Environment activated, running file....
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/DE/01111000_BSP_2_DE_05.mp4
 => using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/DE/01111000_BSP_3_DE_03.mp4
-=> using pre-trained model 'flownets'
-/central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/DE/optical_flow
 => using pre-trained model 'flownets'
 /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/DE/01111000_BSP_3_DE_02.mp4
 => using pre-trained model 'flownets'
