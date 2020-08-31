@@ -1,3 +1,8 @@
+STEP 0:
+=======
+Download data
+curl -L -o balint_data https://www.dropbox.com/sh/w6pp9pr1b5f1qdk/AAD8_lSz0p0kx5aJYm1Ht7nga/balint_provided?dl=0&subfolder_nav_tracking=1
+
 STEP 1:
 =======
 Rawdata is /central/groups/tensorlab/rbao/balint_data/caltech_format
@@ -17,6 +22,14 @@ Find flow files in optical_flow subfolders of each class folder
 
 
 Do this to reformat the positive and negative directories
+cd positive
+find . -mindepth 2 -type f -print -exec mv {} . \;
+rm -rf */;
+mkdir optical_flow
+find . -name 'flownet*' -exec mv {} optical_flow/ \;
+
+cd ../
+cd negative
 find . -mindepth 2 -type f -print -exec mv {} . \;
 rm -rf */;
 mkdir optical_flow
