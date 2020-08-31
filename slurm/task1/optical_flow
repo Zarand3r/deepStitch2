@@ -30,7 +30,7 @@ cd optical_flow
 for D in $(find /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data -mindepth 2 -maxdepth 2) ; do
     echo $D 
     # python convert_using_dali.py --mp4_fn $D --gpu_id 0
-    python convert_using_flownet.py --mp4_fn $D --gpu_id 0 --window 5 --join 2 #change join to 2 for two stream
+    python convert_using_flownet.py --mp4_fn $D --gpu_id 0 --window 2 --join 2 #change join to 2 for two stream
 done
 
 #srun ./central/groups/tensorlab/rbao/robosurgery/deepStitch/task1/preprocessing/optical_flow/generate_flows.sh
