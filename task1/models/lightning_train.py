@@ -72,7 +72,6 @@ class CustomDataset(Dataset):
 		n_frames = video.size()[0]
 		if self.mode == 'train':
 			if n_frames > self.max_frames: # Sample random 200 frames
-				print(f"FRAMES:{n_frames}")
 				start_ii = random.choice(list(range(0, n_frames-self.max_frames)))
 				video = video[start_ii:start_ii+(self.max_frames-1), :, :]
 			start_phase = random.choice(list(range(self.stride)))
