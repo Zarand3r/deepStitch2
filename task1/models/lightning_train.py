@@ -157,7 +157,7 @@ class FusionModel(LightningModule):
 			self.fc = nn.Linear(args.hidden_size, self.num_classes)
 		elif args.rnn_model == 'convLSTM': 
 			# Twice number of channels for RGB and OF which are concat
-			self.rnn = ConvLSTMCell(input_channels = self.final_channels, hidden_channels = int(self.final_channels/2), kernel_size = 3, bias = True)
+			self.rnn = ConvLSTMCell(input_channels = self.final_channels, hidden_channels = self.final_channels, kernel_size = 3, bias = True)
 			
 			nF = 6 if args.arch.startswith('alexnet') else 7
 			self.fc = nn.Linear(self.final_channels*nF*nF, self.num_classes)
@@ -219,7 +219,6 @@ class FusionModel(LightningModule):
 					outputs = self.rnn(f_of, first_step=True)
 				else:
 					outputs = self.rnn(f_of, first_step=False)
-				
 			outputs = outputs.reshape(outputs.size(0), -1)
 			outputs = self.fc(outputs)
 			# Add a dimension to make the size consistent with old rnn
