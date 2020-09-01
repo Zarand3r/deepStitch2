@@ -1,0 +1,6 @@
+Create a pipeline like optical_flow to preprocess the videos we want to predict
+Write a script to use checkpoints for prediction, incorporate into pipeline, outputs a label for that given clip
+Write a script that loops through a preprocessed video and runs the script on every sliding window
+Write a script that uses these lablel outputs to annotate the original video
+
+Implement video stabilization
