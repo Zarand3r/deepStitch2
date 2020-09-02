@@ -146,9 +146,31 @@ class FusionModel(LightningModule):
 			self.final_channels = 512
 
 		else:
-			raise ValueError('architecture base model not yet implemented choices: alexnet, vgg16, ResNet 18/34')
+			raise ValueError('architecture base model not yet implemented choices: alexnet, ResNet 18')
 		# Select an RNN
 		#print(self.features)
+		# if args.rnn_model == 'LSTM':
+		# 	self.rnn = nn.LSTM(input_size = int(args.fc_size/2),
+		# 				hidden_size = args.hidden_size,
+		# 				num_layers = args.rnn_layers,
+		# 				batch_first = True)
+		# 	self.fc = nn.Linear(args.hidden_size, self.num_classes)
+		# elif args.rnn_model == 'convLSTM': 
+		# 	# Twice number of channels for RGB and OF which are concat
+		# 	self.rnn = ConvLSTMCell(input_channels = self.final_channels, hidden_channels = self.final_channels, kernel_size = 3, bias = True)
+			
+		# 	nF = 6 if args.arch.startswith('alexnet') else 7
+		# 	self.fc = nn.Linear(self.final_channels*nF*nF, self.num_classes)
+		# elif args.rnn_model == 'convttLSTM': 
+		# 	# Twice number of channels for RGB and OF which are concat
+		# 	self.rnn = ConvTTLSTMCell(input_channels = self.final_channels, hidden_channels = int(self.final_channels/2), order = 3, steps = 5, ranks = 16, kernel_size = 3, bias = True)
+			
+		# 	nF = 6 if args.arch.startswith('alexnet') else 7
+		# 	self.fc = nn.Linear(self.final_channels*nF*nF, self.num_classes)
+		# else:
+		# 	raise ValueError('Not implemented, choose LSTM, convLSTM, convttLSTM type')
+		
+		# self.modelName = '%s_%s_latefusion_trainbaseparams_%s' % (args.arch, args.rnn_model, args.trainable_base)
 		if args.rnn_model == 'LSTM':
 			self.rnn = nn.LSTM(input_size = int(args.fc_size/2),
 						hidden_size = args.hidden_size,
@@ -157,10 +179,10 @@ class FusionModel(LightningModule):
 			self.fc = nn.Linear(args.hidden_size, self.num_classes)
 		elif args.rnn_model == 'convLSTM': 
 			# Twice number of channels for RGB and OF which are concat
-			self.rnn = ConvLSTMCell(input_channels = self.final_channels, hidden_channels = self.final_channels, kernel_size = 3, bias = True)
+			self.rnn = ConvLSTMCell(input_channels = self.final_channels, hidden_channels = int(self.final_channels/2), kernel_size = 3, bias = True)
 			
 			nF = 6 if args.arch.startswith('alexnet') else 7
-			self.fc = nn.Linear(self.final_channels*nF*nF, self.num_classes)
+			self.fc = nn.Linear(int(self.final_channels/2)*nF*nF, self.num_classes) #replace self.final_channels here the parameter must equal the hidden_channels in self.rnn
 		elif args.rnn_model == 'convttLSTM': 
 			# Twice number of channels for RGB and OF which are concat
 			self.rnn = ConvTTLSTMCell(input_channels = self.final_channels, hidden_channels = int(self.final_channels/2), order = 3, steps = 5, ranks = 16, kernel_size = 3, bias = True)
