@@ -179,10 +179,10 @@ class FusionModel(LightningModule):
 			self.fc = nn.Linear(args.hidden_size, self.num_classes)
 		elif args.rnn_model == 'convLSTM': 
 			# Twice number of channels for RGB and OF which are concat
-			self.rnn = ConvLSTMCell(input_channels = self.final_channels, hidden_channels = int(self.final_channels/2), kernel_size = 3, bias = True)
+			self.rnn = ConvLSTMCell(input_channels = self.final_channels, hidden_channels = int(self.final_channels/16), kernel_size = 3, bias = True)
 			
 			nF = 6 if args.arch.startswith('alexnet') else 7
-			self.fc = nn.Linear(int(self.final_channels/2)*nF*nF, self.num_classes) #replace self.final_channels here the parameter must equal the hidden_channels in self.rnn
+			self.fc = nn.Linear(int(self.final_channels/16)*nF*nF, self.num_classes) #replace self.final_channels here the parameter must equal the hidden_channels in self.rnn
 		elif args.rnn_model == 'convttLSTM': 
 			# Twice number of channels for RGB and OF which are concat
 			self.rnn = ConvTTLSTMCell(input_channels = self.final_channels, hidden_channels = int(self.final_channels/2), order = 3, steps = 5, ranks = 16, kernel_size = 3, bias = True)
@@ -437,7 +437,7 @@ if __name__ == '__main__':
 
 	checkpoint_callback = ModelCheckpoint(
 		# filepath=os.path.join(logger.log_dir, 'checkpoints'),
-		filepath=os.path.join('checkpoints', classification_name, f'{hparams.arch}_{hparams.trainable_base}_{hparams.rnn_model}'),
+		filepath=os.path.join(settings1.checkpoints, classification_name, f'{hparams.arch}_{hparams.trainable_base}_{hparams.rnn_model}'),
 		save_top_k=3,
 		verbose=True,
 		monitor='val_acc',
