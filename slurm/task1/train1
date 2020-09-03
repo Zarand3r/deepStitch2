@@ -21,7 +21,7 @@ cd ../../
 cd task1
 cd models
 
-python lightning_train.py
+# python lightning_train.py
 python lightning_train.py --rnn_model "convLSTM"
 # python lightning_train.py --arch "resnet18" --rnn_model "LSTM" 
 python lightning_train.py --arch "resnet18" --rnn_model "convLSTM" 
