@@ -5,23 +5,24 @@ CUDA_VISIBLE_DEVICES: [0]
   warnings.warn(*args, **kwargs)
 Set SLURM handle signals.
 
-  | Name        | Type         | Params
----------------------------------------------
-0 | features_of | Sequential   | 2 M   
-1 | rnn         | ConvLSTMCell | 1 M   
-2 | fc          | Linear       | 9 K   
+  | Name        | Type       | Params
+-------------------------------------------
+0 | features_of | Sequential | 2 M   
+1 | fc_pre_of   | Sequential | 147 K 
+2 | rnn         | LSTM       | 4 K   
+3 | fc          | Linear     | 34    
 /central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/utilities/distributed.py:25: UserWarning: The dataloader, train dataloader, does not have many workers which may be a bottleneck. Consider increasing the value of the `num_workers` argument` (try 28 which is the number of cpus on this machine) in the `DataLoader` init to improve performance.
   warnings.warn(*args, **kwargs)
 /central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/utilities/distributed.py:25: UserWarning: The dataloader, val dataloader 0, does not have many workers which may be a bottleneck. Consider increasing the value of the `num_workers` argument` (try 28 which is the number of cpus on this machine) in the `DataLoader` init to improve performance.
   warnings.warn(*args, **kwargs)
 
-Epoch 00000: val_acc reached 0.68000 (best 0.68000), saving model to /central/groups/tensorlab/rbao/robosurgery/deepStitch/task1/models/checkpoints/positive_negative/_ckpt_epoch_0.ckpt as top 3
+Epoch 00000: val_acc reached 0.72000 (best 0.72000), saving model to /central/groups/tensorlab/rbao/robosurgery/task1_checkpoints/positive_negative/_ckpt_epoch_0.ckpt as top 3
 
-Epoch 00001: val_acc reached 0.88000 (best 0.88000), saving model to /central/groups/tensorlab/rbao/robosurgery/deepStitch/task1/models/checkpoints/positive_negative/_ckpt_epoch_1.ckpt as top 3
+Epoch 00001: val_acc reached 0.68000 (best 0.72000), saving model to /central/groups/tensorlab/rbao/robosurgery/task1_checkpoints/positive_negative/_ckpt_epoch_1.ckpt as top 3
 
-Epoch 00002: val_acc reached 0.84000 (best 0.88000), saving model to /central/groups/tensorlab/rbao/robosurgery/deepStitch/task1/models/checkpoints/positive_negative/_ckpt_epoch_2.ckpt as top 3
+Epoch 00002: val_acc reached 0.76000 (best 0.76000), saving model to /central/groups/tensorlab/rbao/robosurgery/task1_checkpoints/positive_negative/_ckpt_epoch_2.ckpt as top 3
 
-Epoch 00003: val_acc reached 0.88000 (best 0.88000), saving model to /central/groups/tensorlab/rbao/robosurgery/deepStitch/task1/models/checkpoints/positive_negative/_ckpt_epoch_3.ckpt as top 3
+Epoch 00003: val_acc reached 0.72000 (best 0.76000), saving model to /central/groups/tensorlab/rbao/robosurgery/task1_checkpoints/positive_negative/_ckpt_epoch_3.ckpt as top 3
 
 Epoch 00004: val_acc  was not in top 3
 
@@ -29,7 +30,7 @@ Epoch 00005: val_acc  was not in top 3
 
 Epoch 00006: val_acc  was not in top 3
 
-Epoch 00007: val_acc reached 0.88000 (best 0.88000), saving model to /central/groups/tensorlab/rbao/robosurgery/deepStitch/task1/models/checkpoints/positive_negative/_ckpt_epoch_7.ckpt as top 3
+Epoch 00007: val_acc  was not in top 3
 
 Epoch 00008: val_acc  was not in top 3
 
@@ -65,7 +66,7 @@ Epoch 00022: val_acc  was not in top 3
 
 Epoch 00023: val_acc  was not in top 3
 
-Epoch 00024: val_acc  was not in top 3
+Epoch 00024: val_acc reached 0.76000 (best 0.76000), saving model to /central/groups/tensorlab/rbao/robosurgery/task1_checkpoints/positive_negative/_ckpt_epoch_24.ckpt as top 3
 
 Epoch 00025: val_acc  was not in top 3
 
@@ -145,37 +146,175 @@ Set SLURM handle signals.
 
   | Name        | Type         | Params
 ---------------------------------------------
-0 | features_of | Sequential   | 11 M  
-1 | rnn         | ConvLSTMCell | 7 M   
-2 | fc          | Linear       | 25 K  
+0 | features_of | Sequential   | 2 M   
+1 | rnn         | ConvLSTMCell | 156 K 
+2 | fc          | Linear       | 1 K   
 /central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/utilities/distributed.py:25: UserWarning: The dataloader, train dataloader, does not have many workers which may be a bottleneck. Consider increasing the value of the `num_workers` argument` (try 28 which is the number of cpus on this machine) in the `DataLoader` init to improve performance.
   warnings.warn(*args, **kwargs)
 /central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/utilities/distributed.py:25: UserWarning: The dataloader, val dataloader 0, does not have many workers which may be a bottleneck. Consider increasing the value of the `num_workers` argument` (try 28 which is the number of cpus on this machine) in the `DataLoader` init to improve performance.
   warnings.warn(*args, **kwargs)
 
-Epoch 00000: val_acc reached 0.88000 (best 0.88000), saving model to /central/groups/tensorlab/rbao/robosurgery/deepStitch/task1/models/checkpoints/positive_negative/_ckpt_epoch_0.ckpt as top 3
+Epoch 00000: val_acc reached 0.60000 (best 0.60000), saving model to /central/groups/tensorlab/rbao/robosurgery/task1_checkpoints/positive_negative/_ckpt_epoch_0.ckpt as top 3
 
-Epoch 00001: val_acc reached 0.84000 (best 0.88000), saving model to /central/groups/tensorlab/rbao/robosurgery/deepStitch/task1/models/checkpoints/positive_negative/_ckpt_epoch_1_v0.ckpt as top 3
+Epoch 00001: val_acc reached 0.64000 (best 0.64000), saving model to /central/groups/tensorlab/rbao/robosurgery/task1_checkpoints/positive_negative/_ckpt_epoch_1.ckpt as top 3
 
-Epoch 00002: val_acc reached 0.84000 (best 0.88000), saving model to /central/groups/tensorlab/rbao/robosurgery/deepStitch/task1/models/checkpoints/positive_negative/_ckpt_epoch_2.ckpt as top 3
+Epoch 00002: val_acc reached 0.60000 (best 0.64000), saving model to /central/groups/tensorlab/rbao/robosurgery/task1_checkpoints/positive_negative/_ckpt_epoch_2_v0.ckpt as top 3
 
-Epoch 00003: val_acc  was not in top 3
+Epoch 00003: val_acc reached 0.76000 (best 0.76000), saving model to /central/groups/tensorlab/rbao/robosurgery/task1_checkpoints/positive_negative/_ckpt_epoch_3_v0.ckpt as top 3
 
-Epoch 00004: val_acc reached 0.88000 (best 0.88000), saving model to /central/groups/tensorlab/rbao/robosurgery/deepStitch/task1/models/checkpoints/positive_negative/_ckpt_epoch_4.ckpt as top 3
+Epoch 00004: val_acc reached 0.64000 (best 0.76000), saving model to /central/groups/tensorlab/rbao/robosurgery/task1_checkpoints/positive_negative/_ckpt_epoch_4.ckpt as top 3
 
-Epoch 00005: val_acc reached 0.88000 (best 0.88000), saving model to /central/groups/tensorlab/rbao/robosurgery/deepStitch/task1/models/checkpoints/positive_negative/_ckpt_epoch_5.ckpt as top 3
+Epoch 00005: val_acc  was not in top 3
 
-Epoch 00006: val_acc  was not in top 3
+Epoch 00006: val_acc reached 0.68000 (best 0.76000), saving model to /central/groups/tensorlab/rbao/robosurgery/task1_checkpoints/positive_negative/_ckpt_epoch_6.ckpt as top 3
 
 Epoch 00007: val_acc  was not in top 3
 
-Epoch 00008: val_acc  was not in top 3
+Epoch 00008: val_acc reached 0.68000 (best 0.76000), saving model to /central/groups/tensorlab/rbao/robosurgery/task1_checkpoints/positive_negative/_ckpt_epoch_8.ckpt as top 3
 
 Epoch 00009: val_acc  was not in top 3
 lightning_train.py:302: RuntimeWarning: More than 20 figures have been opened. Figures created through the pyplot interface (`matplotlib.pyplot.figure`) are retained until explicitly closed and may consume too much memory. (To control this warning, see the rcParam `figure.max_open_warning`).
   fig = plt.figure(); sns.heatmap(cm, cmap = cmap_use, ax =plt.gca(), annot = True, xticklabels = self.hparams.include_classes, yticklabels = self.hparams.include_classes)
 
-Epoch 00010: val_acc  was not in top 3
+Epoch 00010: val_acc reached 0.76000 (best 0.76000), saving model to /central/groups/tensorlab/rbao/robosurgery/task1_checkpoints/positive_negative/_ckpt_epoch_10.ckpt as top 3
+
+Epoch 00011: val_acc reached 0.76000 (best 0.76000), saving model to /central/groups/tensorlab/rbao/robosurgery/task1_checkpoints/positive_negative/_ckpt_epoch_11.ckpt as top 3
+
+Epoch 00012: val_acc reached 0.80000 (best 0.80000), saving model to /central/groups/tensorlab/rbao/robosurgery/task1_checkpoints/positive_negative/_ckpt_epoch_12.ckpt as top 3
+
+Epoch 00013: val_acc  was not in top 3
+
+Epoch 00014: val_acc  was not in top 3
+
+Epoch 00015: val_acc  was not in top 3
+
+Epoch 00016: val_acc  was not in top 3
+
+Epoch 00017: val_acc  was not in top 3
+
+Epoch 00018: val_acc  was not in top 3
+
+Epoch 00019: val_acc reached 0.80000 (best 0.80000), saving model to /central/groups/tensorlab/rbao/robosurgery/task1_checkpoints/positive_negative/_ckpt_epoch_19.ckpt as top 3
+
+Epoch 00020: val_acc  was not in top 3
+
+Epoch 00021: val_acc reached 0.80000 (best 0.80000), saving model to /central/groups/tensorlab/rbao/robosurgery/task1_checkpoints/positive_negative/_ckpt_epoch_21.ckpt as top 3
+
+Epoch 00022: val_acc  was not in top 3
+
+Epoch 00023: val_acc  was not in top 3
+
+Epoch 00024: val_acc  was not in top 3
+
+Epoch 00025: val_acc  was not in top 3
+
+Epoch 00026: val_acc  was not in top 3
+
+Epoch 00027: val_acc  was not in top 3
+
+Epoch 00028: val_acc reached 0.84000 (best 0.84000), saving model to /central/groups/tensorlab/rbao/robosurgery/task1_checkpoints/positive_negative/_ckpt_epoch_28.ckpt as top 3
+
+Epoch 00029: val_acc  was not in top 3
+
+Epoch 00030: val_acc  was not in top 3
+
+Epoch 00031: val_acc  was not in top 3
+
+Epoch 00032: val_acc  was not in top 3
+
+Epoch 00033: val_acc  was not in top 3
+
+Epoch 00034: val_acc  was not in top 3
+
+Epoch 00035: val_acc  was not in top 3
+
+Epoch 00036: val_acc  was not in top 3
+
+Epoch 00037: val_acc  was not in top 3
+
+Epoch 00038: val_acc  was not in top 3
+
+Epoch 00039: val_acc  was not in top 3
+
+Epoch 00040: val_acc reached 0.84000 (best 0.84000), saving model to /central/groups/tensorlab/rbao/robosurgery/task1_checkpoints/positive_negative/_ckpt_epoch_40.ckpt as top 3
+
+Epoch 00041: val_acc  was not in top 3
+
+Epoch 00042: val_acc  was not in top 3
+
+Epoch 00043: val_acc  was not in top 3
+
+Epoch 00044: val_acc  was not in top 3
+
+Epoch 00045: val_acc  was not in top 3
+
+Epoch 00046: val_acc  was not in top 3
+
+Epoch 00047: val_acc  was not in top 3
+
+Epoch 00048: val_acc  was not in top 3
+
+Epoch 00049: val_acc  was not in top 3
+
+Epoch 00050: val_acc  was not in top 3
+
+Epoch 00051: val_acc  was not in top 3
+
+Epoch 00052: val_acc reached 0.84000 (best 0.84000), saving model to /central/groups/tensorlab/rbao/robosurgery/task1_checkpoints/positive_negative/_ckpt_epoch_52.ckpt as top 3
+
+Epoch 00053: val_acc  was not in top 3
+
+Epoch 00054: val_acc  was not in top 3
+
+Epoch 00055: val_acc  was not in top 3
+
+Epoch 00056: val_acc  was not in top 3
+
+Epoch 00057: val_acc  was not in top 3
+
+Epoch 00058: val_acc  was not in top 3
+
+Epoch 00059: val_acc  was not in top 3
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+CUDA_VISIBLE_DEVICES: [0]
+/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/utilities/distributed.py:25: RuntimeWarning: You have defined a `val_dataloader()` and have defined a `validation_step()`, you may also want to define `validation_epoch_end()` for accumulating stats.
+  warnings.warn(*args, **kwargs)
+Set SLURM handle signals.
+
+  | Name        | Type         | Params
+---------------------------------------------
+0 | features_of | Sequential   | 11 M  
+1 | rnn         | ConvLSTMCell | 626 K 
+2 | fc          | Linear       | 3 K   
+/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/utilities/distributed.py:25: UserWarning: The dataloader, train dataloader, does not have many workers which may be a bottleneck. Consider increasing the value of the `num_workers` argument` (try 28 which is the number of cpus on this machine) in the `DataLoader` init to improve performance.
+  warnings.warn(*args, **kwargs)
+/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/utilities/distributed.py:25: UserWarning: The dataloader, val dataloader 0, does not have many workers which may be a bottleneck. Consider increasing the value of the `num_workers` argument` (try 28 which is the number of cpus on this machine) in the `DataLoader` init to improve performance.
+  warnings.warn(*args, **kwargs)
+
+Epoch 00000: val_acc reached 0.36000 (best 0.36000), saving model to /central/groups/tensorlab/rbao/robosurgery/task1_checkpoints/positive_negative/_ckpt_epoch_0.ckpt as top 3
+
+Epoch 00001: val_acc reached 0.64000 (best 0.64000), saving model to /central/groups/tensorlab/rbao/robosurgery/task1_checkpoints/positive_negative/_ckpt_epoch_1.ckpt as top 3
+
+Epoch 00002: val_acc reached 0.52000 (best 0.64000), saving model to /central/groups/tensorlab/rbao/robosurgery/task1_checkpoints/positive_negative/_ckpt_epoch_2_v0.ckpt as top 3
+
+Epoch 00003: val_acc reached 0.44000 (best 0.64000), saving model to /central/groups/tensorlab/rbao/robosurgery/task1_checkpoints/positive_negative/_ckpt_epoch_3_v0.ckpt as top 3
+
+Epoch 00004: val_acc reached 0.48000 (best 0.64000), saving model to /central/groups/tensorlab/rbao/robosurgery/task1_checkpoints/positive_negative/_ckpt_epoch_4.ckpt as top 3
+
+Epoch 00005: val_acc  was not in top 3
+
+Epoch 00006: val_acc  was not in top 3
+
+Epoch 00007: val_acc reached 0.56000 (best 0.64000), saving model to /central/groups/tensorlab/rbao/robosurgery/task1_checkpoints/positive_negative/_ckpt_epoch_7.ckpt as top 3
+
+Epoch 00008: val_acc  was not in top 3
+
+Epoch 00009: val_acc reached 0.64000 (best 0.64000), saving model to /central/groups/tensorlab/rbao/robosurgery/task1_checkpoints/positive_negative/_ckpt_epoch_9.ckpt as top 3
+lightning_train.py:302: RuntimeWarning: More than 20 figures have been opened. Figures created through the pyplot interface (`matplotlib.pyplot.figure`) are retained until explicitly closed and may consume too much memory. (To control this warning, see the rcParam `figure.max_open_warning`).
+  fig = plt.figure(); sns.heatmap(cm, cmap = cmap_use, ax =plt.gca(), annot = True, xticklabels = self.hparams.include_classes, yticklabels = self.hparams.include_classes)
+
+Epoch 00010: val_acc reached 0.64000 (best 0.64000), saving model to /central/groups/tensorlab/rbao/robosurgery/task1_checkpoints/positive_negative/_ckpt_epoch_10.ckpt as top 3
 
 Epoch 00011: val_acc  was not in top 3
 
@@ -191,7 +330,7 @@ Epoch 00016: val_acc  was not in top 3
 
 Epoch 00017: val_acc  was not in top 3
 
-Epoch 00018: val_acc  was not in top 3
+Epoch 00018: val_acc reached 0.68000 (best 0.68000), saving model to /central/groups/tensorlab/rbao/robosurgery/task1_checkpoints/positive_negative/_ckpt_epoch_18.ckpt as top 3
 
 Epoch 00019: val_acc  was not in top 3
 
@@ -229,7 +368,7 @@ Epoch 00035: val_acc  was not in top 3
 
 Epoch 00036: val_acc  was not in top 3
 
-Epoch 00037: val_acc  was not in top 3
+Epoch 00037: val_acc reached 0.68000 (best 0.68000), saving model to /central/groups/tensorlab/rbao/robosurgery/task1_checkpoints/positive_negative/_ckpt_epoch_37.ckpt as top 3
 
 Epoch 00038: val_acc  was not in top 3
 
@@ -245,7 +384,7 @@ Epoch 00043: val_acc  was not in top 3
 
 Epoch 00044: val_acc  was not in top 3
 
-Epoch 00045: val_acc  was not in top 3
+Epoch 00045: val_acc reached 0.72000 (best 0.72000), saving model to /central/groups/tensorlab/rbao/robosurgery/task1_checkpoints/positive_negative/_ckpt_epoch_45.ckpt as top 3
 
 Epoch 00046: val_acc  was not in top 3
 
@@ -263,7 +402,7 @@ Epoch 00052: val_acc  was not in top 3
 
 Epoch 00053: val_acc  was not in top 3
 
-Epoch 00054: val_acc  was not in top 3
+Epoch 00054: val_acc reached 0.72000 (best 0.72000), saving model to /central/groups/tensorlab/rbao/robosurgery/task1_checkpoints/positive_negative/_ckpt_epoch_54.ckpt as top 3
 
 Epoch 00055: val_acc  was not in top 3
 
