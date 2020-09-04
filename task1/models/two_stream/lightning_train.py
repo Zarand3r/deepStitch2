@@ -28,6 +28,7 @@ sys.path.insert(1, f"{homedir}" + '/utils')
 from convlstmcells import ConvLSTMCell, ConvTTLSTMCell
 import settings1
 
+
 class CustomDataset(Dataset):
 	"""CustomDataset"""
 	def __init__(self, global_dir, idxs= None, include_classes = [], flow_method = 'flownet', balance_classes = False, mode = 'train', max_frames = 150, stride = 2):
@@ -106,7 +107,7 @@ class FusionModel(LightningModule):
 		############################################################################################
 
 		# Model specific
-		# original_model_rgb = models.__dict__[args.arch](pretrained=self.hparams.use_pretrained)
+		original_model_rgb = models.__dict__[args.arch](pretrained=self.hparams.use_pretrained)
 		original_model_of = models.__dict__[args.arch](pretrained=self.hparams.use_pretrained)
 		
 		self.hidden_size = args.hidden_size
@@ -116,15 +117,15 @@ class FusionModel(LightningModule):
 
 		# select a base model
 		if args.arch.startswith('alexnet'):
-			# self.features_rgb = original_model_rgb.features
-			# for i, param in enumerate(self.features_rgb.parameters()):
-			# 	param.requires_grad = self.trainable_base
+			self.features_rgb = original_model_rgb.features
+			for i, param in enumerate(self.features_rgb.parameters()):
+				param.requires_grad = self.trainable_base
 			self.features_of = original_model_of.features
 			for i, param in enumerate(self.features_of.parameters()):
 				param.requires_grad = self.trainable_base
 			
 			# Make the output of each one be to fc_size/2 so that we cooncat the two fc outputs
-			# self.fc_pre_rgb = nn.Sequential(nn.Linear(256*6*6, int(args.fc_size/2) ), nn.Dropout()) if 'conv' not in args.rnn_model else None
+			self.fc_pre_rgb = nn.Sequential(nn.Linear(256*6*6, int(args.fc_size/2) ), nn.Dropout()) if 'conv' not in args.rnn_model else None
 			self.fc_pre_of = nn.Sequential(nn.Linear(256*6*6, int(args.fc_size/2) ), nn.Dropout()) if 'conv' not in args.rnn_model else None
 			self.final_channels = 256
 
@@ -134,58 +135,36 @@ class FusionModel(LightningModule):
 			# 	param.requires_grad = self.trainable_base
 			# self.fc_pre = nn.Sequential(nn.Linear(512*7*7, int(args.fc_size/2)), nn.Dropout()) if 'conv' not in args.rnn_model else None
 			# self.final_channels = 512
-			# self.features_rgb = nn.Sequential(*list(original_model_rgb.children())[:-2])
-			# for i, param in enumerate(self.features_rgb.parameters()):
-			# 	param.requires_grad = self.trainable_base
+			self.features_rgb = nn.Sequential(*list(original_model_rgb.children())[:-2])
+			for i, param in enumerate(self.features_rgb.parameters()):
+				param.requires_grad = self.trainable_base
 			self.features_of = nn.Sequential(*list(original_model_of.children())[:-2])
 			for i, param in enumerate(self.features_of.parameters()):
 				param.requires_grad = self.trainable_base
 			
-			# self.fc_pre_rgb = nn.Sequential(nn.Linear(512*7*7, int(args.fc_size/2) ), nn.Dropout()) if 'conv' not in args.rnn_model else None
+			self.fc_pre_rgb = nn.Sequential(nn.Linear(512*7*7, int(args.fc_size/2) ), nn.Dropout()) if 'conv' not in args.rnn_model else None
 			self.fc_pre_of = nn.Sequential(nn.Linear(512*7*7, int(args.fc_size/2) ), nn.Dropout()) if 'conv' not in args.rnn_model else None
 			self.final_channels = 512
 
 		else:
-			raise ValueError('architecture base model not yet implemented choices: alexnet, ResNet 18')
+			raise ValueError('architecture base model not yet implemented choices: alexnet, vgg16, ResNet 18/34')
 		# Select an RNN
 		#print(self.features)
-		# if args.rnn_model == 'LSTM':
-		# 	self.rnn = nn.LSTM(input_size = int(args.fc_size/2),
-		# 				hidden_size = args.hidden_size,
-		# 				num_layers = args.rnn_layers,
-		# 				batch_first = True)
-		# 	self.fc = nn.Linear(args.hidden_size, self.num_classes)
-		# elif args.rnn_model == 'convLSTM': 
-		# 	# Twice number of channels for RGB and OF which are concat
-		# 	self.rnn = ConvLSTMCell(input_channels = self.final_channels, hidden_channels = self.final_channels, kernel_size = 3, bias = True)
-			
-		# 	nF = 6 if args.arch.startswith('alexnet') else 7
-		# 	self.fc = nn.Linear(self.final_channels*nF*nF, self.num_classes)
-		# elif args.rnn_model == 'convttLSTM': 
-		# 	# Twice number of channels for RGB and OF which are concat
-		# 	self.rnn = ConvTTLSTMCell(input_channels = self.final_channels, hidden_channels = int(self.final_channels/2), order = 3, steps = 5, ranks = 16, kernel_size = 3, bias = True)
-			
-		# 	nF = 6 if args.arch.startswith('alexnet') else 7
-		# 	self.fc = nn.Linear(self.final_channels*nF*nF, self.num_classes)
-		# else:
-		# 	raise ValueError('Not implemented, choose LSTM, convLSTM, convttLSTM type')
-		
-		# self.modelName = '%s_%s_latefusion_trainbaseparams_%s' % (args.arch, args.rnn_model, args.trainable_base)
 		if args.rnn_model == 'LSTM':
-			self.rnn = nn.LSTM(input_size = int(args.fc_size/2),
+			self.rnn = nn.LSTM(input_size = args.fc_size,
 						hidden_size = args.hidden_size,
 						num_layers = args.rnn_layers,
 						batch_first = True)
 			self.fc = nn.Linear(args.hidden_size, self.num_classes)
 		elif args.rnn_model == 'convLSTM': 
 			# Twice number of channels for RGB and OF which are concat
-			self.rnn = ConvLSTMCell(input_channels = self.final_channels, hidden_channels = int(self.final_channels/16), kernel_size = 3, bias = True)
+			self.rnn = ConvLSTMCell(input_channels = self.final_channels*2, hidden_channels = self.final_channels, kernel_size = 3, bias = True)
 			
 			nF = 6 if args.arch.startswith('alexnet') else 7
-			self.fc = nn.Linear(int(self.final_channels/16)*nF*nF, self.num_classes) #replace self.final_channels here the parameter must equal the hidden_channels in self.rnn
+			self.fc = nn.Linear(self.final_channels*nF*nF, self.num_classes)
 		elif args.rnn_model == 'convttLSTM': 
 			# Twice number of channels for RGB and OF which are concat
-			self.rnn = ConvTTLSTMCell(input_channels = self.final_channels, hidden_channels = int(self.final_channels/2), order = 3, steps = 5, ranks = 16, kernel_size = 3, bias = True)
+			self.rnn = ConvTTLSTMCell(input_channels = self.final_channels*2, hidden_channels = self.final_channels, order = 3, steps = 5, ranks = 16, kernel_size = 3, bias = True)
 			
 			nF = 6 if args.arch.startswith('alexnet') else 7
 			self.fc = nn.Linear(self.final_channels*nF*nF, self.num_classes)
@@ -207,10 +186,10 @@ class FusionModel(LightningModule):
 			fs = torch.zeros(nBatch, nFrames, self.rnn.input_size).cuda()
 			for kk in range(nFrames):
 				f_all = []
-				# f = self.features_rgb(inputs[:, kk, :, :, :, 0].permute(0, 3, 1, 2)) # permute to nB x nC x H x W
-				# f = f.reshape(f.size(0), -1)
-				# f = self.fc_pre_rgb(f)
-				# f_all.append(f)
+				f = self.features_rgb(inputs[:, kk, :, :, :, 0].permute(0, 3, 1, 2)) # permute to nB x nC x H x W
+				f = f.reshape(f.size(0), -1)
+				f = self.fc_pre_rgb(f)
+				f_all.append(f)
 
 				f_of = self.features_of(inputs[:, kk, :, :, :, 1].permute(0, 3, 1, 2))  # permute to nB x nC x H x W
 				f_of = f_of.reshape(f_of.size(0), -1)
@@ -228,19 +207,15 @@ class FusionModel(LightningModule):
 			#########################################################################################
 			# Convolutional flavors
 			for kk in range(nFrames):
-				# f = self.features_rgb(inputs[:, kk, :, :, :, 0].permute(0, 3, 1, 2)) # permute to nB x nC x H x W
+				f = self.features_rgb(inputs[:, kk, :, :, :, 0].permute(0, 3, 1, 2)) # permute to nB x nC x H x W
 				f_of = self.features_of(inputs[:, kk, :, :, :, 1].permute(0, 3, 1, 2))  # permute to nB x nC x H x W
 				
-				# # Size nBatch x nChannels x H x W
-				# if kk == 0:
-				# 	outputs = self.rnn(torch.cat([f, f_of], dim = 1), first_step=True)
-				# else:
-				# 	outputs = self.rnn(torch.cat([f, f_of], dim = 1), first_step=False)
 				# Size nBatch x nChannels x H x W
 				if kk == 0:
-					outputs = self.rnn(f_of, first_step=True)
+					outputs = self.rnn(torch.cat([f, f_of], dim = 1), first_step=True)
 				else:
-					outputs = self.rnn(f_of, first_step=False)
+					outputs = self.rnn(torch.cat([f, f_of], dim = 1), first_step=False)
+				
 			outputs = outputs.reshape(outputs.size(0), -1)
 			outputs = self.fc(outputs)
 			# Add a dimension to make the size consistent with old rnn
@@ -306,11 +281,11 @@ class FusionModel(LightningModule):
 		
 	def configure_optimizers(self):
 		self.layers_to_fit = [{'params': self.fc.parameters()}, {'params': self.rnn.parameters()}]
-		if self.fc_pre_of != None:
-			# self.layers_to_fit.append({'params': self.fc_pre_rgb.parameters()})
+		if self.fc_pre_rgb != None:
+			self.layers_to_fit.append({'params': self.fc_pre_rgb.parameters()})
 			self.layers_to_fit.append({'params': self.fc_pre_of.parameters()})
 		if self.trainable_base:
-			# self.layers_to_fit.append({'params': self.features_rgb.parameters()})
+			self.layers_to_fit.append({'params': self.features_rgb.parameters()})
 			self.layers_to_fit.append({'params': self.features_of.parameters()})
 		
 		optimizer = torch.optim.Adam(self.layers_to_fit,
@@ -342,6 +317,7 @@ class FusionModel(LightningModule):
 		else:
 			rgb = self.augGPU_resize(batch[0][:, :, :, :int(nW/2), :].type(torch.float)/255., npix_resize = (224, 224))
 			of 	= self.augGPU_resize(batch[0][:, :, :, int(nW/2):, :].type(torch.float)/255., npix_resize = (224, 224))
+
 		#of = self.augGPU_normalize_inplace(of, mean = [0.485, 0.456, 0.406], std = [0.229, 0.224, 0.225])
 		#rgb = self.augGPU_normalize_inplace(rgb, mean = [0.485, 0.456, 0.406], std = [0.229, 0.224, 0.225])
 		#print(of.reshape(-1, 3).mean(0))
@@ -408,7 +384,7 @@ if __name__ == '__main__':
 	parser.add_argument('--auto_lr', default=0, type=int)
 	parser.add_argument('--use_pretrained', default=1, type=int, help='whether or not to load pretrained weights')
 	parser.add_argument('--logging_dir', default='lightning_logs', type=str)
-	parser.add_argument('--loader_nframes', default=140, type=int, help='How many frames to load at stride 2') #change to 140?
+	parser.add_argument('--loader_nframes', default=140, type=int, help='How many frames to load at stride 2')
 	parser.add_argument('--loader_stride', default=2, type=int, help='stride for dataloader')
 	
 	hparams = parser.parse_args()
@@ -437,7 +413,7 @@ if __name__ == '__main__':
 
 	checkpoint_callback = ModelCheckpoint(
 		# filepath=os.path.join(logger.log_dir, 'checkpoints'),
-		filepath=os.path.join(settings1.checkpoints, classification_name, f'{hparams.arch}_{hparams.trainable_base}_{hparams.rnn_model}'),
+		filepath=os.path.join(settings1.checkpoints, "two_stream", classification_name, f'{hparams.arch}_{hparams.trainable_base}_{hparams.rnn_model}'),
 		save_top_k=3,
 		verbose=True,
 		monitor='val_acc',

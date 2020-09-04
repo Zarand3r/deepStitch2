@@ -20,10 +20,19 @@ echo "Environment activated, running file...."
 cd ../../
 cd task1
 cd models
+cd one_stream
 
-# python lightning_train.py
-python lightning_train.py --rnn_model "convLSTM"
+python lightning_train.py
+# python lightning_train.py --rnn_model "convLSTM"
+python lightning_train.py --arch "resnet18" --rnn_model "LSTM" 
+# python lightning_train.py --arch "resnet18" --rnn_model "convLSTM" 
+
+cd ../
+cd two_stream
+python lightning_train.py
+# python lightning_train.py --rnn_model "convLSTM"
 # python lightning_train.py --arch "resnet18" --rnn_model "LSTM" 
-python lightning_train.py --arch "resnet18" --rnn_model "convLSTM" 
+# python lightning_train.py --arch "resnet18" --rnn_model "convLSTM" 
+
 #python lightning_train.py --datadir /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data --include_classes "AB_BC"
 
