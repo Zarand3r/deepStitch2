@@ -23,14 +23,14 @@ cd models
 cd one_stream
 
 python lightning_train.py
-# python lightning_train.py --rnn_model "convLSTM"
-python lightning_train.py --arch "resnet18" --rnn_model "LSTM" 
-# python lightning_train.py --arch "resnet18" --rnn_model "convLSTM" 
+python lightning_train.py --rnn_model "convLSTM"
+# python lightning_train.py --arch "resnet18" --rnn_model "LSTM" 
+python lightning_train.py --arch "resnet18" --rnn_model "convLSTM" 
 
 cd ../
 cd two_stream
 python lightning_train.py
-# python lightning_train.py --rnn_model "convLSTM"
+python lightning_train.py --rnn_model "convLSTM"
 # python lightning_train.py --arch "resnet18" --rnn_model "LSTM" 
 # python lightning_train.py --arch "resnet18" --rnn_model "convLSTM" 
 
