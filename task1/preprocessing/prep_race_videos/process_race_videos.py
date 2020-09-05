@@ -13,8 +13,9 @@ homedir = repo.working_dir
 sys.path.insert(1, f"{homedir}" + '/utils')
 import settings1
 
-
 df = pd.read_excel(settings1.data_labels)
+df = df.where(pd.notnull(df), None)
+# make modular
 
 # Convert the strings to lists and none literals
 for ii in range(len(df)):
@@ -52,12 +53,12 @@ for xx in range(6):
 # First do all the cuts between different letters
 for nn in tqdm(range(len(df))):
     kk = 0
-    while kk < 6:
+    while kk < len(all_timepoints)-1:
         start_col = 'timepoint_%s' % all_timepoints[kk]
         end_col = 'timepoint_%s' % all_timepoints[kk+1]
         #print('on %s to %s' % (start_col, end_col))
         start_val, end_val = df.iloc[nn][start_col], df.iloc[nn][end_col]
-        if start_val == None or end_val == None:
+        if start_val is None or end_val is None:
             #print('ff 2 due to None val')
             kk+=2
             pass
