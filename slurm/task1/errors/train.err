@@ -11,6 +11,10 @@ Set SLURM handle signals.
 1 | fc_pre_of   | Sequential | 147 K 
 2 | rnn         | LSTM       | 4 K   
 3 | fc          | Linear     | 34    
+/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/utilities/distributed.py:25: UserWarning: The dataloader, train dataloader, does not have many workers which may be a bottleneck. Consider increasing the value of the `num_workers` argument` (try 28 which is the number of cpus on this machine) in the `DataLoader` init to improve performance.
+  warnings.warn(*args, **kwargs)
+/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/utilities/distributed.py:25: UserWarning: The dataloader, val dataloader 0, does not have many workers which may be a bottleneck. Consider increasing the value of the `num_workers` argument` (try 28 which is the number of cpus on this machine) in the `DataLoader` init to improve performance.
+  warnings.warn(*args, **kwargs)
 Traceback (most recent call last):
   File "lightning_train.py", line 462, in <module>
     trainer.fit(model)
@@ -28,27 +32,19 @@ Traceback (most recent call last):
     self.hiddens
   File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/trainer/training_loop.py", line 776, in optimizer_closure
     hiddens)
-  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/trainer/training_loop.py", line 944, in training_forward
-    batch = self.transfer_batch_to_gpu(batch, gpu_id)
-  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/trainer/distrib_parts.py", line 159, in transfer_batch_to_gpu
-    return self.__transfer_batch_to_device(batch, device)
-  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/trainer/distrib_parts.py", line 164, in __transfer_batch_to_device
-    return model.transfer_batch_to_device(batch, device)
-  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/core/hooks.py", line 242, in transfer_batch_to_device
-    return move_data_to_device(batch, device)
-  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/utilities/apply_func.py", line 109, in move_data_to_device
-    return apply_to_collection(batch, dtype=(TransferableDataType, Batch), function=batch_to)
-  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/utilities/apply_func.py", line 44, in apply_to_collection
-    return elem_type([apply_to_collection(d, dtype, function, *args, **kwargs) for d in data])
-  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/utilities/apply_func.py", line 44, in <listcomp>
-    return elem_type([apply_to_collection(d, dtype, function, *args, **kwargs) for d in data])
-  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/utilities/apply_func.py", line 35, in apply_to_collection
-    return function(data, *args, **kwargs)
-  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/utilities/apply_func.py", line 107, in batch_to
-    return data.to(device, non_blocking=True)
-  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/torch/utils/data/_utils/signal_handling.py", line 66, in handler
-    _error_if_any_worker_fails()
-RuntimeError: DataLoader worker (pid 24296) is killed by signal: Killed. 
+  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/trainer/training_loop.py", line 946, in training_forward
+    output = self.model.training_step(*args)
+  File "lightning_train.py", line 257, in training_step
+    output, _, _ = self(input_cuda)
+  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/torch/nn/modules/module.py", line 722, in _call_impl
+    result = self.forward(*input, **kwargs)
+  File "lightning_train.py", line 225, in forward
+    outputs, (hidden, cell)  = self.rnn(fs, hidden)
+  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/torch/nn/modules/module.py", line 722, in _call_impl
+    result = self.forward(*input, **kwargs)
+  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/torch/nn/modules/rnn.py", line 577, in forward
+    self.dropout, self.training, self.bidirectional, self.batch_first)
+RuntimeError: stack expects a non-empty TensorList
 GPU available: True, used: True
 TPU available: False, using: 0 TPU cores
 CUDA_VISIBLE_DEVICES: [0]
@@ -61,6 +57,10 @@ Set SLURM handle signals.
 0 | features_of | Sequential   | 2 M   
 1 | rnn         | ConvLSTMCell | 156 K 
 2 | fc          | Linear       | 1 K   
+/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/utilities/distributed.py:25: UserWarning: The dataloader, train dataloader, does not have many workers which may be a bottleneck. Consider increasing the value of the `num_workers` argument` (try 28 which is the number of cpus on this machine) in the `DataLoader` init to improve performance.
+  warnings.warn(*args, **kwargs)
+/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/utilities/distributed.py:25: UserWarning: The dataloader, val dataloader 0, does not have many workers which may be a bottleneck. Consider increasing the value of the `num_workers` argument` (try 28 which is the number of cpus on this machine) in the `DataLoader` init to improve performance.
+  warnings.warn(*args, **kwargs)
 Traceback (most recent call last):
   File "lightning_train.py", line 462, in <module>
     trainer.fit(model)
@@ -78,27 +78,15 @@ Traceback (most recent call last):
     self.hiddens
   File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/trainer/training_loop.py", line 776, in optimizer_closure
     hiddens)
-  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/trainer/training_loop.py", line 944, in training_forward
-    batch = self.transfer_batch_to_gpu(batch, gpu_id)
-  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/trainer/distrib_parts.py", line 159, in transfer_batch_to_gpu
-    return self.__transfer_batch_to_device(batch, device)
-  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/trainer/distrib_parts.py", line 164, in __transfer_batch_to_device
-    return model.transfer_batch_to_device(batch, device)
-  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/core/hooks.py", line 242, in transfer_batch_to_device
-    return move_data_to_device(batch, device)
-  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/utilities/apply_func.py", line 109, in move_data_to_device
-    return apply_to_collection(batch, dtype=(TransferableDataType, Batch), function=batch_to)
-  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/utilities/apply_func.py", line 44, in apply_to_collection
-    return elem_type([apply_to_collection(d, dtype, function, *args, **kwargs) for d in data])
-  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/utilities/apply_func.py", line 44, in <listcomp>
-    return elem_type([apply_to_collection(d, dtype, function, *args, **kwargs) for d in data])
-  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/utilities/apply_func.py", line 35, in apply_to_collection
-    return function(data, *args, **kwargs)
-  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/utilities/apply_func.py", line 107, in batch_to
-    return data.to(device, non_blocking=True)
-  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/torch/utils/data/_utils/signal_handling.py", line 66, in handler
-    _error_if_any_worker_fails()
-RuntimeError: DataLoader worker (pid 24505) is killed by signal: Killed. 
+  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/trainer/training_loop.py", line 946, in training_forward
+    output = self.model.training_step(*args)
+  File "lightning_train.py", line 257, in training_step
+    output, _, _ = self(input_cuda)
+  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/torch/nn/modules/module.py", line 722, in _call_impl
+    result = self.forward(*input, **kwargs)
+  File "lightning_train.py", line 244, in forward
+    outputs = outputs.reshape(outputs.size(0), -1)
+UnboundLocalError: local variable 'outputs' referenced before assignment
 GPU available: True, used: True
 TPU available: False, using: 0 TPU cores
 CUDA_VISIBLE_DEVICES: [0]
@@ -112,27 +100,10 @@ Set SLURM handle signals.
 1 | fc_pre_of   | Sequential | 401 K 
 2 | rnn         | LSTM       | 4 K   
 3 | fc          | Linear     | 34    
-ac-tex damaged at 37 1
-Error at MB: 158
-Traceback (most recent call last):
-  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/torch/utils/data/dataloader.py", line 779, in _try_get_data
-    data = self._data_queue.get(timeout=timeout)
-  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/multiprocessing/queues.py", line 104, in get
-    if not self._poll(timeout):
-  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/multiprocessing/connection.py", line 257, in poll
-    return self._poll(timeout)
-  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/multiprocessing/connection.py", line 414, in _poll
-    r = wait([self], timeout)
-  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/multiprocessing/connection.py", line 911, in wait
-    ready = selector.select(timeout)
-  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/selectors.py", line 376, in select
-    fd_event_list = self._poll.poll(timeout)
-  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/torch/utils/data/_utils/signal_handling.py", line 66, in handler
-    _error_if_any_worker_fails()
-RuntimeError: DataLoader worker (pid 24715) is killed by signal: Killed. 
-
-During handling of the above exception, another exception occurred:
-
+/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/utilities/distributed.py:25: UserWarning: The dataloader, train dataloader, does not have many workers which may be a bottleneck. Consider increasing the value of the `num_workers` argument` (try 28 which is the number of cpus on this machine) in the `DataLoader` init to improve performance.
+  warnings.warn(*args, **kwargs)
+/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/utilities/distributed.py:25: UserWarning: The dataloader, val dataloader 0, does not have many workers which may be a bottleneck. Consider increasing the value of the `num_workers` argument` (try 28 which is the number of cpus on this machine) in the `DataLoader` init to improve performance.
+  warnings.warn(*args, **kwargs)
 Traceback (most recent call last):
   File "lightning_train.py", line 462, in <module>
     trainer.fit(model)
@@ -144,21 +115,25 @@ Traceback (most recent call last):
     self.train()
   File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/trainer/training_loop.py", line 370, in train
     self.run_training_epoch()
-  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/trainer/training_loop.py", line 440, in run_training_epoch
-    enumerate(_with_is_last(train_dataloader)), "get_train_batch"
-  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/profiler/profilers.py", line 64, in profile_iterable
-    value = next(iterator)
-  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/trainer/training_loop.py", line 1013, in _with_is_last
-    for val in it:
-  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/torch/utils/data/dataloader.py", line 363, in __next__
-    data = self._next_data()
-  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/torch/utils/data/dataloader.py", line 974, in _next_data
-    idx, data = self._get_data()
-  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/torch/utils/data/dataloader.py", line 941, in _get_data
-    success, data = self._try_get_data()
-  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/torch/utils/data/dataloader.py", line 792, in _try_get_data
-    raise RuntimeError('DataLoader worker (pid(s) {}) exited unexpectedly'.format(pids_str))
-RuntimeError: DataLoader worker (pid(s) 24715) exited unexpectedly
+  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/trainer/training_loop.py", line 452, in run_training_epoch
+    batch_output = self.run_training_batch(batch, batch_idx)
+  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/trainer/training_loop.py", line 632, in run_training_batch
+    self.hiddens
+  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/trainer/training_loop.py", line 776, in optimizer_closure
+    hiddens)
+  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/trainer/training_loop.py", line 946, in training_forward
+    output = self.model.training_step(*args)
+  File "lightning_train.py", line 257, in training_step
+    output, _, _ = self(input_cuda)
+  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/torch/nn/modules/module.py", line 722, in _call_impl
+    result = self.forward(*input, **kwargs)
+  File "lightning_train.py", line 225, in forward
+    outputs, (hidden, cell)  = self.rnn(fs, hidden)
+  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/torch/nn/modules/module.py", line 722, in _call_impl
+    result = self.forward(*input, **kwargs)
+  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/torch/nn/modules/rnn.py", line 577, in forward
+    self.dropout, self.training, self.bidirectional, self.batch_first)
+RuntimeError: stack expects a non-empty TensorList
 GPU available: True, used: True
 TPU available: False, using: 0 TPU cores
 CUDA_VISIBLE_DEVICES: [0]
@@ -171,25 +146,10 @@ Set SLURM handle signals.
 0 | features_of | Sequential   | 11 M  
 1 | rnn         | ConvLSTMCell | 626 K 
 2 | fc          | Linear       | 3 K   
-Traceback (most recent call last):
-  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/torch/utils/data/dataloader.py", line 779, in _try_get_data
-    data = self._data_queue.get(timeout=timeout)
-  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/multiprocessing/queues.py", line 104, in get
-    if not self._poll(timeout):
-  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/multiprocessing/connection.py", line 257, in poll
-    return self._poll(timeout)
-  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/multiprocessing/connection.py", line 414, in _poll
-    r = wait([self], timeout)
-  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/multiprocessing/connection.py", line 911, in wait
-    ready = selector.select(timeout)
-  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/selectors.py", line 376, in select
-    fd_event_list = self._poll.poll(timeout)
-  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/torch/utils/data/_utils/signal_handling.py", line 66, in handler
-    _error_if_any_worker_fails()
-RuntimeError: DataLoader worker (pid 24873) is killed by signal: Killed. 
-
-During handling of the above exception, another exception occurred:
-
+/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/utilities/distributed.py:25: UserWarning: The dataloader, train dataloader, does not have many workers which may be a bottleneck. Consider increasing the value of the `num_workers` argument` (try 28 which is the number of cpus on this machine) in the `DataLoader` init to improve performance.
+  warnings.warn(*args, **kwargs)
+/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/utilities/distributed.py:25: UserWarning: The dataloader, val dataloader 0, does not have many workers which may be a bottleneck. Consider increasing the value of the `num_workers` argument` (try 28 which is the number of cpus on this machine) in the `DataLoader` init to improve performance.
+  warnings.warn(*args, **kwargs)
 Traceback (most recent call last):
   File "lightning_train.py", line 462, in <module>
     trainer.fit(model)
@@ -201,21 +161,21 @@ Traceback (most recent call last):
     self.train()
   File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/trainer/training_loop.py", line 370, in train
     self.run_training_epoch()
-  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/trainer/training_loop.py", line 440, in run_training_epoch
-    enumerate(_with_is_last(train_dataloader)), "get_train_batch"
-  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/profiler/profilers.py", line 64, in profile_iterable
-    value = next(iterator)
-  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/trainer/training_loop.py", line 1012, in _with_is_last
-    last = next(it)
-  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/torch/utils/data/dataloader.py", line 363, in __next__
-    data = self._next_data()
-  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/torch/utils/data/dataloader.py", line 974, in _next_data
-    idx, data = self._get_data()
-  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/torch/utils/data/dataloader.py", line 941, in _get_data
-    success, data = self._try_get_data()
-  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/torch/utils/data/dataloader.py", line 792, in _try_get_data
-    raise RuntimeError('DataLoader worker (pid(s) {}) exited unexpectedly'.format(pids_str))
-RuntimeError: DataLoader worker (pid(s) 24873) exited unexpectedly
+  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/trainer/training_loop.py", line 452, in run_training_epoch
+    batch_output = self.run_training_batch(batch, batch_idx)
+  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/trainer/training_loop.py", line 632, in run_training_batch
+    self.hiddens
+  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/trainer/training_loop.py", line 776, in optimizer_closure
+    hiddens)
+  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/trainer/training_loop.py", line 946, in training_forward
+    output = self.model.training_step(*args)
+  File "lightning_train.py", line 257, in training_step
+    output, _, _ = self(input_cuda)
+  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/torch/nn/modules/module.py", line 722, in _call_impl
+    result = self.forward(*input, **kwargs)
+  File "lightning_train.py", line 244, in forward
+    outputs = outputs.reshape(outputs.size(0), -1)
+UnboundLocalError: local variable 'outputs' referenced before assignment
   File "lightning_train.py", line 309
     return val_dataloader
          ^
@@ -224,4 +184,3 @@ SyntaxError: invalid syntax
     return val_dataloader
          ^
 SyntaxError: invalid syntax
-slurmstepd: error: Detected 18097 oom-kill event(s) in step 11137655.batch cgroup. Some of your processes may have been killed by the cgroup out-of-memory handler.
