@@ -8,6 +8,7 @@ for path, subdirs, files in os.walk("/central/groups/tensorlab/rbao/robosurgery/
 		cap = cv2.VideoCapture(fname)
 		length = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
 		if length < 10:
+			print(fname)
 			os.remove(fname)
 
 
@@ -17,5 +18,6 @@ for path, subdirs, files in os.walk("/central/groups/tensorlab/rbao/robosurgery/
 		cap = cv2.VideoCapture(fname)
 		length = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
 		if length < 10:
+			print(fname)
 			os.remove(fname)
 

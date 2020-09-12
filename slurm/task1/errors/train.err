@@ -1,3 +1,4 @@
+/var/spool/slurmd/job11208645/slurm_script: line 16: activate: No such file or directory
 GPU available: True, used: True
 TPU available: False, using: 0 TPU cores
 CUDA_VISIBLE_DEVICES: [0]
@@ -15,172 +16,108 @@ Set SLURM handle signals.
   warnings.warn(*args, **kwargs)
 /central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/utilities/distributed.py:25: UserWarning: The dataloader, val dataloader 0, does not have many workers which may be a bottleneck. Consider increasing the value of the `num_workers` argument` (try 28 which is the number of cpus on this machine) in the `DataLoader` init to improve performance.
   warnings.warn(*args, **kwargs)
-Traceback (most recent call last):
-  File "lightning_train.py", line 462, in <module>
-    trainer.fit(model)
-  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/trainer/trainer.py", line 1003, in fit
-    results = self.single_gpu_train(model)
-  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/trainer/distrib_parts.py", line 186, in single_gpu_train
-    results = self.run_pretrain_routine(model)
-  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/trainer/trainer.py", line 1213, in run_pretrain_routine
-    self.train()
-  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/trainer/training_loop.py", line 370, in train
-    self.run_training_epoch()
-  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/trainer/training_loop.py", line 452, in run_training_epoch
-    batch_output = self.run_training_batch(batch, batch_idx)
-  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/trainer/training_loop.py", line 632, in run_training_batch
-    self.hiddens
-  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/trainer/training_loop.py", line 776, in optimizer_closure
-    hiddens)
-  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/trainer/training_loop.py", line 946, in training_forward
-    output = self.model.training_step(*args)
-  File "lightning_train.py", line 257, in training_step
-    output, _, _ = self(input_cuda)
-  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/torch/nn/modules/module.py", line 722, in _call_impl
-    result = self.forward(*input, **kwargs)
-  File "lightning_train.py", line 225, in forward
-    outputs, (hidden, cell)  = self.rnn(fs, hidden)
-  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/torch/nn/modules/module.py", line 722, in _call_impl
-    result = self.forward(*input, **kwargs)
-  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/torch/nn/modules/rnn.py", line 577, in forward
-    self.dropout, self.training, self.bidirectional, self.batch_first)
-RuntimeError: stack expects a non-empty TensorList
-GPU available: True, used: True
-TPU available: False, using: 0 TPU cores
-CUDA_VISIBLE_DEVICES: [0]
-/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/utilities/distributed.py:25: RuntimeWarning: You have defined a `val_dataloader()` and have defined a `validation_step()`, you may also want to define `validation_epoch_end()` for accumulating stats.
-  warnings.warn(*args, **kwargs)
-Set SLURM handle signals.
 
-  | Name        | Type         | Params
----------------------------------------------
-0 | features_of | Sequential   | 2 M   
-1 | rnn         | ConvLSTMCell | 156 K 
-2 | fc          | Linear       | 1 K   
-/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/utilities/distributed.py:25: UserWarning: The dataloader, train dataloader, does not have many workers which may be a bottleneck. Consider increasing the value of the `num_workers` argument` (try 28 which is the number of cpus on this machine) in the `DataLoader` init to improve performance.
-  warnings.warn(*args, **kwargs)
-/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/utilities/distributed.py:25: UserWarning: The dataloader, val dataloader 0, does not have many workers which may be a bottleneck. Consider increasing the value of the `num_workers` argument` (try 28 which is the number of cpus on this machine) in the `DataLoader` init to improve performance.
-  warnings.warn(*args, **kwargs)
-Traceback (most recent call last):
-  File "lightning_train.py", line 462, in <module>
-    trainer.fit(model)
-  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/trainer/trainer.py", line 1003, in fit
-    results = self.single_gpu_train(model)
-  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/trainer/distrib_parts.py", line 186, in single_gpu_train
-    results = self.run_pretrain_routine(model)
-  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/trainer/trainer.py", line 1213, in run_pretrain_routine
-    self.train()
-  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/trainer/training_loop.py", line 370, in train
-    self.run_training_epoch()
-  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/trainer/training_loop.py", line 452, in run_training_epoch
-    batch_output = self.run_training_batch(batch, batch_idx)
-  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/trainer/training_loop.py", line 632, in run_training_batch
-    self.hiddens
-  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/trainer/training_loop.py", line 776, in optimizer_closure
-    hiddens)
-  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/trainer/training_loop.py", line 946, in training_forward
-    output = self.model.training_step(*args)
-  File "lightning_train.py", line 257, in training_step
-    output, _, _ = self(input_cuda)
-  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/torch/nn/modules/module.py", line 722, in _call_impl
-    result = self.forward(*input, **kwargs)
-  File "lightning_train.py", line 244, in forward
-    outputs = outputs.reshape(outputs.size(0), -1)
-UnboundLocalError: local variable 'outputs' referenced before assignment
-GPU available: True, used: True
-TPU available: False, using: 0 TPU cores
-CUDA_VISIBLE_DEVICES: [0]
-/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/utilities/distributed.py:25: RuntimeWarning: You have defined a `val_dataloader()` and have defined a `validation_step()`, you may also want to define `validation_epoch_end()` for accumulating stats.
-  warnings.warn(*args, **kwargs)
-Set SLURM handle signals.
+Epoch 00000: val_acc reached 0.68775 (best 0.68775), saving model to /central/groups/tensorlab/rbao/robosurgery/checkpoints/task1/one_stream/positive_negative/_ckpt_epoch_0.ckpt as top 3
 
-  | Name        | Type       | Params
--------------------------------------------
-0 | features_of | Sequential | 11 M  
-1 | fc_pre_of   | Sequential | 401 K 
-2 | rnn         | LSTM       | 4 K   
-3 | fc          | Linear     | 34    
-/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/utilities/distributed.py:25: UserWarning: The dataloader, train dataloader, does not have many workers which may be a bottleneck. Consider increasing the value of the `num_workers` argument` (try 28 which is the number of cpus on this machine) in the `DataLoader` init to improve performance.
-  warnings.warn(*args, **kwargs)
-/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/utilities/distributed.py:25: UserWarning: The dataloader, val dataloader 0, does not have many workers which may be a bottleneck. Consider increasing the value of the `num_workers` argument` (try 28 which is the number of cpus on this machine) in the `DataLoader` init to improve performance.
-  warnings.warn(*args, **kwargs)
-Traceback (most recent call last):
-  File "lightning_train.py", line 462, in <module>
-    trainer.fit(model)
-  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/trainer/trainer.py", line 1003, in fit
-    results = self.single_gpu_train(model)
-  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/trainer/distrib_parts.py", line 186, in single_gpu_train
-    results = self.run_pretrain_routine(model)
-  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/trainer/trainer.py", line 1213, in run_pretrain_routine
-    self.train()
-  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/trainer/training_loop.py", line 370, in train
-    self.run_training_epoch()
-  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/trainer/training_loop.py", line 452, in run_training_epoch
-    batch_output = self.run_training_batch(batch, batch_idx)
-  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/trainer/training_loop.py", line 632, in run_training_batch
-    self.hiddens
-  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/trainer/training_loop.py", line 776, in optimizer_closure
-    hiddens)
-  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/trainer/training_loop.py", line 946, in training_forward
-    output = self.model.training_step(*args)
-  File "lightning_train.py", line 257, in training_step
-    output, _, _ = self(input_cuda)
-  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/torch/nn/modules/module.py", line 722, in _call_impl
-    result = self.forward(*input, **kwargs)
-  File "lightning_train.py", line 225, in forward
-    outputs, (hidden, cell)  = self.rnn(fs, hidden)
-  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/torch/nn/modules/module.py", line 722, in _call_impl
-    result = self.forward(*input, **kwargs)
-  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/torch/nn/modules/rnn.py", line 577, in forward
-    self.dropout, self.training, self.bidirectional, self.batch_first)
-RuntimeError: stack expects a non-empty TensorList
-GPU available: True, used: True
-TPU available: False, using: 0 TPU cores
-CUDA_VISIBLE_DEVICES: [0]
-/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/utilities/distributed.py:25: RuntimeWarning: You have defined a `val_dataloader()` and have defined a `validation_step()`, you may also want to define `validation_epoch_end()` for accumulating stats.
-  warnings.warn(*args, **kwargs)
-Set SLURM handle signals.
+Epoch 00001: val_acc reached 0.69170 (best 0.69170), saving model to /central/groups/tensorlab/rbao/robosurgery/checkpoints/task1/one_stream/positive_negative/_ckpt_epoch_1.ckpt as top 3
 
-  | Name        | Type         | Params
----------------------------------------------
-0 | features_of | Sequential   | 11 M  
-1 | rnn         | ConvLSTMCell | 626 K 
-2 | fc          | Linear       | 3 K   
-/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/utilities/distributed.py:25: UserWarning: The dataloader, train dataloader, does not have many workers which may be a bottleneck. Consider increasing the value of the `num_workers` argument` (try 28 which is the number of cpus on this machine) in the `DataLoader` init to improve performance.
-  warnings.warn(*args, **kwargs)
-/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/utilities/distributed.py:25: UserWarning: The dataloader, val dataloader 0, does not have many workers which may be a bottleneck. Consider increasing the value of the `num_workers` argument` (try 28 which is the number of cpus on this machine) in the `DataLoader` init to improve performance.
-  warnings.warn(*args, **kwargs)
-Traceback (most recent call last):
-  File "lightning_train.py", line 462, in <module>
-    trainer.fit(model)
-  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/trainer/trainer.py", line 1003, in fit
-    results = self.single_gpu_train(model)
-  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/trainer/distrib_parts.py", line 186, in single_gpu_train
-    results = self.run_pretrain_routine(model)
-  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/trainer/trainer.py", line 1213, in run_pretrain_routine
-    self.train()
-  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/trainer/training_loop.py", line 370, in train
-    self.run_training_epoch()
-  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/trainer/training_loop.py", line 452, in run_training_epoch
-    batch_output = self.run_training_batch(batch, batch_idx)
-  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/trainer/training_loop.py", line 632, in run_training_batch
-    self.hiddens
-  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/trainer/training_loop.py", line 776, in optimizer_closure
-    hiddens)
-  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/trainer/training_loop.py", line 946, in training_forward
-    output = self.model.training_step(*args)
-  File "lightning_train.py", line 257, in training_step
-    output, _, _ = self(input_cuda)
-  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/torch/nn/modules/module.py", line 722, in _call_impl
-    result = self.forward(*input, **kwargs)
-  File "lightning_train.py", line 244, in forward
-    outputs = outputs.reshape(outputs.size(0), -1)
-UnboundLocalError: local variable 'outputs' referenced before assignment
-  File "lightning_train.py", line 309
-    return val_dataloader
-         ^
-SyntaxError: invalid syntax
-  File "lightning_train.py", line 309
-    return val_dataloader
-         ^
-SyntaxError: invalid syntax
+Epoch 00002: val_acc reached 0.71146 (best 0.71146), saving model to /central/groups/tensorlab/rbao/robosurgery/checkpoints/task1/one_stream/positive_negative/_ckpt_epoch_2.ckpt as top 3
+
+Epoch 00003: val_acc  was not in top 3
+
+Epoch 00004: val_acc reached 0.70356 (best 0.71146), saving model to /central/groups/tensorlab/rbao/robosurgery/checkpoints/task1/one_stream/positive_negative/_ckpt_epoch_4.ckpt as top 3
+
+Epoch 00005: val_acc  was not in top 3
+
+Epoch 00006: val_acc reached 0.74704 (best 0.74704), saving model to /central/groups/tensorlab/rbao/robosurgery/checkpoints/task1/one_stream/positive_negative/_ckpt_epoch_6.ckpt as top 3
+
+Epoch 00007: val_acc reached 0.72727 (best 0.74704), saving model to /central/groups/tensorlab/rbao/robosurgery/checkpoints/task1/one_stream/positive_negative/_ckpt_epoch_7.ckpt as top 3
+
+Epoch 00008: val_acc reached 0.78261 (best 0.78261), saving model to /central/groups/tensorlab/rbao/robosurgery/checkpoints/task1/one_stream/positive_negative/_ckpt_epoch_8.ckpt as top 3
+
+Epoch 00009: val_acc reached 0.73123 (best 0.78261), saving model to /central/groups/tensorlab/rbao/robosurgery/checkpoints/task1/one_stream/positive_negative/_ckpt_epoch_9.ckpt as top 3
+lightning_train.py:302: RuntimeWarning: More than 20 figures have been opened. Figures created through the pyplot interface (`matplotlib.pyplot.figure`) are retained until explicitly closed and may consume too much memory. (To control this warning, see the rcParam `figure.max_open_warning`).
+  fig = plt.figure(); sns.heatmap(cm, cmap = cmap_use, ax =plt.gca(), annot = True, xticklabels = self.hparams.include_classes, yticklabels = self.hparams.include_classes)
+
+Epoch 00010: val_acc reached 0.73518 (best 0.78261), saving model to /central/groups/tensorlab/rbao/robosurgery/checkpoints/task1/one_stream/positive_negative/_ckpt_epoch_10.ckpt as top 3
+
+Epoch 00011: val_acc reached 0.75099 (best 0.78261), saving model to /central/groups/tensorlab/rbao/robosurgery/checkpoints/task1/one_stream/positive_negative/_ckpt_epoch_11.ckpt as top 3
+
+Epoch 00012: val_acc reached 0.75099 (best 0.78261), saving model to /central/groups/tensorlab/rbao/robosurgery/checkpoints/task1/one_stream/positive_negative/_ckpt_epoch_12.ckpt as top 3
+
+Epoch 00013: val_acc reached 0.77866 (best 0.78261), saving model to /central/groups/tensorlab/rbao/robosurgery/checkpoints/task1/one_stream/positive_negative/_ckpt_epoch_13.ckpt as top 3
+
+Epoch 00014: val_acc  was not in top 3
+
+Epoch 00015: val_acc reached 0.75889 (best 0.78261), saving model to /central/groups/tensorlab/rbao/robosurgery/checkpoints/task1/one_stream/positive_negative/_ckpt_epoch_15.ckpt as top 3
+
+Epoch 00016: val_acc  was not in top 3
+
+Epoch 00017: val_acc  was not in top 3
+
+Epoch 00018: val_acc  was not in top 3
+
+Epoch 00019: val_acc  was not in top 3
+
+Epoch 00020: val_acc  was not in top 3
+
+Epoch 00021: val_acc  was not in top 3
+
+Epoch 00022: val_acc  was not in top 3
+
+Epoch 00023: val_acc  was not in top 3
+
+Epoch 00024: val_acc  was not in top 3
+
+Epoch 00025: val_acc  was not in top 3
+
+Epoch 00026: val_acc reached 0.76285 (best 0.78261), saving model to /central/groups/tensorlab/rbao/robosurgery/checkpoints/task1/one_stream/positive_negative/_ckpt_epoch_26.ckpt as top 3
+
+Epoch 00027: val_acc  was not in top 3
+
+Epoch 00028: val_acc  was not in top 3
+
+Epoch 00029: val_acc reached 0.77866 (best 0.78261), saving model to /central/groups/tensorlab/rbao/robosurgery/checkpoints/task1/one_stream/positive_negative/_ckpt_epoch_29.ckpt as top 3
+
+Epoch 00030: val_acc  was not in top 3
+
+Epoch 00031: val_acc  was not in top 3
+
+Epoch 00032: val_acc  was not in top 3
+
+Epoch 00033: val_acc  was not in top 3
+
+Epoch 00034: val_acc  was not in top 3
+
+Epoch 00035: val_acc  was not in top 3
+
+Epoch 00036: val_acc  was not in top 3
+
+Epoch 00037: val_acc  was not in top 3
+
+Epoch 00038: val_acc  was not in top 3
+
+Epoch 00039: val_acc  was not in top 3
+
+Epoch 00040: val_acc  was not in top 3
+
+Epoch 00041: val_acc  was not in top 3
+
+Epoch 00042: val_acc  was not in top 3
+
+Epoch 00043: val_acc  was not in top 3
+
+Epoch 00044: val_acc  was not in top 3
+
+Epoch 00045: val_acc  was not in top 3
+
+Epoch 00046: val_acc  was not in top 3
+
+Epoch 00047: val_acc  was not in top 3
+
+Epoch 00048: val_acc  was not in top 3
+
+Epoch 00049: val_acc  was not in top 3
+
+Epoch 00050: val_acc  was not in top 3
+slurmstepd: error: *** JOB 11208645 ON hpc-90-38 CANCELLED AT 2020-09-12T07:15:46 DUE TO TIME LIMIT ***
