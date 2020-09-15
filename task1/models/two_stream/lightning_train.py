@@ -158,10 +158,10 @@ class FusionModel(LightningModule):
 			self.fc = nn.Linear(args.hidden_size, self.num_classes)
 		elif args.rnn_model == 'convLSTM': 
 			# Twice number of channels for RGB and OF which are concat
-			self.rnn = ConvLSTMCell(input_channels = self.final_channels*2, hidden_channels = self.final_channels, kernel_size = 3, bias = True)
+			self.rnn = ConvLSTMCell(input_channels = self.final_channels, hidden_channels = int(self.final_channels/16), kernel_size = 3, bias = True)
 			
 			nF = 6 if args.arch.startswith('alexnet') else 7
-			self.fc = nn.Linear(self.final_channels*nF*nF, self.num_classes)
+			self.fc = nn.Linear(int(self.final_channels/16)*nF*nF, self.num_classes) #replace self.final_channels here the parameter must equal the hidden_channels in self.rnn
 		elif args.rnn_model == 'convttLSTM': 
 			# Twice number of channels for RGB and OF which are concat
 			self.rnn = ConvTTLSTMCell(input_channels = self.final_channels*2, hidden_channels = self.final_channels, order = 3, steps = 5, ranks = 16, kernel_size = 3, bias = True)
@@ -298,14 +298,14 @@ class FusionModel(LightningModule):
 	def train_dataloader(self):
 		train_dataset 	= CustomDataset(self.hparams.datadir, idxs = self.hparams.idx_train , include_classes = self.hparams.include_classes, 
 							flow_method = self.hparams.flow_method, balance_classes=True, mode = 'train', max_frames = self.hparams.loader_nframes, stride = self.hparams.loader_stride)
-		train_dataloader 	= DataLoader(train_dataset, batch_size=self.batch_size, shuffle=True, num_workers=0)
+		train_dataloader 	= DataLoader(train_dataset, batch_size=self.batch_size, shuffle=True, num_workers=1, drop_last=True)
 		self.epoch_len = len(train_dataset)
 		return train_dataloader
 
 	def val_dataloader(self):
 		val_dataset 	= CustomDataset(self.hparams.datadir, idxs = self.hparams.idx_test , include_classes = self.hparams.include_classes, 
 							flow_method = self.hparams.flow_method, balance_classes=False, mode = 'val', max_frames = self.hparams.loader_nframes, stride = self.hparams.loader_stride)
-		val_dataloader 	= DataLoader(val_dataset, batch_size=self.batch_size, shuffle=False, num_workers=0)
+		val_dataloader 	= DataLoader(val_dataset, batch_size=self.batch_size, shuffle=False, num_workers=1, drop_last=True)
 		return val_dataloader
 
 	def apply_transforms_GPU(self, batch, random_crop = False):
@@ -379,7 +379,7 @@ if __name__ == '__main__':
 	parser.add_argument('--seed', default=0, type=int)
 	parser.add_argument('--train_proportion', default=0.8, type=float)
 	parser.add_argument('--weight_decay', default=0.01, type=float)
-	parser.add_argument('--accum_batches', default=1, type=int)
+	parser.add_argument('--accum_batches', default=3, type=int)
 	parser.add_argument('--overfit', default=0, type=int)
 	parser.add_argument('--auto_lr', default=0, type=int)
 	parser.add_argument('--use_pretrained', default=1, type=int, help='whether or not to load pretrained weights')
@@ -393,7 +393,7 @@ if __name__ == '__main__':
 	hparams.auto_lr = True if hparams.auto_lr == 1 else False
 	hparams.use_pretrained = True if hparams.use_pretrained == 1 else False
 
-	classification_name = "positive_negative"
+	classification_name = "positiveCE_negativeCE"
 	if hparams.include_classes == '':
 		raise ValueError('Please define the classes to use using the 00_01 underscore notation')
 	else:
