@@ -76,3 +76,7 @@ Epoch 00027: val_acc  was not in top 3
 Epoch 00028: val_acc  was not in top 3
 
 Epoch 00029: val_acc  was not in top 3
+
+Epoch 00030: val_acc reached 0.81818 (best 0.82609), saving model to /central/groups/tensorlab/rbao/robosurgery/checkpoints/task1/one_stream/positive_negative/_ckpt_epoch_30.ckpt as top 3
+
+Epoch 00031: val_acc  was not in top 3
