@@ -179,10 +179,10 @@ class FusionModel(LightningModule):
 			self.fc = nn.Linear(args.hidden_size, self.num_classes)
 		elif args.rnn_model == 'convLSTM': 
 			# Twice number of channels for RGB and OF which are concat
-			self.rnn = ConvLSTMCell(input_channels = self.final_channels, hidden_channels = int(self.hparams.conv_layer_size), kernel_size = 3, bias = True)
+			self.rnn = ConvLSTMCell(input_channels = self.final_channels, hidden_channels = int(self.hparams.hidden_size), kernel_size = 3, bias = True)
 			
 			nF = 6 if args.arch.startswith('alexnet') else 7
-			self.fc = nn.Linear(int(self.hparams.conv_layer_size)*nF*nF, self.num_classes) #replace self.final_channels here the parameter must equal the hidden_channels in self.rnn
+			self.fc = nn.Linear(int(self.hparams.hidden_size)*nF*nF, self.num_classes) #replace self.final_channels here the parameter must equal the hidden_channels in self.rnn
 		elif args.rnn_model == 'convttLSTM': 
 			# Twice number of channels for RGB and OF which are concat
 			self.rnn = ConvTTLSTMCell(input_channels = self.final_channels, hidden_channels = int(self.final_channels/2), order = 3, steps = 5, ranks = 16, kernel_size = 3, bias = True)
@@ -412,7 +412,6 @@ if __name__ == '__main__':
 	parser.add_argument('--loader_stride', default=2, type=int, help='stride for dataloader')
 	parser.add_argument('--number_workers', default=0, type=int, help='number of workers for Dataloader')
 	parser.add_argument('--batch_size', default=1, type=int, help='batch size')
-	parser.add_argument('--conv_layer_size', default=16, type=int, help='Size of hidden layers for convlstm')
 	
 	hparams = parser.parse_args()
 	hparams.trainable_base = True if hparams.trainable_base == 1 else False
