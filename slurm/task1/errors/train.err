@@ -10,112 +10,42 @@ Set SLURM handle signals.
 0 | features_of | Sequential   | 2 M   
 1 | rnn         | ConvLSTMCell | 156 K 
 2 | fc          | Linear       | 1 K   
-/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/utilities/distributed.py:25: UserWarning: The dataloader, train dataloader, does not have many workers which may be a bottleneck. Consider increasing the value of the `num_workers` argument` (try 28 which is the number of cpus on this machine) in the `DataLoader` init to improve performance.
-  warnings.warn(*args, **kwargs)
-/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/utilities/distributed.py:25: UserWarning: The dataloader, val dataloader 0, does not have many workers which may be a bottleneck. Consider increasing the value of the `num_workers` argument` (try 28 which is the number of cpus on this machine) in the `DataLoader` init to improve performance.
-  warnings.warn(*args, **kwargs)
+Traceback (most recent call last):
+  File "lightning_train.py", line 469, in <module>
+    trainer.fit(model)
+  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/trainer/trainer.py", line 1003, in fit
+    results = self.single_gpu_train(model)
+  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/trainer/distrib_parts.py", line 186, in single_gpu_train
+    results = self.run_pretrain_routine(model)
+  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/trainer/trainer.py", line 1213, in run_pretrain_routine
+    self.train()
+  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/trainer/training_loop.py", line 370, in train
+    self.run_training_epoch()
+  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/trainer/training_loop.py", line 440, in run_training_epoch
+    enumerate(_with_is_last(train_dataloader)), "get_train_batch"
+  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/profiler/profilers.py", line 64, in profile_iterable
+    value = next(iterator)
+  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/trainer/training_loop.py", line 1012, in _with_is_last
+    last = next(it)
+  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/torch/utils/data/dataloader.py", line 363, in __next__
+    data = self._next_data()
+  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/torch/utils/data/dataloader.py", line 989, in _next_data
+    return self._process_data(data)
+  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/torch/utils/data/dataloader.py", line 1014, in _process_data
+    data.reraise()
+  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/torch/_utils.py", line 395, in reraise
+    raise self.exc_type(msg)
+RuntimeError: Caught RuntimeError in DataLoader worker process 0.
+Original Traceback (most recent call last):
+  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/torch/utils/data/_utils/worker.py", line 185, in _worker_loop
+    data = fetcher.fetch(index)
+  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/torch/utils/data/_utils/fetch.py", line 47, in fetch
+    return self.collate_fn(data)
+  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/torch/utils/data/_utils/collate.py", line 84, in default_collate
+    return [default_collate(samples) for samples in transposed]
+  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/torch/utils/data/_utils/collate.py", line 84, in <listcomp>
+    return [default_collate(samples) for samples in transposed]
+  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/torch/utils/data/_utils/collate.py", line 55, in default_collate
+    return torch.stack(batch, 0, out=out)
+RuntimeError: stack expects each tensor to be equal size, but got [11, 540, 1920, 3] at entry 0 and [49, 540, 1920, 3] at entry 1
 
-Epoch 00032: val_acc  was not in top 3
-
-Epoch 00000: val_acc reached 0.77075 (best 0.77075), saving model to /central/groups/tensorlab/rbao/robosurgery/checkpoints/task1/one_stream/positive_negative/_ckpt_epoch_0.ckpt as top 3
-
-Epoch 00033: val_acc  was not in top 3
-
-Epoch 00001: val_acc reached 0.77075 (best 0.77075), saving model to /central/groups/tensorlab/rbao/robosurgery/checkpoints/task1/one_stream/positive_negative/_ckpt_epoch_1.ckpt as top 3
-
-Epoch 00034: val_acc reached 0.82213 (best 0.82609), saving model to /central/groups/tensorlab/rbao/robosurgery/checkpoints/task1/one_stream/positive_negative/_ckpt_epoch_34.ckpt as top 3
-
-Epoch 00002: val_acc reached 0.75889 (best 0.77075), saving model to /central/groups/tensorlab/rbao/robosurgery/checkpoints/task1/one_stream/positive_negative/_ckpt_epoch_2.ckpt as top 3
-
-Epoch 00035: val_acc  was not in top 3
-
-Epoch 00003: val_acc reached 0.83004 (best 0.83004), saving model to /central/groups/tensorlab/rbao/robosurgery/checkpoints/task1/one_stream/positive_negative/_ckpt_epoch_3_v0.ckpt as top 3
-
-Epoch 00036: val_acc  was not in top 3
-
-Epoch 00037: val_acc  was not in top 3
-
-Epoch 00004: val_acc reached 0.81028 (best 0.83004), saving model to /central/groups/tensorlab/rbao/robosurgery/checkpoints/task1/one_stream/positive_negative/_ckpt_epoch_4.ckpt as top 3
-
-Epoch 00038: val_acc  was not in top 3
-
-Epoch 00005: val_acc reached 0.82213 (best 0.83004), saving model to /central/groups/tensorlab/rbao/robosurgery/checkpoints/task1/one_stream/positive_negative/_ckpt_epoch_5.ckpt as top 3
-
-Epoch 00039: val_acc  was not in top 3
-
-Epoch 00006: val_acc  was not in top 3
-
-Epoch 00040: val_acc  was not in top 3
-
-Epoch 00007: val_acc reached 0.81423 (best 0.83004), saving model to /central/groups/tensorlab/rbao/robosurgery/checkpoints/task1/one_stream/positive_negative/_ckpt_epoch_7.ckpt as top 3
-
-Epoch 00041: val_acc  was not in top 3
-
-Epoch 00008: val_acc reached 0.83399 (best 0.83399), saving model to /central/groups/tensorlab/rbao/robosurgery/checkpoints/task1/one_stream/positive_negative/_ckpt_epoch_8_v1.ckpt as top 3
-
-Epoch 00042: val_acc  was not in top 3
-
-Epoch 00009: val_acc  was not in top 3
-
-Epoch 00043: val_acc  was not in top 3
-lightning_train.py:302: RuntimeWarning: More than 20 figures have been opened. Figures created through the pyplot interface (`matplotlib.pyplot.figure`) are retained until explicitly closed and may consume too much memory. (To control this warning, see the rcParam `figure.max_open_warning`).
-  fig = plt.figure(); sns.heatmap(cm, cmap = cmap_use, ax =plt.gca(), annot = True, xticklabels = self.hparams.include_classes, yticklabels = self.hparams.include_classes)
-
-Epoch 00010: val_acc reached 0.83004 (best 0.83399), saving model to /central/groups/tensorlab/rbao/robosurgery/checkpoints/task1/one_stream/positive_negative/_ckpt_epoch_10_v0.ckpt as top 3
-
-Epoch 00044: val_acc  was not in top 3
-
-Epoch 00011: val_acc  was not in top 3
-
-Epoch 00045: val_acc  was not in top 3
-
-Epoch 00012: val_acc  was not in top 3
-
-Epoch 00046: val_acc  was not in top 3
-
-Epoch 00013: val_acc  was not in top 3
-
-Epoch 00047: val_acc  was not in top 3
-
-Epoch 00014: val_acc  was not in top 3
-
-Epoch 00048: val_acc  was not in top 3
-
-Epoch 00015: val_acc  was not in top 3
-
-Epoch 00049: val_acc  was not in top 3
-
-Epoch 00016: val_acc  was not in top 3
-
-Epoch 00050: val_acc  was not in top 3
-
-Epoch 00017: val_acc  was not in top 3
-
-Epoch 00051: val_acc  was not in top 3
-
-Epoch 00018: val_acc  was not in top 3
-
-Epoch 00052: val_acc  was not in top 3
-
-Epoch 00019: val_acc  was not in top 3
-
-Epoch 00053: val_acc  was not in top 3
-
-Epoch 00020: val_acc  was not in top 3
-
-Epoch 00054: val_acc  was not in top 3
-
-Epoch 00021: val_acc  was not in top 3
-
-Epoch 00055: val_acc  was not in top 3
-
-Epoch 00022: val_acc  was not in top 3
-
-Epoch 00056: val_acc  was not in top 3
-
-Epoch 00023: val_acc  was not in top 3
-slurmstepd: error: *** JOB 11258575 ON hpc-23-34 CANCELLED AT 2020-09-15T18:09:08 DUE TO TIME LIMIT ***
-
-Epoch 00024: val_acc  was not in top 3
-
-Epoch 00025: val_acc reached 0.83399 (best 0.83399), saving model to /central/groups/tensorlab/rbao/robosurgery/checkpoints/task1/one_stream/positive_negative/_ckpt_epoch_25_v0.ckpt as top 3
