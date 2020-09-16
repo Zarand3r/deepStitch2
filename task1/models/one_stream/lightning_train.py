@@ -93,7 +93,7 @@ class FusionModel(LightningModule):
 		self.actual = []; self.actual_train = []
 		self.predicted = []; self.predicted_train = []
 		self.predicted_softmax = []; self.predicted_softmax_train = []
-		self.batch_size = 1
+		self.batch_size = self.hparams.batch_size
 		############################################################################################
 		# Generate the tra300in and test splits
 		fns = []
@@ -179,10 +179,10 @@ class FusionModel(LightningModule):
 			self.fc = nn.Linear(args.hidden_size, self.num_classes)
 		elif args.rnn_model == 'convLSTM': 
 			# Twice number of channels for RGB and OF which are concat
-			self.rnn = ConvLSTMCell(input_channels = self.final_channels, hidden_channels = int(self.final_channels/16), kernel_size = 3, bias = True)
+			self.rnn = ConvLSTMCell(input_channels = self.final_channels, hidden_channels = int(self.hparams.conv_layer_size), kernel_size = 3, bias = True)
 			
 			nF = 6 if args.arch.startswith('alexnet') else 7
-			self.fc = nn.Linear(int(self.final_channels/16)*nF*nF, self.num_classes) #replace self.final_channels here the parameter must equal the hidden_channels in self.rnn
+			self.fc = nn.Linear(int(self.hparams.conv_layer_size)*nF*nF, self.num_classes) #replace self.final_channels here the parameter must equal the hidden_channels in self.rnn
 		elif args.rnn_model == 'convttLSTM': 
 			# Twice number of channels for RGB and OF which are concat
 			self.rnn = ConvTTLSTMCell(input_channels = self.final_channels, hidden_channels = int(self.final_channels/2), order = 3, steps = 5, ranks = 16, kernel_size = 3, bias = True)
@@ -323,14 +323,14 @@ class FusionModel(LightningModule):
 	def train_dataloader(self):
 		train_dataset 	= CustomDataset(self.hparams.datadir, idxs = self.hparams.idx_train , include_classes = self.hparams.include_classes, 
 							flow_method = self.hparams.flow_method, balance_classes=True, mode = 'train', max_frames = self.hparams.loader_nframes, stride = self.hparams.loader_stride)
-		train_dataloader 	= DataLoader(train_dataset, batch_size=self.batch_size, shuffle=True, num_workers=1, drop_last=True)
+		train_dataloader 	= DataLoader(train_dataset, batch_size=self.batch_size, shuffle=True, num_workers=self.hparams.number_workers, drop_last=True)
 		self.epoch_len = len(train_dataset)
 		return train_dataloader
 
 	def val_dataloader(self):
 		val_dataset 	= CustomDataset(self.hparams.datadir, idxs = self.hparams.idx_test , include_classes = self.hparams.include_classes, 
 							flow_method = self.hparams.flow_method, balance_classes=False, mode = 'val', max_frames = self.hparams.loader_nframes, stride = self.hparams.loader_stride)
-		val_dataloader 	= DataLoader(val_dataset, batch_size=self.batch_size, shuffle=False, num_workers=1, drop_last=True)
+		val_dataloader 	= DataLoader(val_dataset, batch_size=self.batch_size, shuffle=False, num_workers=self.hparams.number_workers, drop_last=True)
 		return val_dataloader
 
 	def apply_transforms_GPU(self, batch, random_crop = False):
@@ -403,19 +403,26 @@ if __name__ == '__main__':
 	parser.add_argument('--seed', default=0, type=int)
 	parser.add_argument('--train_proportion', default=0.8, type=float)
 	parser.add_argument('--weight_decay', default=0.01, type=float)
-	parser.add_argument('--accum_batches', default=5, type=int)
+	parser.add_argument('--accum_batches', default=1, type=int)
 	parser.add_argument('--overfit', default=0, type=int)
 	parser.add_argument('--auto_lr', default=0, type=int)
 	parser.add_argument('--use_pretrained', default=1, type=int, help='whether or not to load pretrained weights')
 	parser.add_argument('--logging_dir', default='lightning_logs', type=str)
 	parser.add_argument('--loader_nframes', default=140, type=int, help='How many frames to load at stride 2') #change to 140?
 	parser.add_argument('--loader_stride', default=2, type=int, help='stride for dataloader')
+	parser.add_argument('--number_workers', default=0, type=int, help='number of workers for Dataloader')
+	parser.add_argument('--batch_size', default=1, type=int, help='batch size')
+	parser.add_argument('--conv_layer_size', default=16, type=int, help='Size of hidden layers for convlstm')
 	
 	hparams = parser.parse_args()
 	hparams.trainable_base = True if hparams.trainable_base == 1 else False
 	hparams.random_crop = True if hparams.random_crop == 1 else False
 	hparams.auto_lr = True if hparams.auto_lr == 1 else False
 	hparams.use_pretrained = True if hparams.use_pretrained == 1 else False
+	scale_batch = False
+	if hparams.batch_size < 1:
+		scale_batch='power'
+
 
 	classification_name = "positive_negative"
 	if hparams.include_classes == '':
@@ -448,8 +455,8 @@ if __name__ == '__main__':
 				'accumulate_grad_batches':hparams.accum_batches, 'fast_dev_run' :False, 
 				'num_sanity_val_steps':0, 'reload_dataloaders_every_epoch':False, 
 				'max_epochs' : hparams.epochs, 'log_save_interval':200, 'profiler':False, 
-				'gradient_clip_val':0, 'terminate_on_nan':True,  'auto_lr_find': hparams.auto_lr, 
-				'track_grad_norm': 2, 'checkpoint_callback':checkpoint_callback} # overfit_pct =0.01
+				'gradient_clip_val':0, 'terminate_on_nan':True, 'auto_lr_find': hparams.auto_lr, 
+				'track_grad_norm':2, 'checkpoint_callback':checkpoint_callback, 'auto_scale_batch_size':scale_batch} # overfit_pct =0.01
 	
 	if hparams.overfit == 1:
 		kwargs['overfit_pct'] = 0.05
