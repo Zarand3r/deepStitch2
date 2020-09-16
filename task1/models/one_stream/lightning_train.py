@@ -403,7 +403,7 @@ if __name__ == '__main__':
 	parser.add_argument('--seed', default=0, type=int)
 	parser.add_argument('--train_proportion', default=0.8, type=float)
 	parser.add_argument('--weight_decay', default=0.01, type=float)
-	parser.add_argument('--accum_batches', default=3, type=int)
+	parser.add_argument('--accum_batches', default=5, type=int)
 	parser.add_argument('--overfit', default=0, type=int)
 	parser.add_argument('--auto_lr', default=0, type=int)
 	parser.add_argument('--use_pretrained', default=1, type=int, help='whether or not to load pretrained weights')
