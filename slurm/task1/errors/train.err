@@ -234,3 +234,4 @@ Epoch 00049: val_acc  was not in top 3
 Epoch 00050: val_acc  was not in top 3
 
 Epoch 00051: val_acc  was not in top 3
+slurmstepd: error: *** JOB 11278557 ON hpc-23-36 CANCELLED AT 2020-09-16T18:01:36 ***
