@@ -422,7 +422,6 @@ if __name__ == '__main__':
 	if hparams.batch_size < 1:
 		scale_batch='power'
 
-
 	classification_name = "positive_negative"
 	if hparams.include_classes == '':
 		raise ValueError('Please define the classes to use using the 00_01 underscore notation')

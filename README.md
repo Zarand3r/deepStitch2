@@ -1,5 +1,7 @@
 # Temporally recurrent models of stitch recognition
 
+**This is a continuation of https://github.com/Zarand3r/deepStitch forked from https://github.com/fluongo/deepStitch**
+
 ## Overview
 
 The goal of this project is to apply computer vision techniques (standard two-stream action recogntiion models) towards the goal of
