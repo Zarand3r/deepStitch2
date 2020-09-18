@@ -174,3 +174,52 @@ Epoch 00048: val_acc  was not in top 3
 Epoch 00049: val_acc reached 0.76285 (best 0.77075), saving model to /central/groups/tensorlab/rbao/robosurgery/checkpoints/task1/one_stream/positiveCE_negativeCE/_ckpt_epoch_49.ckpt as top 3
 
 Epoch 00029: val_acc  was not in top 3
+
+Epoch 00050: val_acc  was not in top 3
+
+Epoch 00030: val_acc  was not in top 3
+
+Epoch 00051: val_acc  was not in top 3
+
+Epoch 00052: val_acc  was not in top 3
+
+Epoch 00031: val_acc  was not in top 3
+
+Epoch 00053: val_acc  was not in top 3
+
+Epoch 00054: val_acc  was not in top 3
+
+Epoch 00032: val_acc  was not in top 3
+
+Epoch 00055: val_acc  was not in top 3
+
+Epoch 00056: val_acc  was not in top 3
+
+Epoch 00033: val_acc  was not in top 3
+
+Epoch 00057: val_acc  was not in top 3
+
+Epoch 00034: val_acc  was not in top 3
+
+Epoch 00058: val_acc  was not in top 3
+
+Epoch 00059: val_acc  was not in top 3
+
+Epoch 00035: val_acc  was not in top 3
+
+Epoch 00036: val_acc  was not in top 3
+
+Epoch 00037: val_acc  was not in top 3
+
+Epoch 00038: val_acc  was not in top 3
+
+Epoch 00039: val_acc  was not in top 3
+
+Epoch 00040: val_acc  was not in top 3
+
+Epoch 00041: val_acc  was not in top 3
+
+Epoch 00042: val_acc  was not in top 3
+
+Epoch 00043: val_acc reached 0.83794 (best 0.84190), saving model to /central/groups/tensorlab/rbao/robosurgery/checkpoints/task1/one_stream/positive_negative/_ckpt_epoch_43.ckpt as top 3
+slurmstepd: error: *** JOB 11592657 ON hpc-24-28 CANCELLED AT 2020-09-17T18:13:40 DUE TO TIME LIMIT ***
