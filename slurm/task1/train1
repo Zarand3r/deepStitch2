@@ -31,7 +31,8 @@ cd one_stream
 cd ../
 cd two_stream
 # python lightning_train.py
-python lightning_train.py --rnn_model "convLSTM" --number_workers 3 --accum_batches 10  --hidden_size 16
+# python lightning_train.py --rnn_model "convLSTM" --number_workers 3 --accum_batches 10  --hidden_size 16
+python lightning_train.py --rnn_model "convLSTM" --number_workers 3 --accum_batches 10  --hidden_size 16 --include_classes "positiveCE_negativeCE"
 # python lightning_train.py --arch "resnet18" --rnn_model "LSTM" 
 # python lightning_train.py --arch "resnet18" --rnn_model "convLSTM" 
 
