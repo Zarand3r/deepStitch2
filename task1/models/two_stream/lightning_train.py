@@ -215,7 +215,7 @@ class FusionModel(LightningModule):
 				else:
 					outputs = self.rnn(torch.cat([f, f_of], dim = 1), first_step=False)
 
-			if len(nFrames) == 0:
+			if nFrames == 0:
 				print("NFRAMES IS 0!!!!!!!!!!!!")
 				return outputs, _, _
 				

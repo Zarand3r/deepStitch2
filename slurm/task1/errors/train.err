@@ -12,13 +12,9 @@ Set SLURM handle signals.
 2 | rnn          | ConvLSTMCell | 304 K 
 3 | fc           | Linear       | 3 K   
 
-Epoch 00000: val_acc reached 0.34646 (best 0.34646), saving model to /central/groups/tensorlab/rbao/robosurgery/checkpoints/task1/two_stream/AB_BC_CD_DE_EF_FG/_ckpt_epoch_0.ckpt as top 3
-
-Epoch 00001: val_acc reached 0.43701 (best 0.43701), saving model to /central/groups/tensorlab/rbao/robosurgery/checkpoints/task1/two_stream/AB_BC_CD_DE_EF_FG/_ckpt_epoch_1.ckpt as top 3
-
-Epoch 00002: val_acc reached 0.53150 (best 0.53150), saving model to /central/groups/tensorlab/rbao/robosurgery/checkpoints/task1/two_stream/AB_BC_CD_DE_EF_FG/_ckpt_epoch_2.ckpt as top 3
+Epoch 00000: val_acc reached 0.33071 (best 0.33071), saving model to /central/groups/tensorlab/rbao/robosurgery/checkpoints/task1/two_stream/AB_BC_CD_DE_EF_FG/_ckpt_epoch_0_v0.ckpt as top 3
 Traceback (most recent call last):
-  File "lightning_train.py", line 439, in <module>
+  File "lightning_train.py", line 443, in <module>
     trainer.fit(model)
   File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/trainer/trainer.py", line 1003, in fit
     results = self.single_gpu_train(model)
@@ -36,10 +32,10 @@ Traceback (most recent call last):
     output = self.evaluation_forward(model, batch, batch_idx, dataloader_idx, test_mode)
   File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/trainer/evaluation_loop.py", line 470, in evaluation_forward
     output = model.validation_step(*args)
-  File "lightning_train.py", line 242, in validation_step
+  File "lightning_train.py", line 246, in validation_step
     output, _, _ = self(input_cuda)
   File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/torch/nn/modules/module.py", line 722, in _call_impl
     result = self.forward(*input, **kwargs)
-  File "lightning_train.py", line 218, in forward
-    outputs = outputs.reshape(outputs.size(0), -1)
+  File "lightning_train.py", line 220, in forward
+    return outputs, _, _
 UnboundLocalError: local variable 'outputs' referenced before assignment
