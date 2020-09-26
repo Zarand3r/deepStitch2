@@ -28,6 +28,7 @@ sys.path.insert(1, f"{homedir}" + '/utils')
 from convlstmcells import ConvLSTMCell, ConvTTLSTMCell
 import settings1
 
+
 class CustomDataset(Dataset):
 	"""CustomDataset"""
 	def __init__(self, global_dir, idxs= None, include_classes = [], flow_method = 'flownet', balance_classes = False, mode = 'train', max_frames = 150, stride = 2):
@@ -35,11 +36,14 @@ class CustomDataset(Dataset):
 		self.mode = mode
 		self.max_frames = stride*max_frames
 		self.stride = stride
+
 		if len(include_classes) == 0:
 			self.classes = os.listdir(global_dir)
+			self.remove_empty()
 			fns = glob.glob(os.path.join(global_dir, '*', '%s*' % flow_method))
 		else:
 			self.classes = include_classes
+			self.remove_empty()
 			fns = []
 			for class_curr in include_classes:
 				fns.extend(glob.glob(os.path.join(global_dir, class_curr, "optical_flow", '%s*' % flow_method)))
@@ -85,6 +89,16 @@ class CustomDataset(Dataset):
 		else:
 			raise ValueError('not supported mode must be train or test')
 		return (video, label)
+
+	def remove_empty(self):
+		for class_curr in self.classes:
+			for path, subdirs, files in os.walk(os.path.join(self.global_dir, self.class_curr)):
+				for name in files:
+					fname = os.path.join(path, name)
+					cap = cv2.VideoCapture(fname)
+					length = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+					if length < 10:
+						os.remove(fname)
 
 class FusionModel(LightningModule):
 	def __init__(self, args):
@@ -178,6 +192,7 @@ class FusionModel(LightningModule):
 
 	def forward(self, inputs, hidden=None, steps=0):
 		nBatch, nFrames, ofH, ofW, nChannels, _ = inputs.shape
+		assert nFrames > 0, "cannot have videos with 0 frames"
 		
 		#########################################################################################
 		# Non convolutional (old way)
@@ -214,10 +229,6 @@ class FusionModel(LightningModule):
 					outputs = self.rnn(torch.cat([f, f_of], dim = 1), first_step=True)
 				else:
 					outputs = self.rnn(torch.cat([f, f_of], dim = 1), first_step=False)
-
-			if nFrames == 0:
-				print("NFRAMES IS 0!!!!!!!!!!!!")
-				return outputs, _, _
 				
 			outputs = outputs.reshape(outputs.size(0), -1)
 			outputs = self.fc(outputs)
