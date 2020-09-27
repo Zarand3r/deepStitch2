@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 from copy import deepcopy
 from scipy.special import softmax
 import numpy as np
+import cv2
 
 # Torch imports
 from pytorch_lightning.core.lightning import LightningModule
@@ -92,7 +93,7 @@ class CustomDataset(Dataset):
 
 	def remove_empty(self):
 		for class_curr in self.classes:
-			for path, subdirs, files in os.walk(os.path.join(self.global_dir, self.class_curr)):
+			for path, subdirs, files in os.walk(os.path.join(self.global_dir, class_curr)):
 				for name in files:
 					fname = os.path.join(path, name)
 					cap = cv2.VideoCapture(fname)
