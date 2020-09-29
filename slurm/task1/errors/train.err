@@ -9,40 +9,40 @@ Set SLURM handle signals.
 ----------------------------------------------
 0 | features_rgb | Sequential   | 2 M   
 1 | features_of  | Sequential   | 2 M   
-2 | rnn          | ConvLSTMCell | 304 K 
-3 | fc           | Linear       | 3 K   
+2 | rnn          | ConvLSTMCell | 1 M   
+3 | fc           | Linear       | 13 K  
 
-Epoch 00000: val_acc reached 0.34921 (best 0.34921), saving model to /central/groups/tensorlab/rbao/robosurgery/checkpoints/task1/two_stream/AB_BC_CD_DE_EF_FG/_ckpt_epoch_0_v1.ckpt as top 3
+Epoch 00000: val_acc reached 0.42688 (best 0.42688), saving model to /central/groups/tensorlab/rbao/robosurgery/checkpoints/task1/two_stream/AB_BC_CD_DE_EF_FG/_ckpt_epoch_0_v1.ckpt as top 3
 
-Epoch 00001: val_acc reached 0.48413 (best 0.48413), saving model to /central/groups/tensorlab/rbao/robosurgery/checkpoints/task1/two_stream/AB_BC_CD_DE_EF_FG/_ckpt_epoch_1_v0.ckpt as top 3
+Epoch 00001: val_acc reached 0.48221 (best 0.48221), saving model to /central/groups/tensorlab/rbao/robosurgery/checkpoints/task1/two_stream/AB_BC_CD_DE_EF_FG/_ckpt_epoch_1_v0.ckpt as top 3
 
-Epoch 00002: val_acc reached 0.54365 (best 0.54365), saving model to /central/groups/tensorlab/rbao/robosurgery/checkpoints/task1/two_stream/AB_BC_CD_DE_EF_FG/_ckpt_epoch_2_v0.ckpt as top 3
+Epoch 00002: val_acc reached 0.57312 (best 0.57312), saving model to /central/groups/tensorlab/rbao/robosurgery/checkpoints/task1/two_stream/AB_BC_CD_DE_EF_FG/_ckpt_epoch_2_v0.ckpt as top 3
 
-Epoch 00003: val_acc reached 0.52381 (best 0.54365), saving model to /central/groups/tensorlab/rbao/robosurgery/checkpoints/task1/two_stream/AB_BC_CD_DE_EF_FG/_ckpt_epoch_3.ckpt as top 3
+Epoch 00003: val_acc reached 0.61265 (best 0.61265), saving model to /central/groups/tensorlab/rbao/robosurgery/checkpoints/task1/two_stream/AB_BC_CD_DE_EF_FG/_ckpt_epoch_3.ckpt as top 3
 
-Epoch 00004: val_acc reached 0.54762 (best 0.54762), saving model to /central/groups/tensorlab/rbao/robosurgery/checkpoints/task1/two_stream/AB_BC_CD_DE_EF_FG/_ckpt_epoch_4.ckpt as top 3
+Epoch 00004: val_acc reached 0.68379 (best 0.68379), saving model to /central/groups/tensorlab/rbao/robosurgery/checkpoints/task1/two_stream/AB_BC_CD_DE_EF_FG/_ckpt_epoch_4.ckpt as top 3
 
-Epoch 00005: val_acc reached 0.61111 (best 0.61111), saving model to /central/groups/tensorlab/rbao/robosurgery/checkpoints/task1/two_stream/AB_BC_CD_DE_EF_FG/_ckpt_epoch_5.ckpt as top 3
+Epoch 00005: val_acc reached 0.70751 (best 0.70751), saving model to /central/groups/tensorlab/rbao/robosurgery/checkpoints/task1/two_stream/AB_BC_CD_DE_EF_FG/_ckpt_epoch_5.ckpt as top 3
 
-Epoch 00006: val_acc reached 0.60714 (best 0.61111), saving model to /central/groups/tensorlab/rbao/robosurgery/checkpoints/task1/two_stream/AB_BC_CD_DE_EF_FG/_ckpt_epoch_6.ckpt as top 3
+Epoch 00006: val_acc reached 0.75099 (best 0.75099), saving model to /central/groups/tensorlab/rbao/robosurgery/checkpoints/task1/two_stream/AB_BC_CD_DE_EF_FG/_ckpt_epoch_6.ckpt as top 3
 
-Epoch 00007: val_acc reached 0.65873 (best 0.65873), saving model to /central/groups/tensorlab/rbao/robosurgery/checkpoints/task1/two_stream/AB_BC_CD_DE_EF_FG/_ckpt_epoch_7.ckpt as top 3
+Epoch 00007: val_acc  was not in top 3
 
-Epoch 00008: val_acc reached 0.68651 (best 0.68651), saving model to /central/groups/tensorlab/rbao/robosurgery/checkpoints/task1/two_stream/AB_BC_CD_DE_EF_FG/_ckpt_epoch_8.ckpt as top 3
+Epoch 00008: val_acc reached 0.73913 (best 0.75099), saving model to /central/groups/tensorlab/rbao/robosurgery/checkpoints/task1/two_stream/AB_BC_CD_DE_EF_FG/_ckpt_epoch_8.ckpt as top 3
 
-Epoch 00009: val_acc reached 0.61905 (best 0.68651), saving model to /central/groups/tensorlab/rbao/robosurgery/checkpoints/task1/two_stream/AB_BC_CD_DE_EF_FG/_ckpt_epoch_9.ckpt as top 3
+Epoch 00009: val_acc  was not in top 3
 lightning_train.py:292: RuntimeWarning: More than 20 figures have been opened. Figures created through the pyplot interface (`matplotlib.pyplot.figure`) are retained until explicitly closed and may consume too much memory. (To control this warning, see the rcParam `figure.max_open_warning`).
   fig = plt.figure(); sns.heatmap(cm, cmap = cmap_use, ax =plt.gca(), annot = True, xticklabels = self.hparams.include_classes, yticklabels = self.hparams.include_classes)
 
-Epoch 00010: val_acc reached 0.66270 (best 0.68651), saving model to /central/groups/tensorlab/rbao/robosurgery/checkpoints/task1/two_stream/AB_BC_CD_DE_EF_FG/_ckpt_epoch_10.ckpt as top 3
+Epoch 00010: val_acc reached 0.74704 (best 0.75099), saving model to /central/groups/tensorlab/rbao/robosurgery/checkpoints/task1/two_stream/AB_BC_CD_DE_EF_FG/_ckpt_epoch_10.ckpt as top 3
 
-Epoch 00011: val_acc reached 0.67460 (best 0.68651), saving model to /central/groups/tensorlab/rbao/robosurgery/checkpoints/task1/two_stream/AB_BC_CD_DE_EF_FG/_ckpt_epoch_11.ckpt as top 3
+Epoch 00011: val_acc reached 0.76680 (best 0.76680), saving model to /central/groups/tensorlab/rbao/robosurgery/checkpoints/task1/two_stream/AB_BC_CD_DE_EF_FG/_ckpt_epoch_11.ckpt as top 3
 
-Epoch 00012: val_acc reached 0.69841 (best 0.69841), saving model to /central/groups/tensorlab/rbao/robosurgery/checkpoints/task1/two_stream/AB_BC_CD_DE_EF_FG/_ckpt_epoch_12.ckpt as top 3
+Epoch 00012: val_acc reached 0.77866 (best 0.77866), saving model to /central/groups/tensorlab/rbao/robosurgery/checkpoints/task1/two_stream/AB_BC_CD_DE_EF_FG/_ckpt_epoch_12_v0.ckpt as top 3
 
-Epoch 00013: val_acc  was not in top 3
+Epoch 00013: val_acc reached 0.75494 (best 0.77866), saving model to /central/groups/tensorlab/rbao/robosurgery/checkpoints/task1/two_stream/AB_BC_CD_DE_EF_FG/_ckpt_epoch_13.ckpt as top 3
 
-Epoch 00014: val_acc reached 0.67857 (best 0.69841), saving model to /central/groups/tensorlab/rbao/robosurgery/checkpoints/task1/two_stream/AB_BC_CD_DE_EF_FG/_ckpt_epoch_14.ckpt as top 3
+Epoch 00014: val_acc reached 0.76285 (best 0.77866), saving model to /central/groups/tensorlab/rbao/robosurgery/checkpoints/task1/two_stream/AB_BC_CD_DE_EF_FG/_ckpt_epoch_14.ckpt as top 3
 
 Epoch 00015: val_acc  was not in top 3
 
@@ -50,9 +50,9 @@ Epoch 00016: val_acc  was not in top 3
 
 Epoch 00017: val_acc  was not in top 3
 
-Epoch 00018: val_acc  was not in top 3
+Epoch 00018: val_acc reached 0.76680 (best 0.77866), saving model to /central/groups/tensorlab/rbao/robosurgery/checkpoints/task1/two_stream/AB_BC_CD_DE_EF_FG/_ckpt_epoch_18.ckpt as top 3
 
-Epoch 00019: val_acc reached 0.68254 (best 0.69841), saving model to /central/groups/tensorlab/rbao/robosurgery/checkpoints/task1/two_stream/AB_BC_CD_DE_EF_FG/_ckpt_epoch_19.ckpt as top 3
+Epoch 00019: val_acc  was not in top 3
 
 Epoch 00020: val_acc  was not in top 3
 
@@ -64,15 +64,15 @@ Epoch 00023: val_acc  was not in top 3
 
 Epoch 00024: val_acc  was not in top 3
 
-Epoch 00025: val_acc reached 0.69444 (best 0.69841), saving model to /central/groups/tensorlab/rbao/robosurgery/checkpoints/task1/two_stream/AB_BC_CD_DE_EF_FG/_ckpt_epoch_25.ckpt as top 3
+Epoch 00025: val_acc  was not in top 3
 
 Epoch 00026: val_acc  was not in top 3
 
 Epoch 00027: val_acc  was not in top 3
 
-Epoch 00028: val_acc  was not in top 3
+Epoch 00028: val_acc reached 0.77470 (best 0.77866), saving model to /central/groups/tensorlab/rbao/robosurgery/checkpoints/task1/two_stream/AB_BC_CD_DE_EF_FG/_ckpt_epoch_28.ckpt as top 3
 
-Epoch 00029: val_acc reached 0.69048 (best 0.69841), saving model to /central/groups/tensorlab/rbao/robosurgery/checkpoints/task1/two_stream/AB_BC_CD_DE_EF_FG/_ckpt_epoch_29.ckpt as top 3
+Epoch 00029: val_acc reached 0.77470 (best 0.77866), saving model to /central/groups/tensorlab/rbao/robosurgery/checkpoints/task1/two_stream/AB_BC_CD_DE_EF_FG/_ckpt_epoch_29.ckpt as top 3
 
 Epoch 00030: val_acc  was not in top 3
 
@@ -116,5 +116,20 @@ Epoch 00049: val_acc  was not in top 3
 
 Epoch 00050: val_acc  was not in top 3
 
-Epoch 00051: val_acc reached 0.69444 (best 0.69841), saving model to /central/groups/tensorlab/rbao/robosurgery/checkpoints/task1/two_stream/AB_BC_CD_DE_EF_FG/_ckpt_epoch_51.ckpt as top 3
-slurmstepd: error: *** JOB 11645282 ON hpc-23-30 CANCELLED AT 2020-09-26T23:42:40 DUE TO TIME LIMIT ***
+Epoch 00051: val_acc  was not in top 3
+
+Epoch 00052: val_acc  was not in top 3
+
+Epoch 00053: val_acc  was not in top 3
+
+Epoch 00054: val_acc  was not in top 3
+
+Epoch 00055: val_acc  was not in top 3
+
+Epoch 00056: val_acc  was not in top 3
+
+Epoch 00057: val_acc  was not in top 3
+
+Epoch 00058: val_acc  was not in top 3
+
+Epoch 00059: val_acc  was not in top 3
