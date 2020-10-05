@@ -66,8 +66,77 @@ def cloak(args):
 		if k == 27:
 			break
 
-def detect_dot():
-	return
+def detect_dot(args):
+	cap = cv2.VideoCapture(args.video if args.video else 0)
+	if cap.isOpened():
+		while(True):
+			ret, frame = cap.read()
+			# blurring the frame that's captured
+			frame_gau_blur = cv2.GaussianBlur(frame, (3, 3), 0)
+			# converting BGR to HSV
+			hsv = cv2.cvtColor(frame_gau_blur, cv2.COLOR_BGR2HSV)
+			# the range of yellow color in HSV
+			lower_yellow = np.array([20, 190, 190])
+			higher_yellow = np.array([50, 250, 250])
+			yellow_range = cv2.inRange(hsv, lower_yellow, higher_yellow)
+			# canny_edge = cv2.Canny(yellow_range, 300, 500)
+			canny_edge = cv2.Canny(frame_gau_blur, 300, 500)
+			contours, _ = cv2.findContours(canny_edge, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+			contour_list = []
+			for contour in contours:
+				approx = cv2.approxPolyDP(contour,0.01*cv2.arcLength(contour,True),True)
+				area = cv2.contourArea(contour)
+				if (area > 10):
+					contour_list.append(contour)
+			# cv2.drawContours(frame, contour_list,  -1, (255,0,0), -1)
+			cv2.fillPoly(frame,pts=contour_list,color=(0,0,0))
+
+			# contours = sorted(contours, key=lambda x: cv2.contourArea(x))
+			# biggest = contours[int(len(contours)/2):]
+			# # biggest= max(contours, key = cv2.contourArea)
+			# cv2.fillPoly(frame,pts=biggest,color=(0,0,0))
+			# #	cv2.drawContours(frame, biggest, -1, (0, 0, 255), thickness=-1)
+
+			cv2.imshow('circles', frame)
+			# cv2.imshow('circles', canny_edge)
+			k = cv2.waitKey(5) & 0xFF
+			if k == 27:
+				break
+
+			# ret, frame = cap.read()
+			# # blurring the frame that's captured
+			# frame_gau_blur = cv2.GaussianBlur(frame, (3, 3), 0)
+			# # converting BGR to HSV
+			# hsv = cv2.cvtColor(frame_gau_blur, cv2.COLOR_BGR2HSV)
+			# # the range of yellow color in HSV
+			# lower_yellow = np.array([28, 200, 200])
+			# higher_yellow = np.array([33, 230, 240])
+			# # getting the range of yellow color in frame
+			# yellow_range = cv2.inRange(hsv, lower_yellow, higher_yellow)
+			# res_yellow = cv2.bitwise_and(frame_gau_blur,frame_gau_blur, mask=yellow_range)
+			# yellow_s_gray = cv2.cvtColor(res_yellow, cv2.COLOR_BGR2GRAY)
+			# canny_edge = cv2.Canny(yellow_range, 300, 500)
+			# # applying HoughCircles
+			# circles = cv2.HoughCircles(canny_edge, cv2.HOUGH_GRADIENT, dp=1, minDist=10, param1=10, param2=20, minRadius=5, maxRadius=50)
+			# cir_cen = []
+			# if circles is not None:
+			# 	# circles = np.uint16(np.around(circles))
+			# 	for i in circles[0,:]:
+			# 		# drawing on detected circle and its center
+			# 		cv2.circle(frame,(i[0],i[1]),i[2],(0,255,0),2)
+			# 		cv2.circle(frame,(i[0],i[1]),2,(0,0,255),3)
+			# 		cir_cen.append((i[0],i[1]))
+			# print(cir_cen)
+			# contours, _ = cv2.findContours(canny_edge, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+			# cv2.imshow('circles', frame)
+			# k = cv2.waitKey(5) & 0xFF
+			# if k == 27:
+			# 	break
+		cv2.destroyAllWindows()
+	else:
+		print('no cam')
+		return
 
 def cover_dot(args):
 	cap = cv2.VideoCapture(args.video if args.video else 0)
@@ -79,7 +148,7 @@ def cover_dot(args):
 	output_directory += "_masked"
 	output_path = os.path.join(output_directory, output_fname)
 	if not os.path.exists(output_directory):
-   		os.makedirs(output_directory)
+		os.makedirs(output_directory)
 	result = cv2.VideoWriter(output_path, cv2.VideoWriter_fourcc(*'MP4V'), frame_fps, (frame_width,frame_height)) 
 
 	# We give some time for the camera to setup
@@ -136,7 +205,7 @@ def cover_dot(args):
 if __name__ == '__main__':
 	parser = argparse.ArgumentParser()
 	# Input argument
-	parser.add_argument("--video", default = "test_videos/test.mp4", help = "Path to input video file. Skip this argument to capture frames from a camera.")
+	parser.add_argument("--video", default = "test_videos/test1.mp4", help = "Path to input video file. Skip this argument to capture frames from a camera.")
 	parser.add_argument("--mode", default = "2", help = "Enter 1 to mask with background. Enter 2 to mask with a black cover")
 	parser.add_argument("--optical", dest='optical', action='store_true', help = "Is the input video a split screen with optical flow?")
 	parser.add_argument("--visualize", dest='visualize', action='store_true', help = "see the masked video frame by frame")
@@ -144,4 +213,5 @@ if __name__ == '__main__':
 	if args.mode == 1:
 		cloak(args)
 	else:
-		cover_dot(args)
+		# cover_dot(args)
+		detect_dot(args)
