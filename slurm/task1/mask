@@ -2,20 +2,18 @@
 #SBATCH --time=2:00:00   # walltime
 #SBATCH --ntasks=1   # number of processor cores (i.e. tasks)
 #SBATCH --nodes=1   # number of nodes
-#SBATCH --gres=gpu:1
 #SBATCH --mail-user=rbao@caltech.edu   # email address
 #SBATCH --mail-type=BEGIN
 #SBATCH --mail-type=END
 #SBATCH --mail-type=FAIL
-#SBATCH --error=errors/optical.err 
-#SBATCH --output=outputs/optical.out
+#SBATCH --error=errors/mask.err 
+#SBATCH --output=outputs/mask.out
 
 #Submit this script with: sbatch thefilename
 
 #Activate conda env
 #conda activate tensor
 source activate tensor
-nvidia-smi
 echo "Environment activated, running masking scripts...."
 
 cd ../../
@@ -30,7 +28,4 @@ for D in $(find /central/groups/tensorlab/rbao/robosurgery/balint_data/classific
     echo $D 
     python mask1.py --video $D --optical
 done
-
-#srun ./central/groups/tensorlab/rbao/robosurgery/deepStitch/task1/preprocessing/optical_flow/generate_flows.sh
-
 
