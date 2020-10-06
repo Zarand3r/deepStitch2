@@ -32,7 +32,7 @@ import settings1
 
 class CustomDataset(Dataset):
 	"""CustomDataset"""
-	def __init__(self, global_dir, idxs= None, include_classes = [], flow_method = 'flownet', balance_classes = False, mode = 'train', max_frames = 150, stride = 2):
+	def __init__(self, global_dir, idxs= None, include_classes = [], flow_method = 'flownet', balance_classes = False, mode = 'train', max_frames = 150, stride = 2, masked=""):
 		self.global_dir = global_dir
 		self.mode = mode
 		self.max_frames = stride*max_frames
@@ -47,7 +47,7 @@ class CustomDataset(Dataset):
 			self.remove_empty()
 			fns = []
 			for class_curr in include_classes:
-				fns.extend(glob.glob(os.path.join(global_dir, class_curr, "optical_flow", '%s*' % flow_method)))
+				fns.extend(glob.glob(os.path.join(global_dir, class_curr, "optical_flow"+masked, '%s*' % flow_method)))
 		if len(fns) == 0:
 			raise ValueError('Likely that you have not pre-computed the optical flow or data directory is wrong!')
 		if idxs == None: # load all
@@ -113,7 +113,7 @@ class FusionModel(LightningModule):
 		# Generate the tra300in and test splits
 		fns = []
 		for class_curr in self.hparams.include_classes:
-			fns.extend(glob.glob(os.path.join(self.hparams.datadir, class_curr, "optical_flow", '%s*' % self.hparams.flow_method)))
+			fns.extend(glob.glob(os.path.join(self.hparams.datadir, class_curr, "optical_flow"+self.hparams.masked, '%s*' % self.hparams.flow_method)))
 		idx = list(range(len(fns)))
 		random.seed(self.hparams.seed); random.shuffle(idx)
 		self.hparams.idx_train 	= idx[:int(self.hparams.train_proportion*len(idx))].copy() # Save as hyperparams
@@ -312,14 +312,16 @@ class FusionModel(LightningModule):
 
 	def train_dataloader(self):
 		train_dataset 	= CustomDataset(self.hparams.datadir, idxs = self.hparams.idx_train , include_classes = self.hparams.include_classes, 
-							flow_method = self.hparams.flow_method, balance_classes=True, mode = 'train', max_frames = self.hparams.loader_nframes, stride = self.hparams.loader_stride)
+							flow_method = self.hparams.flow_method, balance_classes=True, mode = 'train', max_frames = self.hparams.loader_nframes,
+							stride = self.hparams.loader_stride, masked = self.hparams.masked)
 		train_dataloader 	= DataLoader(train_dataset, batch_size=self.batch_size, shuffle=True, num_workers=self.hparams.number_workers, drop_last=True)
 		self.epoch_len = len(train_dataset)
 		return train_dataloader
 
 	def val_dataloader(self):
 		val_dataset 	= CustomDataset(self.hparams.datadir, idxs = self.hparams.idx_test , include_classes = self.hparams.include_classes, 
-							flow_method = self.hparams.flow_method, balance_classes=False, mode = 'val', max_frames = self.hparams.loader_nframes, stride = self.hparams.loader_stride)
+							flow_method = self.hparams.flow_method, balance_classes=False, mode = 'val', max_frames = self.hparams.loader_nframes,
+							stride = self.hparams.loader_stride, masked = self.hparams.masked)
 		val_dataloader 	= DataLoader(val_dataset, batch_size=self.batch_size, shuffle=False, num_workers=self.hparams.number_workers, drop_last=True)
 		return val_dataloader
 
@@ -403,12 +405,17 @@ if __name__ == '__main__':
 	parser.add_argument('--loader_stride', default=2, type=int, help='stride for dataloader')
 	parser.add_argument('--number_workers', default=0, type=int, help='number of workers for Dataloader')
 	parser.add_argument('--batch_size', default=1, type=int, help='batch size')
+	parser.add_argument('--masked', dest='masked', action='store_true', help = "train on masked?")
 	
 	hparams = parser.parse_args()
 	hparams.trainable_base = True if hparams.trainable_base == 1 else False
 	hparams.random_crop = True if hparams.random_crop == 1 else False
 	hparams.auto_lr = True if hparams.auto_lr == 1 else False
 	hparams.use_pretrained = True if hparams.use_pretrained == 1 else False
+	if hparams.masked:
+		hparams.masked = "masked"
+	else:
+		hparams.masked = ""
 
 	classification_name = "positiveCE_negativeCE"
 	if hparams.include_classes == '':
