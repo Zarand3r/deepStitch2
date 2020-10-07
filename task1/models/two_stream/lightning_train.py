@@ -413,7 +413,7 @@ if __name__ == '__main__':
 	hparams.auto_lr = True if hparams.auto_lr == 1 else False
 	hparams.use_pretrained = True if hparams.use_pretrained == 1 else False
 	if hparams.masked:
-		hparams.masked = "masked"
+		hparams.masked = "_masked"
 	else:
 		hparams.masked = ""
 

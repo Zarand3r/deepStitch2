@@ -423,7 +423,7 @@ if __name__ == '__main__':
 	hparams.use_pretrained = True if hparams.use_pretrained == 1 else False
 	scale_batch = False
 	if hparams.masked:
-		hparams.masked = "masked"
+		hparams.masked = "_masked"
 	else:
 		hparams.masked = ""
 	if hparams.batch_size < 1:

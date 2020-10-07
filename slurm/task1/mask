@@ -31,18 +31,20 @@ cd mask
 for D in $(find /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/BC -mindepth 2 -maxdepth 2) ; do
     echo $D 
     python mask1.py --video $D --optical
+done
 
 for D in $(find /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/CD -mindepth 2 -maxdepth 2) ; do
     echo $D 
     python mask1.py --video $D --optical
+done
 
 for D in $(find /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/DE -mindepth 2 -maxdepth 2) ; do
     echo $D 
     python mask1.py --video $D --optical
+done
 
 for D in $(find /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/EF -mindepth 2 -maxdepth 2) ; do
     echo $D 
     python mask1.py --video $D --optical
-
 done
 
