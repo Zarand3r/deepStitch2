@@ -51,3 +51,85 @@ Epoch 00016: val_acc  was not in top 3
 Epoch 00017: val_acc  was not in top 3
 
 Epoch 00018: val_acc  was not in top 3
+
+Epoch 00019: val_acc  was not in top 3
+
+Epoch 00020: val_acc  was not in top 3
+
+Epoch 00021: val_acc  was not in top 3
+
+Epoch 00022: val_acc  was not in top 3
+
+Epoch 00023: val_acc  was not in top 3
+
+Epoch 00024: val_acc  was not in top 3
+
+Epoch 00025: val_acc  was not in top 3
+
+Epoch 00026: val_acc  was not in top 3
+
+Epoch 00027: val_acc  was not in top 3
+
+Epoch 00028: val_acc  was not in top 3
+
+Epoch 00029: val_acc  was not in top 3
+
+Epoch 00030: val_acc  was not in top 3
+
+Epoch 00031: val_acc  was not in top 3
+
+Epoch 00032: val_acc reached 0.66798 (best 0.67589), saving model to /central/groups/tensorlab/rbao/robosurgery/checkpoints/task1/two_stream/AB_BC_CD_DE_EF_FG/_ckpt_epoch_32.ckpt as top 3
+
+Epoch 00033: val_acc  was not in top 3
+
+Epoch 00034: val_acc  was not in top 3
+
+Epoch 00035: val_acc  was not in top 3
+
+Epoch 00036: val_acc  was not in top 3
+
+Epoch 00037: val_acc  was not in top 3
+
+Epoch 00038: val_acc  was not in top 3
+
+Epoch 00039: val_acc  was not in top 3
+
+Epoch 00040: val_acc  was not in top 3
+
+Epoch 00041: val_acc  was not in top 3
+
+Epoch 00042: val_acc  was not in top 3
+
+Epoch 00043: val_acc  was not in top 3
+
+Epoch 00044: val_acc  was not in top 3
+
+Epoch 00045: val_acc  was not in top 3
+
+Epoch 00046: val_acc  was not in top 3
+
+Epoch 00047: val_acc  was not in top 3
+
+Epoch 00048: val_acc  was not in top 3
+
+Epoch 00049: val_acc reached 0.66798 (best 0.67589), saving model to /central/groups/tensorlab/rbao/robosurgery/checkpoints/task1/two_stream/AB_BC_CD_DE_EF_FG/_ckpt_epoch_49.ckpt as top 3
+
+Epoch 00050: val_acc  was not in top 3
+
+Epoch 00051: val_acc  was not in top 3
+
+Epoch 00052: val_acc  was not in top 3
+
+Epoch 00053: val_acc  was not in top 3
+
+Epoch 00054: val_acc  was not in top 3
+
+Epoch 00055: val_acc  was not in top 3
+
+Epoch 00056: val_acc  was not in top 3
+
+Epoch 00057: val_acc  was not in top 3
+
+Epoch 00058: val_acc  was not in top 3
+
+Epoch 00059: val_acc  was not in top 3
