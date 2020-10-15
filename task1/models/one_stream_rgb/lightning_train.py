@@ -123,7 +123,7 @@ class FusionModel(LightningModule):
 			# for i, param in enumerate(self.features_of.parameters()):
 			# 	param.requires_grad = self.trainable_base
 			
-			Make the output of each one be to fc_size/2 so that we cooncat the two fc outputs
+			#Make the output of each one be to fc_size/2 so that we cooncat the two fc outputs
 			self.fc_pre_rgb = nn.Sequential(nn.Linear(256*6*6, int(args.fc_size/2) ), nn.Dropout()) if 'conv' not in args.rnn_model else None
 			# self.fc_pre_of = nn.Sequential(nn.Linear(256*6*6, int(args.fc_size/2) ), nn.Dropout()) if 'conv' not in args.rnn_model else None
 			self.final_channels = 256
