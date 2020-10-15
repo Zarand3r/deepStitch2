@@ -217,7 +217,7 @@ def cover_dot(args):
 if __name__ == '__main__':
 	parser = argparse.ArgumentParser()
 	# Input argument
-	parser.add_argument("--video", default = "test_videos/test2.mp4", help = "Path to input video file. Skip this argument to capture frames from a camera.")
+	parser.add_argument("--video", default = "test_videos/test3.m4v", help = "Path to input video file. Skip this argument to capture frames from a camera.")
 	parser.add_argument("--mode", default = "2", help = "Enter 1 to mask with background. Enter 2 to mask with a black cover")
 	parser.add_argument("--optical", dest='optical', action='store_true', help = "Is the input video a split screen with optical flow?")
 	parser.add_argument("--visualize", dest='visualize', action='store_true', help = "see the masked video frame by frame")

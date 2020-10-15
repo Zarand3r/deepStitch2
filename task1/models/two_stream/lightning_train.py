@@ -430,14 +430,14 @@ if __name__ == '__main__':
 	model = FusionModel(hparams)
 	#####################################################################################
 	print('Logging to: % s' % hparams.logging_dir)
-	logger = TensorBoardLogger(hparams.logging_dir, name='%s/%s_%s_%s' %(classification_name, hparams.arch, hparams.trainable_base, hparams.rnn_model))
+	logger = TensorBoardLogger(hparams.logging_dir, name='%s/%s_%s_%s%s' %(classification_name, hparams.arch, hparams.trainable_base, hparams.rnn_model, hparams.masked))
 	logger.log_hyperparams(hparams) # Log the hyperparameters
 	# Set default device
 	# torch.cuda.set_device(hparams.gpu)
 
 	checkpoint_callback = ModelCheckpoint(
 		# filepath=os.path.join(logger.log_dir, 'checkpoints'),
-		filepath=os.path.join(settings1.checkpoints, "two_stream", classification_name, f'{hparams.arch}_{hparams.trainable_base}_{hparams.rnn_model}'),
+		filepath=os.path.join(settings1.checkpoints, "two_stream", classification_name, f'{hparams.arch}_{hparams.trainable_base}_{hparams.rnn_model}{hparams.masked}'),
 		save_top_k=3,
 		verbose=True,
 		monitor='val_acc',
