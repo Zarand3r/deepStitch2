@@ -24,7 +24,7 @@ cd models
 cd one_stream_rgb
 
 # python lightning_train.py
-# python lightning_train.py --rnn_model "convLSTM" --number_workers 3 --accum_batches 10 --hidden_size 16 --include_classes "positiveCE_negativeCE" 
+# python lightning_train.py --rnn_model "convLSTM" --number_workers 3 --accum_batches 10 --hidden_size 16 --include_classes "CE_negativeCE" 
 python lightning_train.py --rnn_model "convLSTM" --number_workers 3 --hidden_size 64 --include_classes "AB_BC_CE_FG" --masked
 # python lightning_train.py --rnn_model "convLSTM" --number_workers 3 --accum_batches 20  --hidden_size 8
 # python lightning_train.py --arch "resnet18" --rnn_model "LSTM" 
@@ -34,7 +34,7 @@ python lightning_train.py --rnn_model "convLSTM" --number_workers 3 --hidden_siz
 # cd two_stream
 # python lightning_train.py
 # python lightning_train.py --rnn_model "convLSTM" --number_workers 3 --accum_batches 10  --hidden_size 16
-# python lightning_train.py --rnn_model "convLSTM" --number_workers 3 --accum_batches 10  --hidden_size 16 --include_classes "positiveCE_negativeCE"
+# python lightning_train.py --rnn_model "convLSTM" --number_workers 3 --accum_batches 10  --hidden_size 16 --include_classes "CE_negativeCE"
 # python lightning_train.py --rnn_model "convLSTM" --number_workers 3 --accum_batches 10  --hidden_size 16 --include_classes "AB_BC_CD_DE_EF_FG"
 # python lightning_train.py --rnn_model "convLSTM" --number_workers 3 --hidden_size 64 --include_classes "AB_BC_CD_DE_EF_FG" --masked
 # python lightning_train.py --arch "resnet18" --rnn_model "LSTM" 
