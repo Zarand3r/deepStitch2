@@ -1,0 +1,29 @@
+#!/bin/bash
+#SBATCH --time=24:00:00   # walltime
+#SBATCH --ntasks=4   # number of processor cores (i.e. tasks)
+#SBATCH --nodes=4   # number of nodes
+#SBATCH --gres=gpu:1
+#SBATCH --mem-per-cpu=16G   # memory per CPU core
+#SBATCH --mail-user=rbao@caltech.edu   # email address
+#SBATCH --mail-type=BEGIN
+#SBATCH --mail-type=END
+#SBATCH --mail-type=FAIL
+#SBATCH --error=errors/train.err 
+#SBATCH --output=outputs/train.out
+#Submit this script with: sbatch thefilename
+
+#Activate conda env
+source activate tensor
+nvidia-smi
+echo "Environment activated, running file...."
+
+cd ../../
+cd task1
+cd models
+# cd one_stream_of
+cd one_stream_rgb
+
+#python lightning_train.py --rnn_model "convLSTM" --number_workers 3 --accum_batches 10 --hidden_size 16 --include_classes "positiveCE_negativeCE" 
+python lightning_train.py --rnn_model "convLSTM" --number_workers 3 --hidden_size 64 --include_classes "AB_BC_CE_FG" --masked
+
+

@@ -5,80 +5,62 @@ CUDA_VISIBLE_DEVICES: [0]
   warnings.warn(*args, **kwargs)
 Set SLURM handle signals.
 
-  | Name         | Type         | Params
-----------------------------------------------
-0 | features_rgb | Sequential   | 2 M   
-1 | rnn          | ConvLSTMCell | 156 K 
-2 | fc           | Linear       | 1 K   
+  | Name        | Type         | Params
+---------------------------------------------
+0 | features_of | Sequential   | 2 M   
+1 | rnn         | ConvLSTMCell | 737 K 
+2 | fc          | Linear       | 9 K   
 
-Epoch 00000: val_acc reached 0.71542 (best 0.71542), saving model to /central/groups/tensorlab/rbao/robosurgery/checkpoints/task1/one_stream/positiveCE_negativeCE/_ckpt_epoch_0.ckpt as top 3
-
-Epoch 00001: val_acc reached 0.80632 (best 0.80632), saving model to /central/groups/tensorlab/rbao/robosurgery/checkpoints/task1/one_stream/positiveCE_negativeCE/_ckpt_epoch_1.ckpt as top 3
-
-Epoch 00002: val_acc reached 0.84585 (best 0.84585), saving model to /central/groups/tensorlab/rbao/robosurgery/checkpoints/task1/one_stream/positiveCE_negativeCE/_ckpt_epoch_2.ckpt as top 3
-
-Epoch 00003: val_acc reached 0.82609 (best 0.84585), saving model to /central/groups/tensorlab/rbao/robosurgery/checkpoints/task1/one_stream/positiveCE_negativeCE/_ckpt_epoch_3.ckpt as top 3
-
-Epoch 00004: val_acc reached 0.84190 (best 0.84585), saving model to /central/groups/tensorlab/rbao/robosurgery/checkpoints/task1/one_stream/positiveCE_negativeCE/_ckpt_epoch_4.ckpt as top 3
-
-Epoch 00005: val_acc reached 0.86166 (best 0.86166), saving model to /central/groups/tensorlab/rbao/robosurgery/checkpoints/task1/one_stream/positiveCE_negativeCE/_ckpt_epoch_5.ckpt as top 3
-
-Epoch 00006: val_acc reached 0.86561 (best 0.86561), saving model to /central/groups/tensorlab/rbao/robosurgery/checkpoints/task1/one_stream/positiveCE_negativeCE/_ckpt_epoch_6.ckpt as top 3
-
-Epoch 00007: val_acc reached 0.85375 (best 0.86561), saving model to /central/groups/tensorlab/rbao/robosurgery/checkpoints/task1/one_stream/positiveCE_negativeCE/_ckpt_epoch_7.ckpt as top 3
-
-Epoch 00008: val_acc  was not in top 3
-
-Epoch 00009: val_acc  was not in top 3
-lightning_train.py:302: RuntimeWarning: More than 20 figures have been opened. Figures created through the pyplot interface (`matplotlib.pyplot.figure`) are retained until explicitly closed and may consume too much memory. (To control this warning, see the rcParam `figure.max_open_warning`).
-  fig = plt.figure(); sns.heatmap(cm, cmap = cmap_use, ax =plt.gca(), annot = True, xticklabels = self.hparams.include_classes, yticklabels = self.hparams.include_classes)
-
-Epoch 00010: val_acc  was not in top 3
-
-Epoch 00011: val_acc reached 0.86957 (best 0.86957), saving model to /central/groups/tensorlab/rbao/robosurgery/checkpoints/task1/one_stream/positiveCE_negativeCE/_ckpt_epoch_11.ckpt as top 3
-
-Epoch 00012: val_acc  was not in top 3
-
-Epoch 00013: val_acc reached 0.86561 (best 0.86957), saving model to /central/groups/tensorlab/rbao/robosurgery/checkpoints/task1/one_stream/positiveCE_negativeCE/_ckpt_epoch_13.ckpt as top 3
-
-Epoch 00014: val_acc  was not in top 3
-
-Epoch 00015: val_acc  was not in top 3
-
-Epoch 00016: val_acc  was not in top 3
-
-Epoch 00017: val_acc  was not in top 3
-
-Epoch 00018: val_acc  was not in top 3
-
-Epoch 00019: val_acc  was not in top 3
-
-Epoch 00020: val_acc  was not in top 3
-
-Epoch 00021: val_acc  was not in top 3
-
-Epoch 00022: val_acc  was not in top 3
-
-Epoch 00023: val_acc  was not in top 3
-
-Epoch 00024: val_acc  was not in top 3
-
-Epoch 00025: val_acc  was not in top 3
-
-Epoch 00026: val_acc  was not in top 3
-
-Epoch 00027: val_acc  was not in top 3
-
-Epoch 00028: val_acc  was not in top 3
-
-Epoch 00029: val_acc  was not in top 3
-
-Epoch 00030: val_acc  was not in top 3
-
-Epoch 00031: val_acc reached 0.86957 (best 0.86957), saving model to /central/groups/tensorlab/rbao/robosurgery/checkpoints/task1/one_stream/positiveCE_negativeCE/_ckpt_epoch_31.ckpt as top 3
-
-Epoch 00032: val_acc reached 0.88142 (best 0.88142), saving model to /central/groups/tensorlab/rbao/robosurgery/checkpoints/task1/one_stream/positiveCE_negativeCE/_ckpt_epoch_32.ckpt as top 3
-
-Epoch 00033: val_acc  was not in top 3
-
-Epoch 00034: val_acc reached 0.87747 (best 0.88142), saving model to /central/groups/tensorlab/rbao/robosurgery/checkpoints/task1/one_stream/positiveCE_negativeCE/_ckpt_epoch_34.ckpt as top 3
+Epoch 00042: val_acc  was not in top 3
+Traceback (most recent call last):
+  File "lightning_train.py", line 462, in <module>
+    trainer.fit(model)
+  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/trainer/trainer.py", line 1003, in fit
+    results = self.single_gpu_train(model)
+  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/trainer/distrib_parts.py", line 186, in single_gpu_train
+    results = self.run_pretrain_routine(model)
+  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/trainer/trainer.py", line 1213, in run_pretrain_routine
+    self.train()
+  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/trainer/training_loop.py", line 370, in train
+    self.run_training_epoch()
+  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/trainer/training_loop.py", line 470, in run_training_epoch
+    self.run_evaluation(test_mode=False)
+  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/trainer/evaluation_loop.py", line 391, in run_evaluation
+    eval_results = self._evaluate(self.model, dataloaders, max_batches, test_mode)
+  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/trainer/evaluation_loop.py", line 337, in _evaluate
+    eval_results = model.validation_end(outputs)
+  File "lightning_train.py", line 274, in validation_end
+    auc_train 	= roc_auc_score(self.actual_train, np.vstack(self.predicted_softmax_train), multi_class = 'ovr')
+  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/sklearn/utils/validation.py", line 73, in inner_f
+    return f(**kwargs)
+  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/sklearn/metrics/_ranking.py", line 386, in roc_auc_score
+    multi_class, average, sample_weight)
+  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/sklearn/metrics/_ranking.py", line 480, in _multiclass_roc_auc_score
+    "Number of classes in y_true not equal to the number of "
+ValueError: Number of classes in y_true not equal to the number of columns in 'y_score'
+Traceback (most recent call last):
+  File "lightning_train.py", line 474, in <module>
+    trainer.fit(model)
+  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/trainer/trainer.py", line 1003, in fit
+    results = self.single_gpu_train(model)
+  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/trainer/distrib_parts.py", line 186, in single_gpu_train
+    results = self.run_pretrain_routine(model)
+  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/trainer/trainer.py", line 1213, in run_pretrain_routine
+    self.train()
+  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/trainer/training_loop.py", line 370, in train
+    self.run_training_epoch()
+  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/trainer/training_loop.py", line 470, in run_training_epoch
+    self.run_evaluation(test_mode=False)
+  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/trainer/evaluation_loop.py", line 391, in run_evaluation
+    eval_results = self._evaluate(self.model, dataloaders, max_batches, test_mode)
+  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/trainer/evaluation_loop.py", line 337, in _evaluate
+    eval_results = model.validation_end(outputs)
+  File "lightning_train.py", line 284, in validation_end
+    auc_train 	= roc_auc_score(self.actual_train, np.vstack(self.predicted_softmax_train), multi_class = 'ovr')
+  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/sklearn/utils/validation.py", line 73, in inner_f
+    return f(**kwargs)
+  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/sklearn/metrics/_ranking.py", line 386, in roc_auc_score
+    multi_class, average, sample_weight)
+  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/sklearn/metrics/_ranking.py", line 480, in _multiclass_roc_auc_score
+    "Number of classes in y_true not equal to the number of "
+ValueError: Number of classes in y_true not equal to the number of columns in 'y_score'
