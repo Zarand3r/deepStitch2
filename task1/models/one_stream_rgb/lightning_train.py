@@ -449,7 +449,7 @@ if __name__ == '__main__':
 
 	checkpoint_callback = ModelCheckpoint(
 		# filepath=os.path.join(logger.log_dir, 'checkpoints'),
-		filepath=os.path.join(settings1.checkpoints, "one_stream", classification_name, f'{hparams.arch}_{hparams.trainable_base}_{hparams.rnn_model}{hparams.masked}'),
+		filepath=os.path.join(settings1.checkpoints, "one_stream_rgb", classification_name, f'{hparams.arch}_{hparams.trainable_base}_{hparams.rnn_model}{hparams.masked}'),
 		save_top_k=3,
 		verbose=True,
 		monitor='val_acc',

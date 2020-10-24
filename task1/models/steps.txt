@@ -1,3 +1,7 @@
+ACTION SEGMENTATION
+put predict.py in utils?
+
+
 STEP 0:
 =======
 Download data
@@ -49,3 +53,8 @@ Step 5:
 =======
 View the tensorboard UI locally after pushing to github and pulling on remote
 Tensorboard --logdir log_dir
+
+Step 6:
+=======
+Action segmentation
+First, scp over the checkpoints and a test videos for the segmentation, add to folder outside of deepStitch

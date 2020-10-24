@@ -40,8 +40,7 @@ def splice(args):
     #cmd = 'ffmpeg -ss %s -i %s -an -vcodec h264 -r 30 -vframes %d %s' % (start_time, video_id, n_frames, video_id_out)
     #os.system(cmd)
 
-    nn = 0
-    all_timepoints = ['A', 'B', 'C', 'D', 'E', 'F', 'G']
+    all_timepoints = args.timepoints.split("_")
 
     input_dir = args.raw_directory
     output_dir = args.data_directory
@@ -49,7 +48,7 @@ def splice(args):
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
 
-    for xx in range(6):
+    for xx in range(len(all_timepoints)-1):
         df['meta_cut_%s%s' % (all_timepoints[xx], all_timepoints[xx+1])] = None
 
 
@@ -183,6 +182,7 @@ if __name__ == '__main__':
     parser.add_argument("--data_labels", default = settings1.data_labels, help = "Path to labels")
     parser.add_argument("--raw_directory", default = settings1.raw_directory, help = "Path to the raw data ")
     parser.add_argument("--data_directory", default = settings1.data_directory, help = "Path to the output directory")
+    parser.add_argument("--timepoints", default = "A_B_C_D_E_F_G", help = "Path to the output directory")
     args = parser.parse_args()
     splice(args)
 
