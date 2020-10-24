@@ -41,6 +41,11 @@ def splice(args):
     #os.system(cmd)
 
     all_timepoints = args.timepoints.split("_")
+    start_index = -1
+    end_index = 0
+    if args.inclusive:
+        start_index = 0
+        end_index = -1
 
     input_dir = args.raw_directory
     output_dir = args.data_directory
@@ -50,7 +55,6 @@ def splice(args):
 
     for xx in range(len(all_timepoints)-1):
         df['meta_cut_%s%s' % (all_timepoints[xx], all_timepoints[xx+1])] = None
-
 
     # First do all the cuts between different letters
     for nn in tqdm(range(len(df))):
@@ -67,9 +71,9 @@ def splice(args):
             else:
                 # If start_val is a list make it the last one
                 if type(start_val) == list:
-                    start_val = start_val[-1]
+                    start_val = start_val[start_index]
                 if type(end_val) == list:
-                    end_val = end_val[0]
+                    end_val = end_val[end_index]
                 #print(start_val)
                 start_time = '0' + str(datetime.timedelta(seconds=start_val))
                 n_frames = round(30.*(end_val-start_val))
@@ -97,51 +101,43 @@ def splice(args):
 
 
 
-    # # Now do the CC and DD versions
-    # nn = 0
+    # # Now do the CC and DD versions DONT DO THESE IF INCLUSIVE
 
-    # df['meta_cut_CC'] = None
-    # df['meta_cut_DD'] = None
+    # if not args.inclusive:
+    #     df['meta_cut_CC'] = None
+    #     df['meta_cut_DD'] = None
 
-    # for nn in range(len(df)):
-    #     for tp_letter in ['C', 'D']:
-    #         curr_entry = df.iloc[nn]['timepoint_%s' % tp_letter]
-    #         if type(curr_entry) == list:
-    #             if len(curr_entry) > 1:
-    #                 fns = []
-    #                 for cnt, kk in enumerate(range(len(curr_entry)-1)):
+    #     for nn in range(len(df)):
+    #         for tp_letter in ['C', 'D']:
+    #             curr_entry = df.iloc[nn]['timepoint_%s' % tp_letter]
+    #             if type(curr_entry) == list:
+    #                 if len(curr_entry) > 1:
+    #                     fns = []
+    #                     for cnt, kk in enumerate(range(len(curr_entry)-1)):
 
-    #                     start_time = '0' + str(datetime.timedelta(seconds=curr_entry[kk]))
-    #                     n_frames = round(30.*(curr_entry[kk+1]-curr_entry[kk]))
+    #                         start_time = '0' + str(datetime.timedelta(seconds=curr_entry[kk]))
+    #                         n_frames = round(30.*(curr_entry[kk+1]-curr_entry[kk]))
 
-    #                     video_input_fn = df.iloc[nn]['meta_video_file_name']
-    #                     video_input_fn = os.path.join(input_dir, video_input_fn)
-    #                     video_output_fn = '%s_%s%s%d_%02d.mp4' % (df.iloc[nn]['meta_video_file_name'][:-4], tp_letter, tp_letter, cnt, df.iloc[nn]['meta_position_nn'])
-    #                     fns.append(video_output_fn) # Add to the list for later
-    #                     video_output_fn = os.path.join(output_dir, video_output_fn)
+    #                         video_input_fn = df.iloc[nn]['meta_video_file_name']
+    #                         video_input_fn = os.path.join(input_dir, video_input_fn)
+    #                         video_output_fn = '%s_%s%s%d_%02d.mp4' % (df.iloc[nn]['meta_video_file_name'][:-4], tp_letter, tp_letter, cnt, df.iloc[nn]['meta_position_nn'])
+    #                         fns.append(video_output_fn) # Add to the list for later
+    #                         video_output_fn = os.path.join(output_dir, video_output_fn)
 
-    #                     if not os.path.exists(video_input_fn):
-    #                         raise ValueError('The file you are trying to chop does not exist')
-    #                     else:
-    #                         if not os.path.exists(video_output_fn):
-    #                             cmd = 'ffmpeg -ss %s -i %s -an -vcodec h264 -r 30 -vframes %d %s' % (start_time, video_input_fn, n_frames, video_output_fn)
-    #                             #print(cmd)
-    #                             os.system(cmd)
+    #                         if not os.path.exists(video_input_fn):
+    #                             raise ValueError('The file you are trying to chop does not exist')
     #                         else:
-    #                             print('already exists so skipping...')
-    #                         #print(cmd)
-    #                         kk+=1
-    #                 df.at[nn, 'meta_cut_%s%s' % (tp_letter, tp_letter)] = fns
-
-    # # Add an existing column for first and last for all Cs and Ds
-    # 'label_needle_entry_angleC'
-    # 'label_hitmiss_timepointC'
-    # 'label_hitmissD'
-    # 'label_needle_driving_1D'
-
+    #                             if not os.path.exists(video_output_fn):
+    #                                 cmd = 'ffmpeg -ss %s -i %s -an -vcodec h264 -r 30 -vframes %d %s' % (start_time, video_input_fn, n_frames, video_output_fn)
+    #                                 #print(cmd)
+    #                                 os.system(cmd)
+    #                             else:
+    #                                 print('already exists so skipping...')
+    #                             #print(cmd)
+    #                             kk+=1
+    #                     df.at[nn, 'meta_cut_%s%s' % (tp_letter, tp_letter)] = fns
 
 
-    #df.to_excel('/home/fluongo/code/usc_project/USC_lightning/preprocessing/prep_race_videos/RACE_francisco_export.xlsx')
 
 
     # # %%
@@ -183,6 +179,7 @@ if __name__ == '__main__':
     parser.add_argument("--raw_directory", default = settings1.raw_directory, help = "Path to the raw data ")
     parser.add_argument("--data_directory", default = settings1.data_directory, help = "Path to the output directory")
     parser.add_argument("--timepoints", default = "A_B_C_D_E_F_G", help = "Path to the output directory")
+    parser.add_argument('--inclusive', dest='inclusive', action='store_true', help = "if inclusive, use first index of start, last index of end for list timepoints")
     args = parser.parse_args()
     splice(args)
 
