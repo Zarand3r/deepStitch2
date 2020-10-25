@@ -19,3 +19,5 @@ Epoch 00001: val_acc reached 0.70000 (best 0.71500), saving model to /central/gr
 Epoch 00002: val_acc reached 0.82000 (best 0.82000), saving model to /central/groups/tensorlab/rbao/robosurgery/checkpoints/task1/two_stream/AC_CE_EG/_ckpt_epoch_2.ckpt as top 3
 
 Epoch 00003: val_acc reached 0.72000 (best 0.82000), saving model to /central/groups/tensorlab/rbao/robosurgery/checkpoints/task1/two_stream/AC_CE_EG/_ckpt_epoch_3.ckpt as top 3
+
+Epoch 00004: val_acc reached 0.80000 (best 0.82000), saving model to /central/groups/tensorlab/rbao/robosurgery/checkpoints/task1/two_stream/AC_CE_EG/_ckpt_epoch_4.ckpt as top 3

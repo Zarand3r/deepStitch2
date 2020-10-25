@@ -1,11 +1,11 @@
-/var/spool/slurmd/job11821177/slurm_script: line 16: activate: No such file or directory
+/var/spool/slurmd/job11821179/slurm_script: line 16: activate: No such file or directory
 Traceback (most recent call last):
-  File "predict.py", line 88, in <module>
+  File "predict.py", line 90, in <module>
     predict(hparams)
-  File "predict.py", line 34, in predict
+  File "predict.py", line 36, in predict
     output = model(video)
   File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/torch/nn/modules/module.py", line 722, in _call_impl
     result = self.forward(*input, **kwargs)
-  File "/central/groups/tensorlab/rbao/robosurgery/deepStitch/task1/models/two_stream/lightning_train.py", line 195, in forward
-    nBatch, nFrames, ofH, ofW, nChannels, _ = inputs.shape
-ValueError: not enough values to unpack (expected 6, got 1)
+  File "/central/groups/tensorlab/rbao/robosurgery/deepStitch/task1/models/two_stream/lightning_train.py", line 226, in forward
+    f_of = self.features_of(inputs[:, kk, :, :, :, 1].permute(0, 3, 1, 2))  # permute to nB x nC x H x W
+IndexError: index 1 is out of bounds for dimension 5 with size 1
