@@ -7,5 +7,6 @@ cd task1
 cd preprocessing
 cd prep_race_videos
 
-python process_race_videos.py
+#python process_race_videos.py 
+python process_race_videos.py --timepoints A_C_E_G --inclusive
 #python process_race_videos.py --data_labels /central/groups/tensorlab/rbao/robosurgery/balint_data/RACE_python_format_final.xlsx --raw_directory /central/groups/tensorlab/rbao/robosurgery/balint_data/caltech_format --data_directory /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data
