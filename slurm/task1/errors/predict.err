@@ -1,0 +1,11 @@
+/var/spool/slurmd/job11821177/slurm_script: line 16: activate: No such file or directory
+Traceback (most recent call last):
+  File "predict.py", line 88, in <module>
+    predict(hparams)
+  File "predict.py", line 34, in predict
+    output = model(video)
+  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/torch/nn/modules/module.py", line 722, in _call_impl
+    result = self.forward(*input, **kwargs)
+  File "/central/groups/tensorlab/rbao/robosurgery/deepStitch/task1/models/two_stream/lightning_train.py", line 195, in forward
+    nBatch, nFrames, ofH, ofW, nChannels, _ = inputs.shape
+ValueError: not enough values to unpack (expected 6, got 1)

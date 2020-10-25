@@ -1,0 +1,25 @@
+#!/bin/bash
+#SBATCH --time=1:00:00   # walltime
+#SBATCH --ntasks=1   # number of processor cores (i.e. tasks)
+#SBATCH --nodes=1   # number of nodes
+#SBATCH --gres=gpu:1
+#SBATCH --mem-per-cpu=16G   # memory per CPU core
+#SBATCH --mail-user=rbao@caltech.edu   # email address
+#SBATCH --mail-type=BEGIN
+#SBATCH --mail-type=END
+#SBATCH --mail-type=FAIL
+#SBATCH --error=errors/predict.err 
+#SBATCH --output=outputs/predict.out
+#Submit this script with: sbatch thefilename
+
+#Activate conda env
+source activate tensor
+nvidia-smi
+echo "Environment activated, running file...."
+
+cd ../../
+cd task1
+cd models
+cd two_stream
+
+python predict.py --rnn_model "convLSTM" --number_workers 3 --hidden_size 64 --include_classes "AB_BC_CE_FG" --masked

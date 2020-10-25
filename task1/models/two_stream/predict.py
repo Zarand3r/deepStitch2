@@ -3,7 +3,8 @@ import pandas as pd
 import os
 import argparse
 import torch
-
+import torchvision
+import numpy as np
 # Custom imports
 import git
 import sys
@@ -18,38 +19,26 @@ import lightning_train as classifier
 # If it has more frames than the sliding window, iteratively slice and classify each slice
 # Return a list of classifications per frame. The starting point of the slice that has a different label than before is the beginning of the new label.
 
-
-def load_ckp(checkpoint_fpath, model, optimizer):
-    """
-    checkpoint_path: path to save checkpoint
-    model: model that we want to load checkpoint parameters into       
-    optimizer: optimizer we defined in previous training
-    """
-    # load check point
-    checkpoint = torch.load(checkpoint_fpath)
-    # initialize state_dict from checkpoint to model
-    model.load_state_dict(checkpoint['state_dict'])
-    # initialize optimizer from checkpoint to optimizer
-    optimizer.load_state_dict(checkpoint['optimizer'])
-    # initialize valid_loss_min from checkpoint to valid_loss_min
-    valid_loss_min = checkpoint['valid_loss_min']
-    # return model, optimizer, epoch value, min validation loss 
-    return model, optimizer, checkpoint['epoch'], valid_loss_min.item()
-
 def predict(hparams):
-    input_file = hparams.input
+    # need to make input shape consistent with what is defined in forward function
+    if torchvision.__version__[:3] == '0.4':
+        video = torchvision.io.read_video(hparams.input_file)[0]
+    else: # Newer version
+        video = torchvision.io.read_video(hparams.input_file, pts_unit = 'sec')[0]
+    video = np.insert(video,0,1)
+    video = np.insert(video,-1,1)
     model = classifier.FusionModel(hparams)
     # load check point
-    checkpoint = torch.load(checkpoint_path)
+    checkpoint = torch.load(hparams.checkpoint_path)
     # initialize state_dict from checkpoint to model
     model.load_state_dict(checkpoint['state_dict'])
-    output = model(input_file)
+    output = model(video)
     print(prediction)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     # Input argument
-    parser.add_argument('--input', default=f'{homedir}/task1/models/two_stream/test/test1.mp4', help='Input file to predict')
+    parser.add_argument('--input_file', default=f'{homedir}/task1/models/two_stream/test/test1.mp4', help='Input file to predict')
     parser.add_argument('--checkpoint_path', default=f'{homedir}/task1/models/two_stream/test/checkpoint.ckpt', help='path to load checkpoints')
     parser.add_argument('--loadchk', default='', help='Pass through to load training from a checkpoint')
     parser.add_argument('--datadir', default=settings1.data_directory, help='train directory')
