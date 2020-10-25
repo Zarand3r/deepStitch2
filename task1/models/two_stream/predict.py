@@ -2,6 +2,7 @@
 import pandas as pd
 import os
 import argparse
+import torch
 
 # Custom imports
 import git
@@ -48,7 +49,8 @@ def predict(hparams):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     # Input argument
-    parser.add_argument('--input', default=f'{homedir}/task1/preprocessing/mask/test_videos/test1.mp4', help='Input file to predict')
+    parser.add_argument('--input', default=f'{homedir}/task1/models/two_stream/test/test1.mp4', help='Input file to predict')
+    parser.add_argument('--checkpoint_path', default=f'{homedir}/task1/models/two_stream/test/checkpoint.ckpt', help='path to load checkpoints')
     parser.add_argument('--loadchk', default='', help='Pass through to load training from a checkpoint')
     parser.add_argument('--datadir', default=settings1.data_directory, help='train directory')
     parser.add_argument('--gpu', default=0, type=int, help='GPU device number')
