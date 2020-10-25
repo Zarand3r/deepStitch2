@@ -25,8 +25,7 @@ def predict(hparams):
         video = torchvision.io.read_video(hparams.input_file)[0]
     else: # Newer version
         video = torchvision.io.read_video(hparams.input_file, pts_unit = 'sec')[0]
-    video = np.insert(video,0,1)
-    video = np.insert(video,-1,1)
+    video = video.reshape((1,33, 540, 1920, 3,1))
     model = classifier.FusionModel(hparams)
     # load check point
     checkpoint = torch.load(hparams.checkpoint_path)
