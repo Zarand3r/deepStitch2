@@ -417,7 +417,7 @@ if __name__ == '__main__':
 	else:
 		hparams.masked = ""
 
-	classification_name = "positiveCE_negativeCE"
+	classification_name = "positive_negative"
 	if hparams.include_classes == '':
 		raise ValueError('Please define the classes to use using the 00_01 underscore notation')
 	else:
