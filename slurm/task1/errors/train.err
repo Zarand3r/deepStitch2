@@ -21,3 +21,83 @@ Epoch 00002: val_acc reached 0.82000 (best 0.82000), saving model to /central/gr
 Epoch 00003: val_acc reached 0.72000 (best 0.82000), saving model to /central/groups/tensorlab/rbao/robosurgery/checkpoints/task1/two_stream/AC_CE_EG/_ckpt_epoch_3.ckpt as top 3
 
 Epoch 00004: val_acc reached 0.80000 (best 0.82000), saving model to /central/groups/tensorlab/rbao/robosurgery/checkpoints/task1/two_stream/AC_CE_EG/_ckpt_epoch_4.ckpt as top 3
+
+Epoch 00005: val_acc reached 0.78500 (best 0.82000), saving model to /central/groups/tensorlab/rbao/robosurgery/checkpoints/task1/two_stream/AC_CE_EG/_ckpt_epoch_5.ckpt as top 3
+
+Epoch 00006: val_acc  was not in top 3
+
+Epoch 00007: val_acc reached 0.82500 (best 0.82500), saving model to /central/groups/tensorlab/rbao/robosurgery/checkpoints/task1/two_stream/AC_CE_EG/_ckpt_epoch_7.ckpt as top 3
+
+Epoch 00008: val_acc reached 0.83500 (best 0.83500), saving model to /central/groups/tensorlab/rbao/robosurgery/checkpoints/task1/two_stream/AC_CE_EG/_ckpt_epoch_8.ckpt as top 3
+
+Epoch 00009: val_acc reached 0.83500 (best 0.83500), saving model to /central/groups/tensorlab/rbao/robosurgery/checkpoints/task1/two_stream/AC_CE_EG/_ckpt_epoch_9.ckpt as top 3
+lightning_train.py:292: RuntimeWarning: More than 20 figures have been opened. Figures created through the pyplot interface (`matplotlib.pyplot.figure`) are retained until explicitly closed and may consume too much memory. (To control this warning, see the rcParam `figure.max_open_warning`).
+  fig = plt.figure(); sns.heatmap(cm, cmap = cmap_use, ax =plt.gca(), annot = True, xticklabels = self.hparams.include_classes, yticklabels = self.hparams.include_classes)
+
+Epoch 00010: val_acc  was not in top 3
+
+Epoch 00011: val_acc reached 0.85000 (best 0.85000), saving model to /central/groups/tensorlab/rbao/robosurgery/checkpoints/task1/two_stream/AC_CE_EG/_ckpt_epoch_11.ckpt as top 3
+
+Epoch 00012: val_acc reached 0.86000 (best 0.86000), saving model to /central/groups/tensorlab/rbao/robosurgery/checkpoints/task1/two_stream/AC_CE_EG/_ckpt_epoch_12.ckpt as top 3
+
+Epoch 00013: val_acc  was not in top 3
+
+Epoch 00014: val_acc reached 0.86000 (best 0.86000), saving model to /central/groups/tensorlab/rbao/robosurgery/checkpoints/task1/two_stream/AC_CE_EG/_ckpt_epoch_14.ckpt as top 3
+
+Epoch 00015: val_acc  was not in top 3
+
+Epoch 00016: val_acc  was not in top 3
+
+Epoch 00017: val_acc reached 0.87000 (best 0.87000), saving model to /central/groups/tensorlab/rbao/robosurgery/checkpoints/task1/two_stream/AC_CE_EG/_ckpt_epoch_17.ckpt as top 3
+
+Epoch 00018: val_acc  was not in top 3
+
+Epoch 00019: val_acc reached 0.86500 (best 0.87000), saving model to /central/groups/tensorlab/rbao/robosurgery/checkpoints/task1/two_stream/AC_CE_EG/_ckpt_epoch_19.ckpt as top 3
+
+Epoch 00020: val_acc reached 0.90000 (best 0.90000), saving model to /central/groups/tensorlab/rbao/robosurgery/checkpoints/task1/two_stream/AC_CE_EG/_ckpt_epoch_20.ckpt as top 3
+Traceback (most recent call last):
+  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/torch/utils/data/dataloader.py", line 779, in _try_get_data
+    data = self._data_queue.get(timeout=timeout)
+  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/multiprocessing/queues.py", line 104, in get
+    if not self._poll(timeout):
+  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/multiprocessing/connection.py", line 257, in poll
+    return self._poll(timeout)
+  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/multiprocessing/connection.py", line 414, in _poll
+    r = wait([self], timeout)
+  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/multiprocessing/connection.py", line 911, in wait
+    ready = selector.select(timeout)
+  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/selectors.py", line 376, in select
+    fd_event_list = self._poll.poll(timeout)
+  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/torch/utils/data/_utils/signal_handling.py", line 66, in handler
+    _error_if_any_worker_fails()
+RuntimeError: DataLoader worker (pid 2195) is killed by signal: Killed. 
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "lightning_train.py", line 462, in <module>
+    trainer.fit(model)
+  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/trainer/trainer.py", line 1003, in fit
+    results = self.single_gpu_train(model)
+  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/trainer/distrib_parts.py", line 186, in single_gpu_train
+    results = self.run_pretrain_routine(model)
+  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/trainer/trainer.py", line 1213, in run_pretrain_routine
+    self.train()
+  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/trainer/training_loop.py", line 370, in train
+    self.run_training_epoch()
+  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/trainer/training_loop.py", line 440, in run_training_epoch
+    enumerate(_with_is_last(train_dataloader)), "get_train_batch"
+  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/profiler/profilers.py", line 64, in profile_iterable
+    value = next(iterator)
+  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/pytorch_lightning/trainer/training_loop.py", line 1013, in _with_is_last
+    for val in it:
+  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/torch/utils/data/dataloader.py", line 363, in __next__
+    data = self._next_data()
+  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/torch/utils/data/dataloader.py", line 974, in _next_data
+    idx, data = self._get_data()
+  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/torch/utils/data/dataloader.py", line 941, in _get_data
+    success, data = self._try_get_data()
+  File "/central/groups/tensorlab/rbao/anaconda/tensor/lib/python3.6/site-packages/torch/utils/data/dataloader.py", line 792, in _try_get_data
+    raise RuntimeError('DataLoader worker (pid(s) {}) exited unexpectedly'.format(pids_str))
+RuntimeError: DataLoader worker (pid(s) 2194, 2195) exited unexpectedly
+slurmstepd: error: Detected 1 oom-kill event(s) in step 11821170.batch cgroup. Some of your processes may have been killed by the cgroup out-of-memory handler.
