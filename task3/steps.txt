@@ -8,4 +8,4 @@ The label in column S: "label_needle_driving_1D" refers to the needle driving 1 
 The label in column T: "label_needle_driving_2FG" refers to the needle driving 2 score. This score is assigned for the interval from F to G. 
 
 
-Try predicting the label in column O first, using the AB time interval vs AC seeing which one is more accurate. For this, try using masking.
+Try predicting the label in column O first, using the AB time interval vs AC seeing which one is more accurate. For this, try using without masking.
