@@ -14,6 +14,62 @@ sys.path.insert(1, f"{homedir}" + '/utils')
 import settings1
 import lightning_train as classifier
 
+# batch = [data, labels]
+# data = [sample_1, sample_2, ... sample_nbatch]
+# sampe = [frame_1, frame_2, ... frame_3]
+# frame = [HxWxC]
+
+def apply_transforms_GPU(self, batch, random_crop = False):
+        # Prepares the outputs
+        nB, nF, nH, nW, nC = batch[0].size()
+        if random_crop:
+            rgb = self.augGPU_resize(batch[0][:, :, :, :int(nW/2), :].type(torch.float)/255., npix_resize = (240, 240), random_crop = True)
+            of  = self.augGPU_resize(batch[0][:, :, :, int(nW/2):, :].type(torch.float)/255., npix_resize = (240, 240), random_crop = True)
+        else:
+            rgb = self.augGPU_resize(batch[0][:, :, :, :int(nW/2), :].type(torch.float)/255., npix_resize = (224, 224))
+            of  = self.augGPU_resize(batch[0][:, :, :, int(nW/2):, :].type(torch.float)/255., npix_resize = (224, 224))
+
+        #of = self.augGPU_normalize_inplace(of, mean = [0.485, 0.456, 0.406], std = [0.229, 0.224, 0.225])
+        #rgb = self.augGPU_normalize_inplace(rgb, mean = [0.485, 0.456, 0.406], std = [0.229, 0.224, 0.225])
+        #print(of.reshape(-1, 3).mean(0))
+        rgb = self.augGPU_normalize_inplace(rgb, mean = [0.3, 0.2, 0.2], std = [0.2, 0.2, 0.2])
+        of = self.augGPU_normalize_inplace(of, mean = [0.99, 0.99, 0.99], std = [0.005, 0.005, 0.005])
+        #print(of.reshape(-1, 3).mean(0))
+        #print(of.reshape(-1, 3).var(0))
+
+        return [torch.stack([rgb, of], axis = -1), batch[1]]
+
+def augGPU_resize(self, input, seed = None, npix_resize = (224, 224), random_crop = False):
+    """ Resizing operation using interp so it is done on the GPU"""
+    if len(input.size()) == 4: # Single batch
+        input = input.unsqueeze(0)
+    nB, nF, _, _, nC = input.size()
+
+    if seed != None:
+        random.seed(seed)
+
+    resized_rgb = torch.zeros(nB, nF, npix_resize[0], npix_resize[1], nC).type_as(input)    
+    for bb in range(nB):
+        for ff in range(nF):
+            im = input.permute(0, 1, 4, 2, 3)[0, 0, :, :, :].unsqueeze(0).type(torch.float)
+            resized_rgb[bb, ff, :, :, :] = F.interpolate(im, size = npix_resize).permute(0,2,3,1)
+    # Right now does random crop for each of optic flow and rgb
+    if random_crop:
+        x0 = random.randint(0, npix_resize[1]-225)
+        y0 = random.randint(0, npix_resize[0]-225)
+        resized_rgb = resized_rgb[:, :, y0:y0+224, x0:x0+224, :]
+    
+    return resized_rgb
+
+def augGPU_normalize_inplace(self, input, mean = [0.3, 0.3, 0.3], std=[0.1, 0.1, 0.1]):
+    """Does an in place normalization on GPU"""
+    mean = torch.as_tensor(mean).type_as(input)
+    std = torch.as_tensor(std).type_as(input)
+    input = input.sub_(mean[None, None, None, None, :]).div_(std[None, None, None, None, :])
+    return input
+
+
+# use the CustomDataset class in lightning_train.py
 
 # Load the preprocessed input video
 # If it has more frames than the sliding window, iteratively slice and classify each slice
@@ -26,15 +82,23 @@ def predict(hparams):
     else: # Newer version
         video = torchvision.io.read_video(hparams.input_file, pts_unit = 'sec')[0]
     #video = video.reshape((1,33, 540, 1920, 3,1))
+    # look at dataloader and apply_transforms_GPU in lightning_train.py
     video = torch.reshape(video,(1,33,540,1920,3,1))
     video = video.float()
+
+
+    # create a batch of (videos, label) tuples (can just be the one). The label is just 0, 1, 2 ...
+    # feed in the input x to the prediction model as apply_transforms_GPU(batch, random_crap=hparams.random_crop)
     model = classifier.FusionModel(hparams)
-    # load check point
     checkpoint = torch.load(hparams.checkpoint_path)
     # initialize state_dict from checkpoint to model
     model.load_state_dict(checkpoint['state_dict'])
-    output = model(video)
-    print(prediction)
+    output = model(x)
+
+    model = classifier.FusionModel.load_from_checkpoint(hparams.checkpoint_path)
+    model.freeze()
+    out = mode(x)
+    print(output)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
