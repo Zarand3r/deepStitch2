@@ -42,7 +42,7 @@ def splice(args):
 
     all_timepoints = args.timepoints.split("_")
     start_index = -1
-    end_index = 0
+    end_index = 0 ## change to include CC in AC or standalone
     if args.inclusive:
         start_index = 0
         end_index = -1
