@@ -36,13 +36,18 @@ def splice(args):
 
     destination_positive = os.path.join(args.output_directory, "positive"+args.segments)
     destination_negative = os.path.join(args.output_directory, "negative"+args.segments)
-    if not os.path.exists(destination):
-        os.makedirs(destination)
+    if not os.path.exists(destination_positive):
+        os.makedirs(destination_positive)
+
+    if not os.path.exists(destination_negative):
+        os.makedirs(destination_negative)
 
     for nn in range(len(df)):
         if df.loc[nn]["timepoint_"+args.segments[0]] and df.loc[nn]["timepoint_"+args.segments[1]]:
             fname = 'flownet_%s_%s_%02d.mp4' % (df.iloc[nn]['meta_video_file_name'][:-4], args.segments, df.iloc[nn]['meta_position_nn'])
             fpath = os.path.join(args.data_directory, args.segments, "optical_flow", fname)
+            if not os.path.exists(fpath):
+                continue
             label = df.iloc[nn]["label_needle positionB"]
             if label == 0:
                 output = os.path.join(destination_negative, fname)

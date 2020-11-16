@@ -27,7 +27,7 @@ repo = git.Repo("./", search_parent_directories=True)
 homedir = repo.working_dir
 sys.path.insert(1, f"{homedir}" + '/utils')
 from convlstmcells import ConvLSTMCell, ConvTTLSTMCell
-import settings1
+import settings3
 
 
 class CustomDataset(Dataset):
@@ -47,12 +47,12 @@ class CustomDataset(Dataset):
 			self.remove_empty()
 			fns = []
 			for class_curr in include_classes:
-				fns.extend(glob.glob(os.path.join(global_dir, class_curr, "optical_flow"+masked, '%s*' % flow_method)))
+				fns.extend(glob.glob(os.path.join(global_dir, class_curr, '%s*' % flow_method)))
 		if len(fns) == 0:
 			raise ValueError('Likely that you have not pre-computed the optical flow or data directory is wrong!')
 		if idxs == None: # load all
 			idxs = list(range(len(fns)))
-		self.filtered_fns = [[f, self.classes.index(f.split('/')[-3]) ] for i, f in enumerate(fns) if i in idxs]
+		self.filtered_fns = [[f, self.classes.index(f.split('/')[-2]) ] for i, f in enumerate(fns) if i in idxs]
 		if balance_classes:
 			class_counter = Counter([f[1] for f in self.filtered_fns])
 			print(class_counter)
@@ -113,7 +113,7 @@ class FusionModel(LightningModule):
 		# Generate the tra300in and test splits
 		fns = []
 		for class_curr in self.hparams.include_classes:
-			fns.extend(glob.glob(os.path.join(self.hparams.datadir, class_curr, "optical_flow"+self.hparams.masked, '%s*' % self.hparams.flow_method)))
+			fns.extend(glob.glob(os.path.join(self.hparams.datadir, class_curr, '%s*' % self.hparams.flow_method)))
 		idx = list(range(len(fns)))
 		random.seed(self.hparams.seed); random.shuffle(idx)
 		self.hparams.idx_train 	= idx[:int(self.hparams.train_proportion*len(idx))].copy() # Save as hyperparams
@@ -379,7 +379,7 @@ if __name__ == '__main__':
 	# ARGS
 	parser = argparse.ArgumentParser(description='Training')
 	parser.add_argument('--loadchk', default='', help='Pass through to load training from a checkpoint')
-	parser.add_argument('--datadir', default=settings1.data_directory, help='train directory')
+	parser.add_argument('--datadir', default=settings3.output_directory, help='train directory')
 	parser.add_argument('--gpu', default=0, type=int, help='GPU device number')
 	parser.add_argument('--arch', default='alexnet', help='model architecture')
 	parser.add_argument('--trainable_base', default=0, type=int, help='Whether to train the feature extractor')
@@ -437,7 +437,7 @@ if __name__ == '__main__':
 
 	checkpoint_callback = ModelCheckpoint(
 		# filepath=os.path.join(logger.log_dir, 'checkpoints'),
-		filepath=os.path.join(settings1.checkpoints, "two_stream", classification_name, f'{hparams.arch}_{hparams.trainable_base}_{hparams.rnn_model}{hparams.masked}'),
+		filepath=os.path.join(settings3.checkpoints, classification_name, f'{hparams.arch}_{hparams.trainable_base}_{hparams.rnn_model}{hparams.masked}'),
 		save_top_k=3,
 		verbose=True,
 		monitor='val_acc',
