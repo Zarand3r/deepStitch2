@@ -1,4 +1,4 @@
 source activate tensor
 
-CUDA_VISIBLE_DEVICES=1 python lightning_train.py --gpu 1 --rnn_model "convLSTM" --number_workers 3 --hidden_size 128 --accum_batches 1 --include_classes "positiveAB_negativeAB"
-# CUDA_VISIBLE_DEVICES=2 python lightning_train.py --gpu 2 --rnn_model "convLSTM" --number_workers 3 --hidden_size 64 --include_classes "positiveAB_negativeAB"
+# CUDA_VISIBLE_DEVICES=1 python lightning_train.py --gpu 1 --rnn_model "convLSTM" --number_workers 3 --hidden_size 128 --accum_batches 1 --include_classes "positiveAB_negativeAB"
+CUDA_VISIBLE_DEVICES=2 python lightning_train.py --gpu 2 --rnn_model "convLSTM" --number_workers 3 --hidden_size 64 --include_classes "positiveAB_negativeAB"
