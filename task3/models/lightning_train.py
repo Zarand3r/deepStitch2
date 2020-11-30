@@ -64,6 +64,7 @@ class CustomDataset(Dataset):
 				self.filtered_fns.extend(random.choices([f for f in self.filtered_fns if f[1] == int(class_curr)], k=max(n_match-cnt, 1) ))
 			print(Counter([f[1] for f in self.filtered_fns]))
 			print('Classes now balanced')
+			print('Filenames: ', list(enumerate(self.filtered_fns)))
 
 	def __len__(self):
 		return len(self.filtered_fns)
@@ -260,6 +261,8 @@ class FusionModel(LightningModule):
 		loss = F.cross_entropy(output, target_cuda.type(torch.long))
 		self.actual.append(target_cuda.item())
 		self.predicted.append(output.topk(1,1)[-1].item())
+		if self.actual[-1] != self.predicted[-1]:
+			print("MISCLASSIFIED: ", batch_idx)
 		self.predicted_softmax.append(softmax(output.detach().cpu().numpy(), axis = -1)) # Save scores
 
 		return {'val_loss': loss}

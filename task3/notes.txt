@@ -1,0 +1,13 @@
+Implement Grad Cam
+
+mabe alexnet can't pick up fine grain detils
+look at fine grain action recognition literature
+explore attention models (transformer models) - human knowledge
+
+two stage process:
+from videos predict pose and from pose predict skill assessment
+multi-task learning:
+use network to predict pose and also skills assessment
+
+incorporate context with RNN on top
+
