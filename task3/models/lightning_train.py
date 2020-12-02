@@ -117,6 +117,7 @@ class FusionModel(LightningModule):
 			fns.extend(glob.glob(os.path.join(self.hparams.datadir, class_curr, '%s*' % self.hparams.flow_method)))
 		idx = list(range(len(fns)))
 		random.seed(self.hparams.seed); random.shuffle(idx)
+		self.hparams.filenames = []
 		self.hparams.idx_train 	= idx[:int(self.hparams.train_proportion*len(idx))].copy() # Save as hyperparams
 		self.hparams.idx_test 	= idx[int(self.hparams.train_proportion*len(idx)):].copy() # Save as hyperparams
 		############################################################################################
@@ -317,6 +318,7 @@ class FusionModel(LightningModule):
 		train_dataset 	= CustomDataset(self.hparams.datadir, idxs = self.hparams.idx_train , include_classes = self.hparams.include_classes, 
 							flow_method = self.hparams.flow_method, balance_classes=True, mode = 'train', max_frames = self.hparams.loader_nframes,
 							stride = self.hparams.loader_stride, masked = self.hparams.masked)
+		self.filenames = train_dataset.filtered_fns
 		train_dataloader 	= DataLoader(train_dataset, batch_size=self.batch_size, shuffle=True, num_workers=self.hparams.number_workers, drop_last=True)
 		self.epoch_len = len(train_dataset)
 		return train_dataloader
