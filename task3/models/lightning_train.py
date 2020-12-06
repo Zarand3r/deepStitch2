@@ -263,7 +263,7 @@ class FusionModel(LightningModule):
 		self.actual.append(target_cuda.item())
 		self.predicted.append(output.topk(1,1)[-1].item())
 		if self.actual[-1] != self.predicted[-1]:
-			print("MISCLASSIFIED: ", batch_idx)
+			print("MISCLASSIFIED: ", batch_idx) # print self.filenames[batch_idx][0]
 		self.predicted_softmax.append(softmax(output.detach().cpu().numpy(), axis = -1)) # Save scores
 
 		return {'val_loss': loss}
