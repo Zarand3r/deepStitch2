@@ -12,7 +12,7 @@ sys.path.insert(1, f"{homedir}" + '/utils')
 import settings1
 
 
-def convert_file(video_path, output_directory):
+def convert_video(video_path, output_directory):
 	print(video_path)
 	cap = cv2.VideoCapture(video_path)
 	vname = os.path.split(video_path)[-1][:-4]
@@ -37,7 +37,11 @@ def convert_all(input_directory, output_directory=None):
 	if not os.path.exists(output_directory):
 		os.makedirs(output_directory)
 	for file in glob.glob(os.path.join(input_directory, "*.mp4")):
-	    convert_file(file, output_directory)
+	    convert_video(file, output_directory)
+
+def label_video()
+
+def label_all(input_directory, output_directory=None):
 
 if __name__ == '__main__':
 	# do stuff
