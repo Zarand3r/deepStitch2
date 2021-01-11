@@ -342,6 +342,7 @@ class FusionModel(LightningModule):
                 #print(of.reshape(-1, 3).mean(0))
                 #print(of.reshape(-1, 3).var(0))
 
+                #return [rgb, batch[1]]
                 return [torch.stack([rgb, of], axis = -1), batch[1]]
 
         def augGPU_resize(self, input, seed = None, npix_resize = (224, 224), random_crop = False):
