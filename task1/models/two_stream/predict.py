@@ -95,7 +95,8 @@ def show_saliency_maps(args):
         plt.axis('off')
         plt.gcf().set_size_inches(12, 5)
     #plt.show()
-    plt.savefig("saliency.png")
+    #to view images on ssh, use eog saliency.png
+    plt.savefig("saliency_rgb.png")
 
 def predict(args):
     model = classifier.FusionModel.load_from_checkpoint(checkpoint_path=args.checkpoint_path, hparams_file=args.hparams_path)
