@@ -40,29 +40,23 @@ def compute_saliency_maps(X, y, model):
     # Make sure the model is in "test" mode
     model.eval()
     print(model)
-    
     # Make input tensor require gradient
     X.requires_grad_()
-    
     saliency = None
     
     # Forward pass
-    #scores = model(X)
     scores = model(X)
-    foo = scores[10]
-    print(foo)
-    foo = foo[0].reshape(1, foo[0].shape[-1])
-    # Correct class scores
-    foo = foo.gather(1, y.view(-1, 1)).squeeze()
-    # Backward pass
-    # Note: scores is a tensor here, need to supply initial gradients of same tensor shape as scores.
-    foo.backward(torch.ones(foo.size()))
-    
+    scores = torch.stack(scores)
+    scores = torch.squeeze(scores, 1)
+    y = torch.tensor([y]*len(scores))
+    scores = scores.gather(1, y.view(-1, 1)).squeeze()
+    print("Score of the label classification for each frame: ", scores)
+    scores.backward(torch.ones(scores.size()))
     saliency = X.grad
-    print(saliency[0][10].shape)
-    # Convert 3d to 1d
-    #saliency = saliency.abs()
-    #saliency, _= torch.max(saliency, dim=1)
+    saliency = saliency.abs()
+    saliency, _= torch.max(saliency, dim=4)
+    saliency = torch.squeeze(saliency)
+    print(saliency.shape)
     
     return saliency
 
@@ -77,16 +71,31 @@ def show_saliency_maps(args):
     dataiter = iter(loader)
     batch = dataiter.next()
     #sample = batch[0]
-    label = batch[1]
     X_tensor, y_tensor = model.apply_transforms_GPU(batch, random_crop=model.hparams.random_crop)
     # Compute saliency maps for images in X
-    N = X_tensor.shape[0]
-    #y_tensor = torch.tensor(np.array([label]*N))
+    print("Input shape (nB, nF, nH, nW, nC, [rgb, of]]): ", X_tensor.shape)
+    print("label shape: ", y_tensor.shape)
     saliency = compute_saliency_maps(X_tensor, y_tensor, model)
 
-    # Convert the saliency map from Torch Tensor to numpy array and show images
-    # and saliency maps together.
+    
+    X = torch.squeeze(X_tensor)
+    X = X.detach().numpy()
+    X_rgb = X[:, :, :, :, 0]
+    # Convert the saliency map from Torch Tensor to numpy array and show images and saliency maps together.
     saliency = saliency.numpy()
+    saliency_rgb = saliency[:, :, :, 0]
+    N = X_rgb.shape[0] #len(X)
+    frames = [0, 6, 12, 18]
+    for i in range(len(frames)):
+        plt.subplot(2, len(frames), i + 1)
+        plt.imshow(X_rgb[frames[i]])
+        plt.axis('off')
+        plt.subplot(2, len(frames), len(frames) + i + 1)
+        plt.imshow(saliency_rgb[frames[i]], cmap=plt.cm.hot)
+        plt.axis('off')
+        plt.gcf().set_size_inches(12, 5)
+    #plt.show()
+    plt.savefig("saliency.png")
 
 def predict(args):
     model = classifier.FusionModel.load_from_checkpoint(checkpoint_path=args.checkpoint_path, hparams_file=args.hparams_path)
@@ -104,8 +113,6 @@ def predict(args):
         prediction = model(input_cuda)
         print(prediction)
 
-    
-
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     # Input argument
@@ -113,7 +120,7 @@ if __name__ == '__main__':
     parser.add_argument('--checkpoint_path', default=f'{settings1.checkpoints}/two_stream/AC_CE_EF_FG/_ckpt_epoch_46.ckpt', help='path to load checkpoints')
     parser.add_argument('--hparams_path', default=f'{homedir}/task1/models/two_stream/test/hparams.yaml', help='path to load hyperparameters')
     args = parser.parse_args()
-    predict(args)
-    #show_saliency_maps(args)
+    #predict(args)
+    show_saliency_maps(args)
     
 
