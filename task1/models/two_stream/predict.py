@@ -70,7 +70,8 @@ def show_saliency_maps(args):
     i = 0
     dataiter = iter(loader)
     batch = dataiter.next()
-    #sample = batch[0]
+    batch = dataiter.next()
+    batch = dataiter.next()
     X_tensor, y_tensor = model.apply_transforms_GPU(batch, random_crop=model.hparams.random_crop)
     # Compute saliency maps for images in X
     print("Input shape (nB, nF, nH, nW, nC, [rgb, of]]): ", X_tensor.shape)
@@ -90,13 +91,14 @@ def show_saliency_maps(args):
         plt.subplot(2, len(frames), i + 1)
         plt.imshow(X_rgb[frames[i]])
         plt.axis('off')
+        plt.title(f"Class: {batch[1]} Frame: {frames[i]}")
         plt.subplot(2, len(frames), len(frames) + i + 1)
         plt.imshow(saliency_rgb[frames[i]], cmap=plt.cm.hot)
         plt.axis('off')
         plt.gcf().set_size_inches(12, 5)
     #plt.show()
     #to view images on ssh, use eog saliency.png
-    plt.savefig("saliency_rgb.png")
+    plt.savefig("saliency_rgb2.png")
 
 def predict(args):
     model = classifier.FusionModel.load_from_checkpoint(checkpoint_path=args.checkpoint_path, hparams_file=args.hparams_path)
