@@ -234,11 +234,13 @@ class FusionModel(LightningModule):
                                         outputs = self.rnn(torch.cat([f, f_of], dim = 1), first_step=True)
                                 else:
                                         outputs = self.rnn(torch.cat([f, f_of], dim = 1), first_step=False)
-                                outputs = outputs.reshape(outputs.size(0), -1)
-                                foo = self.fc(outputs)
-                                results.append(foo)
-                        return results
-                        
+                                
+                        outputs = outputs.reshape(outputs.size(0), -1)
+                        outputs = self.fc(outputs)
+                        # Add a dimension to make the size consistent with old rnn
+                        outputs = outputs.unsqueeze(1)
+
+                        hidden, cell = _, _ # Implement how to do this later... 
                 return outputs, hidden, cell
 
         def training_step(self, batch, batch_idx):

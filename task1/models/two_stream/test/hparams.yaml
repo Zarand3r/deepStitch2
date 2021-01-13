@@ -2,7 +2,7 @@ accum_batches: 3
 arch: alexnet
 auto_lr: false
 batch_size: 1
-datadir: /mnt/md1/richard_bao/balint_data/old_classification_data
+datadir: /mnt/md1/richard_bao/balint_data/classification_data
 epochs: 60
 fc_size: 32
 flow_method: flownet
