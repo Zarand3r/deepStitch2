@@ -69,34 +69,18 @@ def show_saliency_maps(args):
     dataiter = iter(loader)
     for idx in range(1):
         batch = dataiter.next()
-        X_tensor, y_tensor = model.apply_transforms_GPU(batch, random_crop=model.hparams.random_crop, normalize=True)
+        batch = dataiter.next()
+        print(np.array_equal(batch[0][0][0], batch[0][0][-1]))
+        #print(np.array_equal(batch[0][0], batch[0][1]))
+        X_tensor, y_tensor = model.apply_transforms_GPU(batch, random_crop=model.hparams.random_crop)
         # Compute saliency maps for images in X
         print("Input shape (nB, nF, nH, nW, nC, [rgb, of]]): ", X_tensor.shape)
         print("label shape: ", y_tensor.shape)
-        saliency = compute_saliency_maps(X_tensor, y_tensor, model)
-        
-        X_rgb = X_tensor.detach().numpy()[0][:, :, :, :, 0]
-
-        #X_rgb = batch[0][0]
-        #width = X_rgb.shape[2]
-        #X_rgb = X_rgb[:, :, :int(width/2), :]
-        # Convert the saliency map from Torch Tensor to numpy array and show images and saliency maps together.
-        saliency = saliency.numpy()
-        saliency_rgb = saliency[:, :, :, 0]
-        N = X_rgb.shape[0]-1 #len(X)
-        frames = [int(N*1/4), int(N*1/2), int(N*3/4), N]
-        for i in range(len(frames)):
-            plt.subplot(2, len(frames), i + 1)
-            plt.imshow(X_rgb[frames[i]])
-            plt.axis('off')
-            plt.title(f"Class: {batch[1][0]} Frame: {frames[i]}")
-            plt.subplot(2, len(frames), len(frames) + i + 1)
-            plt.imshow(saliency_rgb[frames[i]], cmap=plt.cm.hot)
-            plt.axis('off')
-            plt.gcf().set_size_inches(12, 5)
-        #plt.show()
-        #to view images on ssh, use eog saliency.png
-        plt.savefig(f"saliency_figures/rgb{idx}.png")
+        X = torch.squeeze(X_tensor)
+        X = X.detach().numpy()
+        X_rgb = X[:, :, :, :, 0]
+        print(np.array_equal(X_tensor[0][0], X_tensor[0][-1]))
+        print(np.array_equal(X_rgb[0], X_rgb[-1]))
 
 def predict(args):
     model = classifier.FusionModel.load_from_checkpoint(checkpoint_path=args.checkpoint_path, hparams_file=args.hparams_path)
