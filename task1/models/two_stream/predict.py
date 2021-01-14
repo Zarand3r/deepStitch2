@@ -44,9 +44,9 @@ def compute_saliency_maps(X, y, model):
     saliency = None
     
     # Forward pass
-    scores = model(X)
-    scores = torch.stack(scores)
+    scores = model(X)[0]
     scores = torch.squeeze(scores, 1)
+    print(scores.shape)
     y = torch.tensor([y]*len(scores))
     scores = scores.gather(1, y.view(-1, 1)).squeeze()
     print("Score of the label classification for each frame: ", scores)
@@ -70,17 +70,12 @@ def show_saliency_maps(args):
     for idx in range(1):
         batch = dataiter.next()
         X_tensor, y_tensor = model.apply_transforms_GPU(batch, random_crop=model.hparams.random_crop, normalize=True)
+        print(np.array_equal(X_tensor[0][0], X_tensor[0][-1]))
         # Compute saliency maps for images in X
-        print("Input shape (nB, nF, nH, nW, nC, [rgb, of]]): ", X_tensor.shape)
-        print("label shape: ", y_tensor.shape)
         saliency = compute_saliency_maps(X_tensor, y_tensor, model)
         
         X_rgb = X_tensor.detach().numpy()[0][:, :, :, :, 0]
 
-        #X_rgb = batch[0][0]
-        #width = X_rgb.shape[2]
-        #X_rgb = X_rgb[:, :, :int(width/2), :]
-        # Convert the saliency map from Torch Tensor to numpy array and show images and saliency maps together.
         saliency = saliency.numpy()
         saliency_rgb = saliency[:, :, :, 0]
         N = X_rgb.shape[0]-1 #len(X)
