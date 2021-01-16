@@ -64,9 +64,9 @@ def show_saliency_maps(args):
     model.eval()
     loader = model.val_dataloader()
     dataiter = iter(loader)
-    for idx in range(165, 265, 20):
-        batch = dataiter.next()
-        print(batch[1])
+    for idx in range(20, 260, 20):
+        for i in range(20):
+            batch = dataiter.next()
         X_tensor, y_tensor = model.apply_transforms_GPU(batch, random_crop=model.hparams.random_crop, normalize=True)
         # Compute saliency maps for images in X
         saliency = compute_saliency_maps(X_tensor, y_tensor, model)
@@ -88,7 +88,7 @@ def show_saliency_maps(args):
             plt.gcf().set_size_inches(12, 5)
         #plt.show()
         #to view images on ssh, use eog saliency.png
-        #plt.savefig(f"saliency_figures/rgb{idx}.png")
+        plt.savefig(f"saliency_figures/rgb{idx}.png")
 
 def predict(args):
     model = classifier.FusionModel.load_from_checkpoint(checkpoint_path=args.checkpoint_path, hparams_file=args.hparams_path)
@@ -112,7 +112,7 @@ if __name__ == '__main__':
     parser.add_argument('--input_file', default=f'{homedir}/task1/models/two_stream/test/test1.mp4', help='Input file to predict')
     parser.add_argument('--checkpoint_path', default=f'{settings1.checkpoints}/two_stream/AC_CE_EF_FG/_ckpt_epoch_34.ckpt')
     #parser.add_argument('--checkpoint_path', default=f'{settings1.checkpoints}/two_stream/AC_CE_EF_FG/_ckpt_epoch_46.ckpt', help='path to load checkpoints')
-    parser.add_argument('--hparams_path', default=f'{homedir}/task1/models/two_stream/test/hparams.yaml', help='path to load hyperparameters')
+    parser.add_argument('--hparams_path', default=f'{homedir}/task1/models/two_stream/lightning_logs/AC_CE_EF_FG/alexnet_False_convLSTM/version_1/hparams.yaml', help='path to load hyperparameters')
     args = parser.parse_args()
     #predict(args)
     show_saliency_maps(args)
