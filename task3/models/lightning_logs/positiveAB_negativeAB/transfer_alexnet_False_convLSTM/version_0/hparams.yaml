@@ -1,13 +1,14 @@
-accum_batches: 5
+accum_batches: 3
 arch: alexnet
 auto_lr: false
 batch_size: 1
+checkpoint_path: /home/richard_bao/robosurgery/checkpoints/task1/two_stream/AC_CE_EF_FG/_ckpt_epoch_46.ckpt
 datadir: /mnt/md1/richard_bao/balint_data/label_classification_data
 epochs: 30
-fc_size: 32
+filenames: []
 flow_method: flownet
-gpu: 2
-hidden_size: 64
+gpu: 3
+hparams_path: /home/richard_bao/robosurgery/deepStitch/task1/models/two_stream/test/hparams.yaml
 idx_test:
 - 306
 - 324
@@ -371,6 +372,7 @@ idx_train:
 include_classes:
 - positiveAB
 - negativeAB
+input_file: /home/richard_bao/robosurgery/deepStitch/task1/models/two_stream/test/test1.mp4
 loadchk: ''
 loader_nframes: 140
 loader_stride: 2
@@ -381,7 +383,6 @@ masked: ''
 number_workers: 3
 overfit: 0
 random_crop: false
-rnn_layers: 2
 rnn_model: convLSTM
 seed: 0
 train_proportion: 0.8

@@ -17,7 +17,7 @@ torch.backends.cudnn.deterministic = True
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--action', default='train')
-parser.add_argument('--dataset', default="gtea")
+parser.add_argument('--dataset', default="TCN_sponge")
 parser.add_argument('--split', default='1')
 
 args = parser.parse_args()
@@ -34,18 +34,18 @@ num_epochs = 50
 sample_rate = 1
 # sample input features @ 15fps instead of 30 fps
 # for 50salads, and up-sample the output to 30 fps
-if args.dataset == "50salads":
-    sample_rate = 2
+if args.dataset == "TCN_sponge":
+    sample_rate = 4
 
-vid_list_file = "./data/"+args.dataset+"/splits/train.split"+args.split+".bundle"
-vid_list_file_tst = "./data/"+args.dataset+"/splits/test.split"+args.split+".bundle"
-features_path = "./data/"+args.dataset+"/features/"
-gt_path = "./data/"+args.dataset+"/groundTruth/"
+vid_list_file = "/mnt/md1/richard_bao/balint_data/"+args.dataset+"/splits/train.split"+args.split+".bundle"
+vid_list_file_tst = "/mnt/md1/richard_bao/balint_data/"+args.dataset+"/splits/test.split"+args.split+".bundle"
+features_path = "/mnt/md1/richard_bao/balint_data/"+args.dataset+"/features/"
+gt_path = "/mnt/md1/richard_bao/balint_data/"+args.dataset+"/groundTruth/"
 
-mapping_file = "./data/"+args.dataset+"/mapping.txt"
+mapping_file = "/mnt/md1/richard_bao/balint_data/"+args.dataset+"/mapping.txt"
 
-model_dir = "./models/"+args.dataset+"/split_"+args.split
-results_dir = "./results/"+args.dataset+"/split_"+args.split
+model_dir = "models/"+args.dataset+"/split_"+args.split
+results_dir = "results/"+args.dataset+"/split_"+args.split
  
 if not os.path.exists(model_dir):
     os.makedirs(model_dir)
@@ -53,12 +53,11 @@ if not os.path.exists(results_dir):
     os.makedirs(results_dir)
 
 file_ptr = open(mapping_file, 'r')
-actions = file_ptr.read().split('\n')[:-1]
+actions = file_ptr.read().split('\n') #used to be [:-1]
 file_ptr.close()
 actions_dict = dict()
 for a in actions:
     actions_dict[a.split()[1]] = int(a.split()[0])
-
 num_classes = len(actions_dict)
 
 trainer = Trainer(num_stages, num_layers, num_f_maps, features_dim, num_classes)

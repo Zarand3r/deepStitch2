@@ -44,18 +44,15 @@ def compute_saliency_maps(X, y, model):
     saliency = None
     
     # Forward pass
-    scores = model(X)
-    scores = torch.stack(scores)
+    scores = model(X)[0]
     scores = torch.squeeze(scores, 1)
     y = torch.tensor([y]*len(scores))
     scores = scores.gather(1, y.view(-1, 1)).squeeze()
-    print("Score of the label classification for each frame: ", scores)
     scores.backward(torch.ones(scores.size()))
     saliency = X.grad
     saliency = saliency.abs()
     saliency, _= torch.max(saliency, dim=4)
     saliency = torch.squeeze(saliency)
-    print("Saliency shape: ", saliency.shape)
     
     return saliency
 
@@ -67,20 +64,15 @@ def show_saliency_maps(args):
     model.eval()
     loader = model.val_dataloader()
     dataiter = iter(loader)
-    for idx in range(1):
-        batch = dataiter.next()
+    for idx in range(20, 260, 20):
+        for i in range(20):
+            batch = dataiter.next()
         X_tensor, y_tensor = model.apply_transforms_GPU(batch, random_crop=model.hparams.random_crop, normalize=True)
         # Compute saliency maps for images in X
-        print("Input shape (nB, nF, nH, nW, nC, [rgb, of]]): ", X_tensor.shape)
-        print("label shape: ", y_tensor.shape)
         saliency = compute_saliency_maps(X_tensor, y_tensor, model)
         
         X_rgb = X_tensor.detach().numpy()[0][:, :, :, :, 0]
 
-        #X_rgb = batch[0][0]
-        #width = X_rgb.shape[2]
-        #X_rgb = X_rgb[:, :, :int(width/2), :]
-        # Convert the saliency map from Torch Tensor to numpy array and show images and saliency maps together.
         saliency = saliency.numpy()
         saliency_rgb = saliency[:, :, :, 0]
         N = X_rgb.shape[0]-1 #len(X)
@@ -118,8 +110,9 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     # Input argument
     parser.add_argument('--input_file', default=f'{homedir}/task1/models/two_stream/test/test1.mp4', help='Input file to predict')
-    parser.add_argument('--checkpoint_path', default=f'{settings1.checkpoints}/two_stream/AC_CE_EF_FG/_ckpt_epoch_46.ckpt', help='path to load checkpoints')
-    parser.add_argument('--hparams_path', default=f'{homedir}/task1/models/two_stream/test/hparams.yaml', help='path to load hyperparameters')
+    parser.add_argument('--checkpoint_path', default=f'{settings1.checkpoints}/two_stream/AC_CE_EF_FG/_ckpt_epoch_34.ckpt')
+    #parser.add_argument('--checkpoint_path', default=f'{settings1.checkpoints}/two_stream/AC_CE_EF_FG/_ckpt_epoch_46.ckpt', help='path to load checkpoints')
+    parser.add_argument('--hparams_path', default=f'{homedir}/task1/models/two_stream/lightning_logs/AC_CE_EF_FG/alexnet_False_convLSTM/version_1/hparams.yaml', help='path to load hyperparameters')
     args = parser.parse_args()
     #predict(args)
     show_saliency_maps(args)

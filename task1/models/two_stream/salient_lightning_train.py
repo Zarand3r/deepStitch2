@@ -234,11 +234,13 @@ class FusionModel(LightningModule):
                                         outputs = self.rnn(torch.cat([f, f_of], dim = 1), first_step=True)
                                 else:
                                         outputs = self.rnn(torch.cat([f, f_of], dim = 1), first_step=False)
-                                outputs = outputs.reshape(outputs.size(0), -1)
-                                foo = self.fc(outputs)
-                                results.append(foo)
-                        return results
-                        
+                                
+                        outputs = outputs.reshape(outputs.size(0), -1)
+                        outputs = self.fc(outputs)
+                        # Add a dimension to make the size consistent with old rnn
+                        outputs = outputs.unsqueeze(1)
+
+                        hidden, cell = _, _ # Implement how to do this later... 
                 return outputs, hidden, cell
 
         def training_step(self, batch, batch_idx):
@@ -353,7 +355,7 @@ class FusionModel(LightningModule):
                 resized_rgb = torch.zeros(nB, nF, npix_resize[0], npix_resize[1], nC).type_as(input)    
                 for bb in range(nB):
                         for ff in range(nF):
-                                im = input.permute(0, 1, 4, 2, 3)[0, 0, :, :, :].unsqueeze(0).type(torch.float)
+                                im = input.permute(0, 1, 4, 2, 3)[bb, ff, :, :, :].unsqueeze(0).type(torch.float)
                                 resized_rgb[bb, ff, :, :, :] = F.interpolate(im, size = npix_resize).permute(0,2,3,1)
                 # Right now does random crop for each of optic flow and rgb
                 if random_crop:
