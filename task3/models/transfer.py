@@ -122,11 +122,34 @@ class TransferLearning(LightningModule):
             tensorboard_logs = {'val/loss': avg_loss, 'val/top1': top1_val, 'val/auc': auc_val, 'train/top1': top1_train, 'train/auc': auc_train, 'step': self.current_epoch}
             return {'val_loss': avg_loss, 'val_acc':torch.tensor(top1_val), 'log': tensorboard_logs}
     
-    def send_im_calculate_top1(self, actual, predicted, cmap_use = 'Blues', name = 'tmp/name'):
-            return self.backbone.send_im_calculate_top1(actual, predicted, cmap_use = 'Blues', name = 'tmp/name')
+    # def send_im_calculate_top1(self, actual, predicted, cmap_use = 'Blues', name = 'tmp/name'):
+    #         return self.backbone.send_im_calculate_top1(actual, predicted, cmap_use = 'Blues', name = 'tmp/name')
             
+    # def configure_optimizers(self):
+    #         return self.backbone.configure_optimizers()
+
+    def send_im_calculate_top1(self, actual, predicted, cmap_use = 'Blues', name = 'tmp/name'):
+            cm = confusion_matrix(actual, predicted)
+            fig = plt.figure(); sns.heatmap(cm, cmap = cmap_use, ax =plt.gca(), annot = True, xticklabels = self.hparams.include_classes, yticklabels = self.hparams.include_classes)
+            self.logger.experiment.add_figure(name, fig, global_step=self.current_epoch, close = True)
+            top1 = float(sum([a==b for a,b in zip(actual, predicted)]))/len(actual)
+            return top1
+                
     def configure_optimizers(self):
-            return self.backbone.configure_optimizers()
+            self.layers_to_fit = [{'params': self.backbone.fc.parameters()}, {'params': self.backbone.rnn.parameters()}]
+            if self.fc_pre_rgb != None:
+                    self.layers_to_fit.append({'params': self.backbone.fc_pre_rgb.parameters()})
+                    self.layers_to_fit.append({'params': self.backbone.fc_pre_of.parameters()})
+            if self.trainable_base:
+                    self.layers_to_fit.append({'params': self.backbone.features_rgb.parameters()})
+                    self.layers_to_fit.append({'params': self.backbone.features_of.parameters()})
+            
+            optimizer = torch.optim.Adam(self.layers_to_fit,
+                                                            lr=self.hparams.lr, betas=(0.9, 0.999), 
+                                                            weight_decay = self.hparams.weight_decay)
+    
+            scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=10, gamma = 0.1)
+            return [optimizer], [scheduler]
 
     def train_dataloader(self):
             train_dataset   = CustomDataset(self.hparams.datadir, idxs = self.hparams.idx_train , include_classes = self.hparams.include_classes, 
