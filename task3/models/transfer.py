@@ -58,7 +58,8 @@ class TransferLearning(LightningModule):
         print(x.shape)
         self.feature_extractor.eval()
         with torch.no_grad():
-            representations = self.feature_extractor(x)
+            representations = self.backbone(x)
+            # representations = self.feature_extractor(x)
             #representations = self.feature_extractor(x).flatten(1)
         x = self.classifier(representations)
         x = x.reshape(x.size(0), -1)
@@ -157,9 +158,6 @@ if __name__ == '__main__':
         parser.add_argument('--loadchk', default='', help='Pass through to load training from a checkpoint')
         parser.add_argument('--datadir', default=settings3.output_directory, help='train directory')
         parser.add_argument('--gpu', default=0, type=int, help='GPU device number')
-        parser.add_argument('--arch', default='alexnet', help='model architecture')
-        parser.add_argument('--trainable_base', default=0, type=int, help='Whether to train the feature extractor')
-        parser.add_argument('--rnn_model', default='LSTM', type=str, help='RNN model at clasification')
         parser.add_argument('--epochs', default=60, type=int, help='manual epoch number')
         parser.add_argument('--lr', default=0.0001, type=float, help='initial learning rate')
         parser.add_argument('--lr_lambdas', default=0.9, type=float, help='Schedulre hyperparam')
@@ -185,7 +183,6 @@ if __name__ == '__main__':
         parser.add_argument('--hparams_path', default=f'{homedir}/task1/models/two_stream/test/hparams.yaml', help='path to load hyperparameters')
 
         hparams = parser.parse_args()
-        hparams.trainable_base = True if hparams.trainable_base == 1 else False
         hparams.random_crop = True if hparams.random_crop == 1 else False
         hparams.auto_lr = True if hparams.auto_lr == 1 else False
         hparams.use_pretrained = True if hparams.use_pretrained == 1 else False
@@ -203,18 +200,17 @@ if __name__ == '__main__':
         #####################################################################################
         # Instantiate model
         torch.backends.cudnn.deterministic=True
-        print("==> creating model FUSION '{}' '{}'".format(hparams.arch, hparams.rnn_model))
         model = TransferLearning(hparams)
         #####################################################################################
         print('Logging to: % s' % hparams.logging_dir)
-        logger = TensorBoardLogger(hparams.logging_dir, name='%s/transfer_%s_%s_%s%s' %(classification_name, hparams.arch, hparams.trainable_base, hparams.rnn_model, hparams.masked))
+        logger = TensorBoardLogger(hparams.logging_dir, name='%s/transfer' %(classification_name))
         logger.log_hyperparams(hparams) # Log the hyperparameters
         # Set default device
         # torch.cuda.set_device(hparams.gpu)
 
         checkpoint_callback = ModelCheckpoint(
                 # filepath=os.path.join(logger.log_dir, 'checkpoints'),
-                filepath=os.path.join(settings3.checkpoints, classification_name, "transfer",  f'{hparams.arch}_{hparams.trainable_base}_{hparams.rnn_model}{hparams.masked}'),
+                filepath=os.path.join(settings3.checkpoints, classification_name, "transfer",  "experiment1"),
                 save_top_k=3,
                 verbose=True,
                 monitor='val_acc',
