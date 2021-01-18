@@ -1,0 +1,3 @@
+source activate tensor
+
+CUDA_VISIBLE_DEVICES=3 python new_transfer.py --gpu 3 --rnn_model "convLSTM" --number_workers 3 --accum_batches 3 --lr 0.001 --weight_decay 0.01 --epochs 30 --use_pretrained 1 --include_classes "positiveAB_negativeAB"
