@@ -44,7 +44,7 @@ class TransferLearning(LightningModule):
         # init a pretrained resnet
         backbone = feature_classifier.FusionModel.load_from_checkpoint(checkpoint_path=args.checkpoint_path)
         print("BACKBONE: ", backbone)
-        self.model = backbone
+        self.backbone = backbone
         num_filters = backbone.fc.in_features
         print("NUM_FILTERS: ", num_filters)
         layers = list(backbone.children())[:-1]
@@ -56,7 +56,6 @@ class TransferLearning(LightningModule):
 
     def forward(self, x):
         print(x.shape)
-        print(self.feature_extractor)
         self.feature_extractor.eval()
         with torch.no_grad():
             representations = self.feature_extractor(x)
@@ -69,7 +68,8 @@ class TransferLearning(LightningModule):
 
     def training_step(self, batch, batch_idx):
             # Batch is already on GPU by now
-            input_cuda, target_cuda = self.apply_transforms_GPU(batch, random_crop=self.hparams.random_crop)
+            input_cuda = batch[0]
+            target_cuda = batch[1]
             output, _, _ = self(input_cuda)
             output = output[:, -1, :]
             loss = F.cross_entropy(output, target_cuda.type(torch.long))
@@ -80,7 +80,8 @@ class TransferLearning(LightningModule):
             return {'loss': loss, 'log': tensorboard_logs}
 
     def validation_step(self, batch, batch_idx):
-            input_cuda, target_cuda = self.apply_transforms_GPU(batch, random_crop=False)
+            input_cuda = batch[0]
+            target_cuda = batch[1]
             output, _, _ = self(input_cuda)
             output = output[:, -1, :]
             loss = F.cross_entropy(output, target_cuda.type(torch.long))
@@ -116,33 +117,10 @@ class TransferLearning(LightningModule):
             return {'val_loss': avg_loss, 'val_acc':torch.tensor(top1_val), 'log': tensorboard_logs}
     
     def send_im_calculate_top1(self, actual, predicted, cmap_use = 'Blues', name = 'tmp/name'):
-            self.model.send_im_calculate_top1(self, actual, predicted, cmap_use = 'Blues', name = 'tmp/name')
+            self.backbone.send_im_calculate_top1(self, actual, predicted, cmap_use = 'Blues', name = 'tmp/name')
             
     def configure_optimizers(self):
-            self.model.configure_optimizers()
-
-    # def send_im_calculate_top1(self, actual, predicted, cmap_use = 'Blues', name = 'tmp/name'):
-    #         cm = confusion_matrix(actual, predicted)
-    #         fig = plt.figure(); sns.heatmap(cm, cmap = cmap_use, ax =plt.gca(), annot = True, xticklabels = self.hparams.include_classes, yticklabels = self.hparams.include_classes)
-    #         self.logger.experiment.add_figure(name, fig, global_step=self.current_epoch, close = True)
-    #         top1 = float(sum([a==b for a,b in zip(actual, predicted)]))/len(actual)
-    #         return top1
-            
-    # def configure_optimizers(self):
-    #         self.layers_to_fit = [{'params': self.fc.parameters()}, {'params': self.rnn.parameters()}]
-    #         if self.fc_pre_rgb != None:
-    #                 self.layers_to_fit.append({'params': self.fc_pre_rgb.parameters()})
-    #                 self.layers_to_fit.append({'params': self.fc_pre_of.parameters()})
-    #         if self.trainable_base:
-    #                 self.layers_to_fit.append({'params': self.features_rgb.parameters()})
-    #                 self.layers_to_fit.append({'params': self.features_of.parameters()})
-            
-    #         optimizer = torch.optim.Adam(self.layers_to_fit,
-    #                                                         lr=self.hparams.lr, betas=(0.9, 0.999), 
-    #                                                         weight_decay = self.hparams.weight_decay)
-    
-    #         scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=10, gamma = 0.1)
-    #         return [optimizer], [scheduler]
+            self.backbone.configure_optimizers()
 
     def train_dataloader(self):
             train_dataset   = CustomDataset(self.hparams.datadir, idxs = self.hparams.idx_train , include_classes = self.hparams.include_classes, 
@@ -160,54 +138,6 @@ class TransferLearning(LightningModule):
             val_dataloader  = DataLoader(val_dataset, batch_size=self.hparams.batch_size, shuffle=False, num_workers=self.hparams.number_workers, drop_last=True)
             return val_dataloader
 
-    def apply_transforms_GPU(self, batch, random_crop = False):
-            # Prepares the outputs
-            nB, nF, nH, nW, nC = batch[0].size()
-            if random_crop:
-                    rgb = self.augGPU_resize(batch[0][:, :, :, :int(nW/2), :].type(torch.float)/255., npix_resize = (240, 240), random_crop = True)
-                    of      = self.augGPU_resize(batch[0][:, :, :, int(nW/2):, :].type(torch.float)/255., npix_resize = (240, 240), random_crop = True)
-            else:
-                    rgb = self.augGPU_resize(batch[0][:, :, :, :int(nW/2), :].type(torch.float)/255., npix_resize = (224, 224))
-                    of      = self.augGPU_resize(batch[0][:, :, :, int(nW/2):, :].type(torch.float)/255., npix_resize = (224, 224))
-
-            #of = self.augGPU_normalize_inplace(of, mean = [0.485, 0.456, 0.406], std = [0.229, 0.224, 0.225])
-            #rgb = self.augGPU_normalize_inplace(rgb, mean = [0.485, 0.456, 0.406], std = [0.229, 0.224, 0.225])
-            #print(of.reshape(-1, 3).mean(0))
-            rgb = self.augGPU_normalize_inplace(rgb, mean = [0.3, 0.2, 0.2], std = [0.2, 0.2, 0.2])
-            of = self.augGPU_normalize_inplace(of, mean = [0.99, 0.99, 0.99], std = [0.005, 0.005, 0.005])
-            #print(of.reshape(-1, 3).mean(0))
-            #print(of.reshape(-1, 3).var(0))
-
-            return [torch.stack([rgb, of], axis = -1), batch[1]]
-
-    def augGPU_resize(self, input, seed = None, npix_resize = (224, 224), random_crop = False):
-            """ Resizing operation using interp so it is done on the GPU"""
-            if len(input.size()) == 4: # Single batch
-                    input = input.unsqueeze(0)
-            nB, nF, _, _, nC = input.size()
-
-            if seed != None:
-                    random.seed(seed)
-
-            resized_rgb = torch.zeros(nB, nF, npix_resize[0], npix_resize[1], nC).type_as(input)    
-            for bb in range(nB):
-                    for ff in range(nF):
-                            im = input.permute(0, 1, 4, 2, 3)[bb, ff, :, :, :].unsqueeze(0).type(torch.float)
-                            resized_rgb[bb, ff, :, :, :] = F.interpolate(im, size = npix_resize).permute(0,2,3,1)
-            # Right now does random crop for each of optic flow and rgb
-            if random_crop:
-                    x0 = random.randint(0, npix_resize[1]-225)
-                    y0 = random.randint(0, npix_resize[0]-225)
-                    resized_rgb = resized_rgb[:, :, y0:y0+224, x0:x0+224, :]
-            
-            return resized_rgb
-    
-    def augGPU_normalize_inplace(self, input, mean = [0.3, 0.3, 0.3], std=[0.1, 0.1, 0.1]):
-            """Does an in place normalization on GPU"""
-            mean = torch.as_tensor(mean).type_as(input)
-            std = torch.as_tensor(std).type_as(input)
-            input = input.sub_(mean[None, None, None, None, :]).div_(std[None, None, None, None, :])
-            return input
 
 def predict(args):
     #model = classifier.FusionModel.load_from_checkpoint(checkpoint_path=args.checkpoint_path, hparams_file=args.hparams_path)
