@@ -26,13 +26,16 @@ repo = git.Repo("./", search_parent_directories=True)
 homedir = repo.working_dir
 sys.path.insert(1, f"{homedir}" + '/utils')
 import settings3
-import test as feature_classifier
+import feature_extractor
 from lightning_train import CustomDataset
 
 class TransferLearning(LightningModule):
     def __init__(self, args):
         super().__init__()
         self.hparams = args
+        self.actual = []; self.actual_train = []
+        self.predicted = []; self.predicted_train = []
+        self.predicted_softmax = []; self.predicted_softmax_train = []
         fns = []
         for class_curr in self.hparams.include_classes:
             fns.extend(glob.glob(os.path.join(self.hparams.datadir, class_curr, '%s*' % self.hparams.flow_method)))
@@ -41,36 +44,39 @@ class TransferLearning(LightningModule):
         self.hparams.filenames = []
         self.hparams.idx_train  = idx[:int(self.hparams.train_proportion*len(idx))].copy() # Save as hyperparams
         self.hparams.idx_test   = idx[int(self.hparams.train_proportion*len(idx)):].copy() # Save as hyperparams
+        self.num_classes = len(args.include_classes)
         # init a pretrained resnet
-        backbone = feature_classifier.FusionModel.load_from_checkpoint(checkpoint_path=args.checkpoint_path)
-        print("BACKBONE: ", backbone)
+        backbone = feature_extractor.FusionModel.load_from_checkpoint(checkpoint_path=args.checkpoint_path)
         self.backbone = backbone
         num_filters = backbone.fc.in_features
-        print("NUM_FILTERS: ", num_filters)
         layers = list(backbone.children())[:-1]
         self.feature_extractor = torch.nn.Sequential(*layers)
-        print("LAYERS: ", layers)
+        print("FEATURE EXTRACTOR: ", self.feature_extractor)
         # use the pretrained model to classify cifar-10 (10 image classes)
         num_target_classes = len(args.include_classes)
         self.classifier = nn.Linear(num_filters, num_target_classes)
+        self.backbone.fc = self.classifier
+        print("BACKBONE: ", self.backbone)
+        # backbone is the task1 model. feature_classifier is the attempt to build everything but last layer. classifier is the linear last llayer
 
     def forward(self, x):
-        print(x.shape)
-        self.feature_extractor.eval()
-        with torch.no_grad():
-            representations = self.backbone(x)
+        representations = self.backbone(x)
+        hidden, cell = None, None
+        return representations[0], hidden, cell
+        #self.feature_extractor.eval()
+        #with torch.no_grad():
             # representations = self.feature_extractor(x)
             #representations = self.feature_extractor(x).flatten(1)
-        x = self.classifier(representations)
-        x = x.reshape(x.size(0), -1)
-        x = x.unsqueeze(1)
-        return x, _, _
+        #representations = representations[0]
+        #outputs = self.classifier(representations)
+        #outputs = outputs.reshape(outputs.size(0), -1)
+        #outputs = outputs.unsqueeze(1)
+        #return outputs, hidden, cell
 
 
     def training_step(self, batch, batch_idx):
             # Batch is already on GPU by now
-            input_cuda = batch[0]
-            target_cuda = batch[1]
+            input_cuda, target_cuda = self.backbone.apply_transforms_GPU(batch)
             output, _, _ = self(input_cuda)
             output = output[:, -1, :]
             loss = F.cross_entropy(output, target_cuda.type(torch.long))
@@ -81,8 +87,7 @@ class TransferLearning(LightningModule):
             return {'loss': loss, 'log': tensorboard_logs}
 
     def validation_step(self, batch, batch_idx):
-            input_cuda = batch[0]
-            target_cuda = batch[1]
+            input_cuda, target_cuda = self.backbone.apply_transforms_GPU(batch)
             output, _, _ = self(input_cuda)
             output = output[:, -1, :]
             loss = F.cross_entropy(output, target_cuda.type(torch.long))
@@ -105,7 +110,7 @@ class TransferLearning(LightningModule):
                             auc_val         = roc_auc_score(self.actual, np.vstack(self.predicted_softmax), multi_class = 'ovr')
             else:
                     auc_train, auc_val = 0, 0
-            
+            print(self.actual)
             top1_val = self.send_im_calculate_top1(self.actual, self.predicted, cmap_use = 'Blues', name = 'val/conf_mat')
             top1_train = self.send_im_calculate_top1(self.actual_train, self.predicted_train, cmap_use = 'Oranges', name = 'train/conf_mat')
             #####################################################################################
@@ -118,10 +123,10 @@ class TransferLearning(LightningModule):
             return {'val_loss': avg_loss, 'val_acc':torch.tensor(top1_val), 'log': tensorboard_logs}
     
     def send_im_calculate_top1(self, actual, predicted, cmap_use = 'Blues', name = 'tmp/name'):
-            self.backbone.send_im_calculate_top1(self, actual, predicted, cmap_use = 'Blues', name = 'tmp/name')
+            return self.backbone.send_im_calculate_top1(actual, predicted, cmap_use = 'Blues', name = 'tmp/name')
             
     def configure_optimizers(self):
-            self.backbone.configure_optimizers()
+            return self.backbone.configure_optimizers()
 
     def train_dataloader(self):
             train_dataset   = CustomDataset(self.hparams.datadir, idxs = self.hparams.idx_train , include_classes = self.hparams.include_classes, 
