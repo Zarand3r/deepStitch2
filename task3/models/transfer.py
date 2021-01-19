@@ -110,7 +110,6 @@ class TransferLearning(LightningModule):
                             auc_val         = roc_auc_score(self.actual, np.vstack(self.predicted_softmax), multi_class = 'ovr')
             else:
                     auc_train, auc_val = 0, 0
-            print(self.actual)
             top1_val = self.send_im_calculate_top1(self.actual, self.predicted, cmap_use = 'Blues', name = 'val/conf_mat')
             top1_train = self.send_im_calculate_top1(self.actual_train, self.predicted_train, cmap_use = 'Oranges', name = 'train/conf_mat')
             #####################################################################################
@@ -137,10 +136,10 @@ class TransferLearning(LightningModule):
                 
     def configure_optimizers(self):
             self.layers_to_fit = [{'params': self.backbone.fc.parameters()}, {'params': self.backbone.rnn.parameters()}]
-            if self.fc_pre_rgb != None:
+            if self.backbone.fc_pre_rgb != None:
                     self.layers_to_fit.append({'params': self.backbone.fc_pre_rgb.parameters()})
                     self.layers_to_fit.append({'params': self.backbone.fc_pre_of.parameters()})
-            if self.trainable_base:
+            if self.backbone.trainable_base:
                     self.layers_to_fit.append({'params': self.backbone.features_rgb.parameters()})
                     self.layers_to_fit.append({'params': self.backbone.features_of.parameters()})
             
