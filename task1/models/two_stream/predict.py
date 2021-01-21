@@ -110,7 +110,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     # Input argument
     parser.add_argument('--input_file', default=f'{homedir}/task1/models/two_stream/test/test1.mp4', help='Input file to predict')
-    parser.add_argument('--checkpoint_path', default=f'{settings1.checkpoints}/two_stream/AC_CE_EF_FG/_ckpt_epoch_34.ckpt')
+    parser.add_argument('--checkpoint_path', default=f'{settings1.checkpoints}/two_stream/AC_CE_EF_FG/version1_ckpt_epoch_34.ckpt')
     #parser.add_argument('--checkpoint_path', default=f'{settings1.checkpoints}/two_stream/AC_CE_EF_FG/_ckpt_epoch_46.ckpt', help='path to load checkpoints')
     parser.add_argument('--hparams_path', default=f'{homedir}/task1/models/two_stream/lightning_logs/AC_CE_EF_FG/alexnet_False_convLSTM/version_1/hparams.yaml', help='path to load hyperparameters')
     args = parser.parse_args()
