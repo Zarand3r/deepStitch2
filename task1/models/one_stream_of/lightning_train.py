@@ -366,7 +366,7 @@ class FusionModel(LightningModule):
 		resized_rgb = torch.zeros(nB, nF, npix_resize[0], npix_resize[1], nC).type_as(input)    
 		for bb in range(nB):
 			for ff in range(nF):
-				im = input.permute(0, 1, 4, 2, 3)[0, 0, :, :, :].unsqueeze(0).type(torch.float)
+				im = input.permute(0, 1, 4, 2, 3)[bb, ff, :, :, :].unsqueeze(0).type(torch.float)
 				resized_rgb[bb, ff, :, :, :] = F.interpolate(im, size = npix_resize).permute(0,2,3,1)
 		# Right now does random crop for each of optic flow and rgb
 		if random_crop:

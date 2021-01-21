@@ -47,11 +47,14 @@ class TransferLearning(LightningModule):
         self.num_classes = len(args.include_classes)
         # init a pretrained resnet
         backbone = feature_extractor.FusionModel.load_from_checkpoint(checkpoint_path=args.checkpoint_path)
+        ####
+        backbone.hparams.lr = self.hparams.lr
+        ####
         self.backbone = backbone
         num_filters = backbone.fc.in_features
-        layers = list(backbone.children())[:-1]
-        self.feature_extractor = torch.nn.Sequential(*layers)
-        print("FEATURE EXTRACTOR: ", self.feature_extractor)
+        #layers = list(backbone.children())[:-1]
+        #self.feature_extractor = torch.nn.Sequential(*layers)
+        #print("FEATURE EXTRACTOR: ", self.feature_extractor)
         # use the pretrained model to classify cifar-10 (10 image classes)
         num_target_classes = len(args.include_classes)
         self.classifier = nn.Linear(num_filters, num_target_classes)
