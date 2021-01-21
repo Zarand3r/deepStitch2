@@ -167,17 +167,6 @@ class TransferLearning(LightningModule):
             return val_dataloader
 
 
-def predict(args):
-    #model = classifier.FusionModel.load_from_checkpoint(checkpoint_path=args.checkpoint_path, hparams_file=args.hparams_path)
-    backbone = classifier.FusionModel.load_from_checkpoint(checkpoint_path=args.checkpoint_path)
-    #backbone.freeze()
-    print(backbone)
-    num_filters = backbone.fc.in_features
-    print(num_filters)
-    layers = list(backbone.children())[:-1]
-    print(layers)
-
-
 if __name__ == '__main__':
         ###########################################################################################
         # ARGS
@@ -205,9 +194,8 @@ if __name__ == '__main__':
         parser.add_argument('--batch_size', default=1, type=int, help='batch size')
         parser.add_argument('--masked', dest='masked', action='store_true', help = "train on masked?")
 
-        parser.add_argument('--input_file', default=f'{homedir}/task1/models/two_stream/test/test1.mp4', help='Input file to predict')
         parser.add_argument('--checkpoint_path', default=f'/home/richard_bao/robosurgery/checkpoints/task1/two_stream/AC_CE_EF_FG/_ckpt_epoch_46.ckpt', help='path to load checkpoints')
-        parser.add_argument('--hparams_path', default=f'{homedir}/task1/models/two_stream/test/hparams.yaml', help='path to load hyperparameters')
+        parser.add_argument('--hparams_path', default=f'{homedir}/task1/models/two_stream/lightning_logs/AC_CE_EF_FG/alexnet_False_convLSTM/version_1/hparams.yaml', help='path to load hyperparameters')
 
         hparams = parser.parse_args()
         hparams.random_crop = True if hparams.random_crop == 1 else False
