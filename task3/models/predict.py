@@ -14,6 +14,7 @@ homedir = repo.working_dir
 sys.path.insert(1, f"{homedir}" + '/utils')
 import settings3
 import lightning_train as classifier
+#import salient_lightning_train as classifier
 
 # def val_dataloader(self):
 #     val_dataset = CustomDataset(self.hparams.datadir, idxs = self.hparams.idx_test , include_classes = self.hparams.include_classes, 
@@ -57,16 +58,19 @@ def compute_saliency_maps(X, y, model):
 
 
 def show_saliency_maps(args):
-    model = classifier.FusionModel.load_from_checkpoint(checkpoint_path=args.checkpoint_path, hparams_file=args.hparams_path)
+    #model = classifier.FusionModel.load_from_checkpoint(checkpoint_path=args.checkpoint_path, hparams_file=args.hparams_path)
+    model = classifier.FusionModel.load_from_checkpoint(checkpoint_path=args.checkpoint_path)
     for param in model.parameters():
         param.requires_grad = False
     model.eval()
     loader = model.val_dataloader()
     dataiter = iter(loader)
-    for idx in range(20, 260, 20):
-        for i in range(20):
+    print(len(dataiter))
+    interval = int(len(model.hparams.idx_test)/5)
+    for idx in range(interval, len(model.hparams.idx_test), interval):
+        for i in range(interval):
             batch = dataiter.next()
-        X_tensor, y_tensor = model.apply_transforms_GPU(batch, random_crop=model.hparams.random_crop, normalize=True)
+        X_tensor, y_tensor = model.apply_transforms_GPU(batch, random_crop=model.hparams.random_crop)
         # Compute saliency maps for images in X
         saliency = compute_saliency_maps(X_tensor, y_tensor, model)
         
@@ -87,7 +91,7 @@ def show_saliency_maps(args):
             plt.gcf().set_size_inches(12, 5)
         #plt.show()
         #to view images on ssh, use eog saliency.png
-        plt.savefig(f"saliency_figures/transfer/rgb{idx}.png")
+        plt.savefig(f"saliency_figures/rgb{idx}.png")
 
 def predict(args):
     model = classifier.FusionModel.load_from_checkpoint(checkpoint_path=args.checkpoint_path)
@@ -107,8 +111,7 @@ def predict(args):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--checkpoint_path', default=f'{settings3.checkpoints}/positiveAB_negativeAB/_ckpt_epoch_7_v2.ckpt')
-    parser.add_argument('--hparams_path', default=f'{homedir}/task1/models/two_stream/lightning_logs/positiveAB_negativeAB/version_6/hparams.yaml', help='path to load hyperparameters')
-    #parser.add_argument('--checkpoint_path', default=f'{settings3.checkpoints}/positiveAB_negativeAB/transfer/_ckpt_epoch_23.ckpt')
+    parser.add_argument('--hparams_path', default=f'{homedir}/task3/models/lightning_logs/positiveAB_negativeAB/alexnet_False_convLSTM/version_6/hparams.yaml', help='path to load hyperparameters')
     args = parser.parse_args()
     #predict(args)
     show_saliency_maps(args)

@@ -47,7 +47,7 @@ class CustomDataset(Dataset):
                         self.remove_empty()
                         fns = []
                         for class_curr in include_classes:
-                                fns.extend(glob.glob(os.path.join(global_dir, class_curr, '%s*' % flow_method)))
+                            fns.extend(glob.glob(os.path.join(global_dir, class_curr, '%s*' % flow_method)))   
                 if len(fns) == 0:
                         raise ValueError('Likely that you have not pre-computed the optical flow or data directory is wrong!')
                 if idxs == None: # load all
@@ -62,6 +62,7 @@ class CustomDataset(Dataset):
                                 cnt = class_counter[class_curr]
                                 print(class_curr, cnt)
                                 self.filtered_fns.extend(random.choices([f for f in self.filtered_fns if f[1] == int(class_curr)], k=max(n_match-cnt, 1) ))
+                        print(Counter([f[1] for f in self.filtered_fns]))
                         print('Classes now balanced')
 
         def __len__(self):
@@ -88,6 +89,7 @@ class CustomDataset(Dataset):
                         video = video[list(range(start_phase, video.size()[0], self.stride)), :, :]
                 else:
                         raise ValueError('not supported mode must be train or test')
+                print(self.filtered_fns[idx][0])
                 return (video, label)
 
         def remove_empty(self):
@@ -104,7 +106,7 @@ class FusionModel(LightningModule):
         def __init__(self, args):
                 super(FusionModel, self).__init__()
                 if isinstance(args, dict):
-                    args = argparse.Namespace(**args)
+                        args = argparse.Namespace(**args)
                 self.hparams = args
                 self.actual = []; self.actual_train = []
                 self.predicted = []; self.predicted_train = []
@@ -117,7 +119,6 @@ class FusionModel(LightningModule):
                         fns.extend(glob.glob(os.path.join(self.hparams.datadir, class_curr, '%s*' % self.hparams.flow_method)))
                 idx = list(range(len(fns)))
                 random.seed(self.hparams.seed); random.shuffle(idx)
-                self.hparams.filenames = []
                 self.hparams.idx_train  = idx[:int(self.hparams.train_proportion*len(idx))].copy() # Save as hyperparams
                 self.hparams.idx_test   = idx[int(self.hparams.train_proportion*len(idx)):].copy() # Save as hyperparams
                 ############################################################################################
@@ -197,6 +198,7 @@ class FusionModel(LightningModule):
                 nBatch, nFrames, ofH, ofW, nChannels, _ = inputs.shape
                 assert nFrames > 0, "cannot have videos with 0 frames"
                 
+                results = []
                 #########################################################################################
                 # Non convolutional (old way)
                 if 'conv' not in self.hparams.rnn_model:
@@ -238,9 +240,7 @@ class FusionModel(LightningModule):
                         # Add a dimension to make the size consistent with old rnn
                         outputs = outputs.unsqueeze(1)
 
-                        hidden, cell = _, _ # Implement how to do this later...
-                        #########################################################################################
-                
+                        hidden, cell = _, _ # Implement how to do this later... 
                 return outputs, hidden, cell
 
         def training_step(self, batch, batch_idx):
@@ -262,8 +262,6 @@ class FusionModel(LightningModule):
                 loss = F.cross_entropy(output, target_cuda.type(torch.long))
                 self.actual.append(target_cuda.item())
                 self.predicted.append(output.topk(1,1)[-1].item())
-                if self.actual[-1] != self.predicted[-1]:
-                        print("MISCLASSIFIED: ", batch_idx) # print self.filenames[batch_idx][0]
                 self.predicted_softmax.append(softmax(output.detach().cpu().numpy(), axis = -1)) # Save scores
 
                 return {'val_loss': loss}
@@ -318,19 +316,18 @@ class FusionModel(LightningModule):
                 train_dataset   = CustomDataset(self.hparams.datadir, idxs = self.hparams.idx_train , include_classes = self.hparams.include_classes, 
                                                         flow_method = self.hparams.flow_method, balance_classes=True, mode = 'train', max_frames = self.hparams.loader_nframes,
                                                         stride = self.hparams.loader_stride, masked = self.hparams.masked)
-                self.filenames = train_dataset.filtered_fns
                 train_dataloader        = DataLoader(train_dataset, batch_size=self.batch_size, shuffle=True, num_workers=self.hparams.number_workers, drop_last=True)
                 self.epoch_len = len(train_dataset)
                 return train_dataloader
 
         def val_dataloader(self):
                 val_dataset     = CustomDataset(self.hparams.datadir, idxs = self.hparams.idx_test , include_classes = self.hparams.include_classes, 
-                                                        flow_method = self.hparams.flow_method, balance_classes=True, mode = 'val', max_frames = self.hparams.loader_nframes,
+                                                        flow_method = self.hparams.flow_method, balance_classes=False, mode = 'val', max_frames = self.hparams.loader_nframes,
                                                         stride = self.hparams.loader_stride, masked = self.hparams.masked)
                 val_dataloader  = DataLoader(val_dataset, batch_size=self.batch_size, shuffle=False, num_workers=self.hparams.number_workers, drop_last=True)
                 return val_dataloader
 
-        def apply_transforms_GPU(self, batch, random_crop = False):
+        def apply_transforms_GPU(self, batch, random_crop = False, normalize=True):
                 # Prepares the outputs
                 nB, nF, nH, nW, nC = batch[0].size()
                 if random_crop:
@@ -340,13 +337,9 @@ class FusionModel(LightningModule):
                         rgb = self.augGPU_resize(batch[0][:, :, :, :int(nW/2), :].type(torch.float)/255., npix_resize = (224, 224))
                         of      = self.augGPU_resize(batch[0][:, :, :, int(nW/2):, :].type(torch.float)/255., npix_resize = (224, 224))
 
-                #of = self.augGPU_normalize_inplace(of, mean = [0.485, 0.456, 0.406], std = [0.229, 0.224, 0.225])
-                #rgb = self.augGPU_normalize_inplace(rgb, mean = [0.485, 0.456, 0.406], std = [0.229, 0.224, 0.225])
-                #print(of.reshape(-1, 3).mean(0))
-                rgb = self.augGPU_normalize_inplace(rgb, mean = [0.3, 0.2, 0.2], std = [0.2, 0.2, 0.2])
-                of = self.augGPU_normalize_inplace(of, mean = [0.99, 0.99, 0.99], std = [0.005, 0.005, 0.005])
-                #print(of.reshape(-1, 3).mean(0))
-                #print(of.reshape(-1, 3).var(0))
+                if normalize:
+                    rgb = self.augGPU_normalize_inplace(rgb, mean = [0.3, 0.2, 0.2], std = [0.2, 0.2, 0.2])
+                    of = self.augGPU_normalize_inplace(of, mean = [0.99, 0.99, 0.99], std = [0.005, 0.005, 0.005])
 
                 return [torch.stack([rgb, of], axis = -1), batch[1]]
 
@@ -442,7 +435,7 @@ if __name__ == '__main__':
 
         checkpoint_callback = ModelCheckpoint(
                 # filepath=os.path.join(logger.log_dir, 'checkpoints'),
-                filepath=os.path.join(settings3.checkpoints, classification_name, f'{hparams.arch}_{hparams.trainable_base}_{hparams.rnn_model}{hparams.masked}'),
+                filepath=os.path.join(settings3.checkpoints, "two_stream", classification_name, f'{hparams.arch}_{hparams.trainable_base}_{hparams.rnn_model}{hparams.masked}'),
                 save_top_k=3,
                 verbose=True,
                 monitor='val_acc',
