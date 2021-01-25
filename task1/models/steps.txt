@@ -10,7 +10,7 @@ curl -L https://www.dropbox.com/sh/w6pp9pr1b5f1qdk/AAD8_lSz0p0kx5aJYm1Ht7nga/bal
 
 STEP 1:
 =======
-Rawdata is /central/groups/tensorlab/rbao/balint_data/caltech_format
+Rawdata is /central/groups/tensorlab/rbao/balint_data/original
 Split videos into classes, using the time stamps provided
 Populate a balint_data/task1/classification_data repository with subfolders corresponding to classes ***
 Retain the name of the class in the filename
