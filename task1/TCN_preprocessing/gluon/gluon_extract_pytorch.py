@@ -36,11 +36,15 @@ def main(cfg, save_path):
                                   new_height=cfg.CONFIG.DATA.NEW_HEIGHT,
                                   new_width=cfg.CONFIG.DATA.NEW_WIDTH)
 
+    samples = val_dataset.dataset_samples
     print('Extracting features from %d videos.' % len(val_dataset))
-
     start_time = time.time()
     for vid, vtuple in enumerate(val_dataset):
         video_clip, video_label, video_name = vtuple
+        video_name = os.path.basename(samples[vid]).split(".")[0]
+        print(video_name)
+        print(video_clip.shape)
+        continue
         video_clip = torch.unsqueeze(video_clip, dim=0).cuda()
         with torch.no_grad():
             feat = model(video_clip).cpu().numpy()

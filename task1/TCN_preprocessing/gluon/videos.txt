@@ -1,4 +1,4 @@
-/mnt/md1/richard_bao/samples/balint_samples/original/00001010_BSP_2.m4v	0	0
-/mnt/md1/richard_bao/samples/balint_samples/original/00001010_BSP_3.m4v	0	0
-/mnt/md1/richard_bao/samples/balint_samples/original/00010110_BSP_3.m4v	0	0
-/mnt/md1/richard_bao/samples/balint_samples/original/00110010_BSP_3.m4v	0	0
+/mnt/md1/richard_bao/balint_samples/original/00001010_BSP_2.mp4 0 0
+/mnt/md1/richard_bao/balint_samples/original/00001010_BSP_3.m4v 0 0
+/mnt/md1/richard_bao/balint_samples/original/00010110_BSP_3.m4v 0 0
+/mnt/md1/richard_bao/balint_samples/original/00110010_BSP_3.m4v 0 0

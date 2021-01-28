@@ -1,0 +1,1 @@
+CUDA_VISIBLE_DEVICES=2 python gluon_extract.py --data-list videos.txt --model i3d_resnet50_v1_kinetics400 --save-dir features2

@@ -9,7 +9,7 @@ DDP_CONFIG:
   WOLRD_URLS: ['172.31.72.252']
   AUTO_RANK_MATCH: True
   DIST_BACKEND: 'nccl'
-  GPU: 2
+  GPU: 0
   DISTRIBUTED: True
 
 CONFIG:
@@ -20,7 +20,7 @@ CONFIG:
     VAL_ANNO_PATH: 'videos.txt'
     VAL_DATA_PATH: ''
     NUM_CLASSES: 400
-    CLIP_LEN: 1000
+    CLIP_LEN: 32
     FRAME_RATE: 2
     NUM_SEGMENT: 1
     NUM_CROP: 1

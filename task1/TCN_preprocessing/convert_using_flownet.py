@@ -49,19 +49,30 @@ class OpticalFlow:
         self.model_dir = settings1.flownet_model
         torch.cuda.set_device(self.args.gpu_id)
 
-    def save_flow(self, flow_output):
-        print(output.shape)
-        for suffix, flow_output in zip(['flow', 'inv_flow'], output):
-            filename= os.path.join(self.args.output_dir, suffix, img1_file.stem[:-1])
-            if self.args.output_type in['vis', 'both']:
+    def save_flow(self, flow_output, fname, index):
+        for suffix, flow_output in zip(['flow', 'inv_flow'], flow_output):
+            fdir= os.path.join(self.args.output_dir, fname)
+            if not os.path.exists(fdir):
+                os.makedirs(fdir)
+            fpath = os.path.join(fdir, f"{suffix}_{index}")
+            if self.args.output_type in ['vis']:
                 rgb_flow = flow2rgb(self.args.div_flow * flow_output, max_value=self.args.max_flow)
                 to_save = (rgb_flow * 255).astype(np.uint8).transpose(1,2,0)
-                print(to_save.shape)
                 # imwrite(filename + '.png', to_save)
-            if self.args.output_type in ['raw', 'both']:
+            elif self.args.output_type in ['raw']:
                 # Make the flow map a HxWx2 array as in .flo files
                 to_save = (args.div_flow*flow_output).cpu().numpy().transpose(1,2,0)
                 # np.save(filename + '.npy', to_save)
+            elif self.args.output_type in ['gray']:
+                to_save = (args.div_flow*flow_output).cpu().detach().numpy().transpose(1,2,0)
+                print(to_save.shape)
+                x_flow = to_save[:, :, 0]
+                x_flow = np.expand_dims(x_flow, axis=-1)
+                y_flow = to_save[:, :, 1]
+                print(x_flow.shape)
+                # split this 2 channel image into 2 grayscale (1 channel) images for x and y
+                imwrite(fpath + '.png', x_flow)
+
             # make join an option for output_type
 
     def generate_flow(self):
@@ -81,9 +92,10 @@ class OpticalFlow:
         # if 'div_flow' in network_data.keys():
         #     args.div_flow = network_data['div_flow']
 
-        mp4_list = glob.glob(self.args.input_directory)
-
+        mp4_list = glob.glob(os.path.join(self.args.input_dir, "*.m4v"))
+        print(mp4_list)
         for mp4_fn in mp4_list:
+            print(mp4_fn)
             mp4_ims = mp4_load(mp4_fn)
             n_im = len(mp4_ims) # Number of images
 
@@ -93,6 +105,8 @@ class OpticalFlow:
             #frame_ints = list(range(n_im))
 
             for ii in tqdm(range(n_im-self.args.window)):
+                if ii > 10:
+                    break
                 aa=ii
                 bb=ii+self.args.window
                 img1 = input_transform(mp4_ims[aa])
@@ -108,7 +122,8 @@ class OpticalFlow:
                 # outs.append(np.array(output.cpu().detach()))
                 # Upsample
                 output = F.interpolate(output, size=img1.size()[-2:], mode='bilinear', align_corners=False)
-                self.save_flow(output)
+                fname = os.path.basename(mp4_fn).split(".")[0]
+                self.save_flow(output, fname, ii)
 
 
 if __name__ == '__main__':
@@ -119,8 +134,8 @@ if __name__ == '__main__':
     parser.add_argument('--window', default=4,type=int, help='sliding window for smoothing frames')
     parser.add_argument('--div_flow', default=20, type=float, help='value by which flow will be divided. overwritten if stored in pretrained file')
     parser.add_argument('--max_flow', default=None, type=float, help='max flow value. Flow map color is saturated above this value. If not set, will use flow map\'s max value')
-    parser.add_argument('--output_type', default='viz',type=int, help='viz or raw or both')
+    parser.add_argument('--output_type', default='gray', help='viz or raw or gray')
     args = parser.parse_args()
 
-
-    out.release()
+    Flow1 = OpticalFlow(args)
+    Flow1.generate_flow()
