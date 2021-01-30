@@ -1,0 +1,64 @@
+CONFIG:
+  DATA:
+    CLIP_LEN: 1
+    CROP_SIZE: 224
+    FRAME_RATE: 5
+    KEEP_ASPECT_RATIO: false
+    MULTIGRID: false
+    NEW_HEIGHT: 256
+    NEW_WIDTH: 340
+    NUM_CLASSES: 400
+    NUM_CROP: 1
+    NUM_SEGMENT: 1
+    SHORT_SIDE_SIZE: 256
+    TEST_NUM_CROP: 3
+    TEST_NUM_SEGMENT: 10
+    TRAIN_ANNO_PATH: ''
+    TRAIN_DATA_PATH: ''
+    VAL_ANNO_PATH: videos.txt
+    VAL_DATA_PATH: ''
+  INFERENCE:
+    FEAT: true
+  LOG:
+    BASE_PATH: results/i3d_resnet50_v1_kinetics400
+    DISPLAY_FREQ: 1
+    EVAL_DIR: ''
+    EXP_NAME: ''
+    LOG_DIR: tb_log
+    SAVE_DIR: features
+    SAVE_FREQ: 1
+  MODEL:
+    BN_EVAL: false
+    BN_FROZEN: false
+    LOAD: false
+    NAME: i3d_resnet50_v1_kinetics400
+    PARTIAL_BN: false
+    PRETRAINED: true
+    PRETRAINED_BASE: true
+    PRETRAINED_PATH: ''
+    USE_AFFINE: false
+  TRAIN:
+    BATCH_SIZE: 8
+    EPOCH_NUM: 196
+    LR: 0.01
+    LR_MILESTONE:
+    - 40
+    - 80
+    MOMENTUM: 0.9
+    STEP: 0.1
+    W_DECAY: 0.0001
+  VAL:
+    BATCH_SIZE: 8
+    FREQ: 2
+DDP_CONFIG:
+  AUTO_RANK_MATCH: true
+  DISTRIBUTED: true
+  DIST_BACKEND: nccl
+  DIST_URL: tcp://172.31.72.252:23456
+  GPU: 2
+  GPU_WORLD_RANK: 0
+  GPU_WORLD_SIZE: 1
+  WOLRD_URLS:
+  - 172.31.72.252
+  WORLD_RANK: 0
+  WORLD_SIZE: 1

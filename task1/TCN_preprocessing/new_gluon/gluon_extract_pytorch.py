@@ -40,28 +40,24 @@ def main(cfg, save_path):
     print('Extracting features from %d videos.' % len(val_dataset))
     start_time = time.time()
     for vid, vtuple in enumerate(val_dataset):
+        if vid > 0:
+            break
         video_clip, video_label, video_name = vtuple
         video_name = os.path.basename(samples[vid]).split(".")[0]
         video_features = []
         video_clip = torch.unsqueeze(video_clip, dim=0).cuda()
         
-        video_frame = video_clip[:, :, 10:12, :, :]
-        print(video_frame.shape)
-        with torch.no_grad():
-            feat = model(video_frame).cpu().numpy()
-        continue
-
-        for i in range(video_clip.shape[2]-1):
+        for i in range(video_clip.shape[2]-5):
             print(i)
             print(video_clip.shape)
-            video_frame = video_clip[:, :, i:i+2, :, :]
+            video_frame = video_clip[:, :, i:i+5, :, :]
             print(video_frame.shape)
             with torch.no_grad():
                 feat = model(video_frame).cpu().numpy()
                 video_features.append(feat)
         video_features = np.squeeze(video_features)
 
-        feat_file = '%s_%s_feat.npy' % (cfg.CONFIG.MODEL.NAME, video_name)
+        feat_file = '%s_feat.npy' % (video_name)
         np.save(os.path.join(save_path, feat_file), video_features)
 
         if vid > 0 and vid % 10 == 0:
@@ -78,6 +74,7 @@ if __name__ == '__main__':
 
     cfg = get_cfg_defaults()
     cfg.merge_from_file(args.config_file)
+    cfg.CONFIG.LOG.EXP_NAME = ""
     _ = build_log_dir(cfg)
     save_path = os.path.join(cfg.CONFIG.LOG.BASE_PATH, cfg.CONFIG.LOG.SAVE_DIR)
     print('Saving extracted features to %s' % save_path)

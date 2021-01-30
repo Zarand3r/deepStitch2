@@ -51,10 +51,9 @@ class OpticalFlow:
 
     def save_flow(self, flow_output, fname, index):
         for suffix, flow_output in zip(['flow', 'inv_flow'], flow_output):
-            fdir= os.path.join(self.args.output_dir, fname)
-            if not os.path.exists(fdir):
-                os.makedirs(fdir)
-            fpath = os.path.join(fdir, f"{suffix}_{index}")
+            fpath= os.path.join(self.args.output_dir, fname, suffix)
+            if not os.path.exists(fpath):
+                os.makedirs(fpath)
             if self.args.output_type in ['vis']:
                 rgb_flow = flow2rgb(self.args.div_flow * flow_output, max_value=self.args.max_flow)
                 to_save = (rgb_flow * 255).astype(np.uint8).transpose(1,2,0)
@@ -71,7 +70,8 @@ class OpticalFlow:
                 y_flow = to_save[:, :, 1]
                 print(x_flow.shape)
                 # split this 2 channel image into 2 grayscale (1 channel) images for x and y
-                imwrite(fpath + '.png', x_flow)
+                imwrite(os.path.join(fpath, f"x_flow_{index}.png"), x_flow)
+                imwrite(os.path.join(fpath, f"y_flow_{index}.png"), y_flow)
 
             # make join an option for output_type
 

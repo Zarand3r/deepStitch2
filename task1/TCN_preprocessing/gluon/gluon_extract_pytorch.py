@@ -42,12 +42,11 @@ def main(cfg, save_path):
     for vid, vtuple in enumerate(val_dataset):
         video_clip, video_label, video_name = vtuple
         video_name = os.path.basename(samples[vid]).split(".")[0]
-        print(video_name)
-        print(video_clip.shape)
-        continue
         video_clip = torch.unsqueeze(video_clip, dim=0).cuda()
         with torch.no_grad():
             feat = model(video_clip).cpu().numpy()
+            print(video_clip.shape)
+            print(feat.shape)
 
         feat_file = '%s_%s_feat.npy' % (cfg.CONFIG.MODEL.NAME, video_name)
         np.save(os.path.join(save_path, feat_file), feat)
