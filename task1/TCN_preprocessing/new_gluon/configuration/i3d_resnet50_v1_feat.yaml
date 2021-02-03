@@ -21,7 +21,7 @@ CONFIG:
     VAL_DATA_PATH: ''
     NUM_CLASSES: 400
     CLIP_LEN: 1
-    FRAME_RATE: 5
+    FRAME_RATE: 2
     NUM_SEGMENT: 1
     NUM_CROP: 1
     MULTIGRID: False
@@ -32,5 +32,5 @@ CONFIG:
     PRETRAINED: True
 
   LOG:
-    BASE_PATH: 'results/i3d_resnet50_v1_kinetics400'
+    BASE_PATH: '/mnt/md1/richard_bao/balint_data/TCN_data'
     SAVE_DIR: 'features'

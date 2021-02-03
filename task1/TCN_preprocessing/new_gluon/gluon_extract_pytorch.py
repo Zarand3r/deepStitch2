@@ -40,24 +40,22 @@ def main(cfg, save_path):
     print('Extracting features from %d videos.' % len(val_dataset))
     start_time = time.time()
     for vid, vtuple in enumerate(val_dataset):
-        if vid > 0:
-            break
         video_clip, video_label, video_name = vtuple
+        # the line below was a bootstrap necessary before the bug was fixed. Can comment it out now
         video_name = os.path.basename(samples[vid]).split(".")[0]
         video_features = []
         video_clip = torch.unsqueeze(video_clip, dim=0).cuda()
-        
+        print(video_name)
+        print(video_clip.shape)
+
         for i in range(video_clip.shape[2]-5):
-            print(i)
-            print(video_clip.shape)
             video_frame = video_clip[:, :, i:i+5, :, :]
-            print(video_frame.shape)
             with torch.no_grad():
                 feat = model(video_frame).cpu().numpy()
                 video_features.append(feat)
         video_features = np.squeeze(video_features)
 
-        feat_file = '%s_feat.npy' % (video_name)
+        feat_file = '%s.npy' % (video_name)
         np.save(os.path.join(save_path, feat_file), video_features)
 
         if vid > 0 and vid % 10 == 0:
