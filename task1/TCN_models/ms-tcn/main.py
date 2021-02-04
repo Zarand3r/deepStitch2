@@ -53,8 +53,9 @@ if not os.path.exists(results_dir):
     os.makedirs(results_dir)
 
 file_ptr = open(mapping_file, 'r')
-actions = file_ptr.read().split('\n') #used to be [:-1]
-actions.remove('')
+actions = file_ptr.read().split('\n')[:-1]
+# actions = file_ptr.read().split('\n')
+# actions.remove('')
 file_ptr.close()
 actions_dict = dict()
 for a in actions:

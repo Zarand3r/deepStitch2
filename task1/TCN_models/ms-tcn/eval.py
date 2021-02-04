@@ -1,4 +1,3 @@
-#!/usr/bin/python2.7
 # adapted from: https://github.com/colincsl/TemporalConvolutionalNetworks/blob/master/code/metrics.py
 
 import numpy as np
@@ -93,14 +92,14 @@ def f_score(recognized, ground_truth, overlap, bg_class=["background"]):
 def main():
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('--dataset', default="gtea")
+    parser.add_argument('--dataset', default="TCN_data")
     parser.add_argument('--split', default='1')
 
     args = parser.parse_args()
 
-    ground_truth_path = "./data/"+args.dataset+"/groundTruth/"
-    recog_path = "./results/"+args.dataset+"/split_"+args.split+"/"
-    file_list = "./data/"+args.dataset+"/splits/test.split"+args.split+".bundle"
+    ground_truth_path = "/mnt/md1/richard_bao/balint_data/"+args.dataset+"/groundTruth/"
+    recog_path = "results/"+args.dataset+"/split_"+args.split+"/"
+    file_list = "/mnt/md1/richard_bao/balint_data/"+args.dataset+"/splits/test.split"+args.split+".bundle"
 
     list_of_videos = read_file(file_list).split('\n')[:-1]
 
@@ -131,8 +130,8 @@ def main():
             fp[s] += fp1
             fn[s] += fn1
             
-    print "Acc: %.4f" % (100*float(correct)/total)
-    print 'Edit: %.4f' % ((1.0*edit)/len(list_of_videos))
+    print("Acc: %.4f" % (100*float(correct)/total))
+    print('Edit: %.4f' % ((1.0*edit)/len(list_of_videos)))
     for s in range(len(overlap)):
         precision = tp[s] / float(tp[s]+fp[s])
         recall = tp[s] / float(tp[s]+fn[s])
@@ -140,7 +139,7 @@ def main():
         f1 = 2.0 * (precision*recall) / (precision+recall)
 
         f1 = np.nan_to_num(f1)*100
-        print 'F1@%0.2f: %.4f' % (overlap[s], f1)
+        print('F1@%0.2f: %.4f' % (overlap[s], f1))
 
 
 if __name__ == '__main__':
