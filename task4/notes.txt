@@ -1,0 +1,26 @@
+Implement Grad Cam
+
+mabe alexnet can't pick up fine grain detils
+look at fine grain action recognition literature
+explore attention models (transformer models) - human knowledge
+
+two stage process:
+from videos predict pose and from pose predict skill assessment
+multi-task learning:
+use network to predict pose and also skills assessment
+
+incorporate context with RNN on top
+
+
+
+
+Use TCN, train on skills labels (or retrain from TCN trained on action segmentation)
+Try TCN for both kinematics and skills assessment and segmentation
+
+feature extractor for all 3 tasks
+fc heads
+
+
+skills assessment and kinematics at the same time
+use segmentation weight to initialize skills assessment weight in seperate model
+Have the capability to initialize several layers, and the capaibility to combine losses from multiple FC heads

@@ -1,0 +1,60 @@
+ACTION SEGMENTATION
+put predict.py in utils?
+
+
+STEP 0:
+=======
+Download data
+curl -L -o balint_data https://www.dropbox.com/sh/w6pp9pr1b5f1qdk/AAD8_lSz0p0kx5aJYm1Ht7nga/balint_provided?dl=0&subfolder_nav_tracking=1
+curl -L https://www.dropbox.com/sh/w6pp9pr1b5f1qdk/AAD8_lSz0p0kx5aJYm1Ht7nga/balint_provided?dl=1 > download.zip
+
+STEP 1:
+=======
+Rawdata is /central/groups/tensorlab/rbao/balint_data/original
+Split videos into classes, using the time stamps provided
+Populate a balint_data/task1/classification_data repository with subfolders corresponding to classes ***
+Retain the name of the class in the filename
+
+STEP 2:
+=======
+In each class folder, compute optical flow for all videos, populate an optical_flow subfolder 
+Make classes for CC and DD too ***
+This is the last preprocessing step
+
+Step 3:
+=======
+Datadir is /central/groups/tensorlab/rbao/balint_data/classification_data
+Find flow files in optical_flow subfolders of each class folder
+
+
+Do this to reformat the positive and negative directories
+cd positive
+find . -mindepth 2 -type f -print -exec mv {} . \;
+rm -rf */;
+mkdir optical_flow
+find . -name 'flownet*' -exec mv {} optical_flow/ \;
+
+cd ../
+cd negative
+find . -mindepth 2 -type f -print -exec mv {} . \;
+rm -rf */;
+mkdir optical_flow
+find . -name 'flownet*' -exec mv {} optical_flow/ \;
+
+
+Step 4:
+=======
+Train model to classify videos
+Checkpoint is saved to checkpoints folder
+Tensorboard logs are saved to lightning_logs folder
+
+
+Step 5:
+=======
+View the tensorboard UI locally after pushing to github and pulling on remote
+Tensorboard --logdir log_dir
+
+Step 6:
+=======
+Action segmentation
+First, scp over the checkpoints and a test videos for the segmentation, add to folder outside of deepStitch

@@ -1,3 +1,11 @@
-Connect to mimic api
-Reinforcement learning agent
-Unsupervised pretraining?
+Skills assessment
+The label in column O: "label_needle positionB" refers to the final needle position that was reached at time point B (column I). The needle is being manipulated during the AB interval to reach the final needle position at time point B, so I believe we use this interval for predicting needle position.
+
+The label in column P: "label_needle_entry_angleC" refers to the entry angle assessment for each time point C (column J). If there are multiple entry angle skills assessments, there were multiple attempts to hit the first needle target (time point C). The interval from time point B to the first C is usually used to predict the first entry angle skill assessment. Subsequent correspond to CC intervals. 
+
+The label in column S: "label_needle_driving_1D" refers to the needle driving 1 score. The first score is always assigned for the interval ranging from the last time point C to the first time point D. If there are additional attempts, the corresponding needle driving skill score refers to a D-D interval (though this interval includes some reverse movement of the needle usually). The D to E interval corresponds to the last D time point to the end of needle driving.
+
+The label in column T: "label_needle_driving_2FG" refers to the needle driving 2 score. This score is assigned for the interval from F to G. 
+
+
+Try predicting the label in column O first, using the AB time interval vs AC seeing which one is more accurate. For this, try using without masking.

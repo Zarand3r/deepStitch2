@@ -1,0 +1,6 @@
+This is for the tubes data
+
+Use a pretrained model from task1
+Use stye transfer methods or other domain adaptation to create more real data
+The other way is to consider designing some self-supervised proxy-task losses on the real videos jointly with synthetic training, so that the model learns some representation from the real domain. This is more of a domain adaptation approach.
+Semi supervised training to tune the model on live
