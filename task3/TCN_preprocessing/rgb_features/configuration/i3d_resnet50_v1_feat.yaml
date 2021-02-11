@@ -32,5 +32,5 @@ CONFIG:
     PRETRAINED: True
 
   LOG:
-    BASE_PATH: '/mnt/md1/richard_bao/balint_data/TCN_data'
+    BASE_PATH: '/mnt/md1/richard_bao/balint_data/label_TCN_data'
     SAVE_DIR: 'features'

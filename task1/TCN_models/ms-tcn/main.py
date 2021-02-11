@@ -19,15 +19,19 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--action', default='train')
 parser.add_argument('--dataset', default="TCN_data")
 parser.add_argument('--split', default='1')
+parser.add_argument('--stages', default=4)
+parser.add_argument('--layers', default=10)
+parser.add_argument('--f_maps', default=64)
+parser.add_argument('--lr', default=0.0005)
 
 args = parser.parse_args()
 
-num_stages = 4
-num_layers = 10
-num_f_maps = 64
+num_stages = args.stages
+num_layers = args.layers
+num_f_maps = args.f_maps
 features_dim = 2048
 bz = 1
-lr = 0.0005
+lr = args.lr
 num_epochs = 50
 
 # use the full temporal resolution @ 15fps

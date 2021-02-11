@@ -20,4 +20,4 @@ flownet_model = '/home/richard_bao/robosurgery/FlowNetPytorch/trained_models/flo
 checkpoints = '/home/richard_bao/robosurgery/checkpoints/task1'
 TCN_raw = '/mnt/md1/richard_bao/balint_data/original'
 TCN_data = '/mnt/md1/richard_bao/balint_data/TCN_data'
-
+label_TCN_data = '/mnt/md1/richard_bao/balint_data/label_TCN_data'

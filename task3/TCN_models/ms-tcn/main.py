@@ -17,7 +17,7 @@ torch.backends.cudnn.deterministic = True
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--action', default='train')
-parser.add_argument('--dataset', default="TCN_data")
+parser.add_argument('--dataset', default="label_TCN_data")
 parser.add_argument('--split', default='1')
 
 args = parser.parse_args()
@@ -34,7 +34,7 @@ num_epochs = 50
 sample_rate = 1
 # sample input features @ 15fps instead of 30 fps
 # for 50salads, and up-sample the output to 30 fps
-if args.dataset == "TCN_data":
+if args.dataset == "label_TCN_data":
     sample_rate = 1
 
 vid_list_file = "/mnt/md1/richard_bao/balint_data/"+args.dataset+"/splits/train.split"+args.split+".bundle"

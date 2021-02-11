@@ -92,7 +92,7 @@ def f_score(recognized, ground_truth, overlap, bg_class=["background"]):
 def main():
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('--dataset', default="TCN_data")
+    parser.add_argument('--dataset', default="label_TCN_data")
     parser.add_argument('--split', default='1')
 
     args = parser.parse_args()

@@ -84,7 +84,7 @@ def generate_labels(video_directory, output_directory, labels, stride=1):
 
                 skills = [] # should have the same number of elements as the number of occurences of skills_classes
                 skills_index = 0
-                for col in columns:
+                for col in skills_columns:
                     t = row[col]
                     if t is None:
                         continue
@@ -95,20 +95,20 @@ def generate_labels(video_directory, output_directory, labels, stride=1):
                             skills.append(t[i])
                     else:
                         skills.append(t)
-                print(skills)
-
-                return
 
                 if len(frames) == 1:
                         continue
-
+                
+                print(index)
+                if index == 238:
+                    skills = [1, 1, 0, 0, 0]
                 result = {}
                 result = defaultdict(lambda:0,result)
                 classes_list = []
                 for i in range(len(frames)-1):
                         classification = intervals[i] + intervals[i+1]
                         if classification in skills_classes:
-                            classification = skills_classes[classification] + str(skills[skills_index])
+                            classification = skills_classes[classification] + str(int(skills[skills_index]))
                             skills_index += 1
                         result[classification] += frames[i+1] - frames[i]
                         classes_list.append(classification)
@@ -125,7 +125,7 @@ def generate_labels(video_directory, output_directory, labels, stride=1):
                                                 output_file.write('%s\n' % classification)
 
                 else:
-                        with open(os.path.join(output_directory, f'{name[:-4]}.txt'), 'w') as output_file:
+                        with open(os.path.join(output_directory, f'{name[:-4]}.txt'), 'w+') as output_file:
                                 # for classification in classes_list:
                                 for classification in result:
                                         for i in range(result[classification]):
