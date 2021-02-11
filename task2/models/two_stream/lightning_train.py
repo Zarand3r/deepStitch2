@@ -131,8 +131,10 @@ class FusionModel(LightningModule):
                 self.fc_size = args.fc_size
                 self.trainable_base = args.trainable_base
 
+                nf = 7
                 # select a base model
                 if args.arch.startswith('alexnet'):
+                        nf = 6
                         self.features_rgb = original_model_rgb.features
                         for i, param in enumerate(self.features_rgb.parameters()):
                                 param.requires_grad = self.trainable_base
@@ -141,8 +143,8 @@ class FusionModel(LightningModule):
                                 param.requires_grad = self.trainable_base
                         
                         # Make the output of each one be to fc_size/2 so that we cooncat the two fc outputs
-                        self.fc_pre_rgb = nn.Sequential(nn.Linear(256*6*6, int(args.fc_size/2) ), nn.Dropout()) if 'conv' not in args.rnn_model else None
-                        self.fc_pre_of = nn.Sequential(nn.Linear(256*6*6, int(args.fc_size/2) ), nn.Dropout()) if 'conv' not in args.rnn_model else None
+                        self.fc_pre_rgb = nn.Sequential(nn.Linear(256*nf*nf, int(args.fc_size/2) ), nn.Dropout()) if 'conv' not in args.rnn_model else None
+                        self.fc_pre_of = nn.Sequential(nn.Linear(256*nf*nf, int(args.fc_size/2) ), nn.Dropout()) if 'conv' not in args.rnn_model else None
                         self.final_channels = 256
 
                 elif args.arch.startswith('resnet18'):
@@ -158,8 +160,8 @@ class FusionModel(LightningModule):
                         for i, param in enumerate(self.features_of.parameters()):
                                 param.requires_grad = self.trainable_base
                         
-                        self.fc_pre_rgb = nn.Sequential(nn.Linear(512*7*7, int(args.fc_size/2) ), nn.Dropout()) if 'conv' not in args.rnn_model else None
-                        self.fc_pre_of = nn.Sequential(nn.Linear(512*7*7, int(args.fc_size/2) ), nn.Dropout()) if 'conv' not in args.rnn_model else None
+                        self.fc_pre_rgb = nn.Sequential(nn.Linear(512*nf*nf, int(args.fc_size/2) ), nn.Dropout()) if 'conv' not in args.rnn_model else None
+                        self.fc_pre_of = nn.Sequential(nn.Linear(512*nf*nf, int(args.fc_size/2) ), nn.Dropout()) if 'conv' not in args.rnn_model else None
                         self.final_channels = 512
 
                 else:
@@ -176,13 +178,12 @@ class FusionModel(LightningModule):
                         # Twice number of channels for RGB and OF which are concat
                         self.rnn = ConvLSTMCell(input_channels = self.final_channels*2, hidden_channels = int(self.hparams.hidden_size), kernel_size = 3, bias = True)
                         
-                        nF = 6 if args.arch.startswith('alexnet') else 7
-                        self.fc = nn.Linear(int(self.hparams.hidden_size)*nF*nF, self.num_classes) #replace self.final_channels here the parameter must equal the hidden_channels in self.rnn
+                        self.fc = nn.Linear(int(self.hparams.hidden_size)*nF*nF, self.num_classes)
+                        self.fc_k = nn.Linear(int(self.hparams.hidden_size)*nF*nF, self.num_classes) #replace with the dimensions of the kinematics data
                 elif args.rnn_model == 'convttLSTM': 
                         # Twice number of channels for RGB and OF which are concat
                         self.rnn = ConvTTLSTMCell(input_channels = self.final_channels*2, hidden_channels = self.final_channels, order = 3, steps = 5, ranks = 16, kernel_size = 3, bias = True)
                         
-                        nF = 6 if args.arch.startswith('alexnet') else 7
                         self.fc = nn.Linear(self.final_channels*nF*nF, self.num_classes)
                 else:
                         raise ValueError('Not implemented, choose LSTM, convLSTM, convttLSTM type')
@@ -220,9 +221,11 @@ class FusionModel(LightningModule):
                         # Note that for the 2 layer network will output hidden state as
                         outputs, (hidden, cell)  = self.rnn(fs, hidden)
                         outputs = self.fc(outputs)
+                        return outputs, (hidden, cell)
                 else:
                         #########################################################################################
                         # Convolutional flavors
+                        aggregate_outputs = []
                         for kk in range(nFrames):
                                 f = self.features_rgb(inputs[:, kk, :, :, :, 0].permute(0, 3, 1, 2)) # permute to nB x nC x H x W
                                 f_of = self.features_of(inputs[:, kk, :, :, :, 1].permute(0, 3, 1, 2))  # permute to nB x nC x H x W
@@ -233,36 +236,41 @@ class FusionModel(LightningModule):
                                 else:
                                         outputs = self.rnn(torch.cat([f, f_of], dim = 1), first_step=False)
                                 
-                        outputs = outputs.reshape(outputs.size(0), -1)
-                        outputs = self.fc(outputs)
-                        # Add a dimension to make the size consistent with old rnn
-                        outputs = outputs.unsqueeze(1)
+                                outputs = outputs.reshape(outputs.size(0), -1)
+                                aggregate_outputs.append(outputs)
 
-                        hidden, cell = _, _ # Implement how to do this later...
+                        class_outputs = self.fc(aggregate_outputs)
+                        kinematics_outputs = self.fc_k(aggregate_outputs)
+                        # Add a dimension to make the size consistent with old rnn
+                        # class_outputs = class_outputs.unsqueeze(1)
+                        # kinematics_outputs = kinematics_outputs.unsqueeze(1)
+
                         #########################################################################################
                 
-                return outputs, hidden, cell
+                        return class_outputs, kinematics_outputs
 
         def training_step(self, batch, batch_idx):
                 # Batch is already on GPU by now
                 input_cuda, target_cuda = self.apply_transforms_GPU(batch, random_crop=self.hparams.random_crop)
-                output, _, _ = self(input_cuda)
-                output = output[:, -1, :]
-                loss = F.cross_entropy(output, target_cuda.type(torch.long))
+                class_outputs, kinematics_outputs = self(input_cuda)
+                class_outputs = class_outputs[:, -1, :]
+                kinematics_outputs = kinematics_outputs[:, -1, :]
+                loss = F.cross_entropy(class_outputs, target_cuda.type(torch.long))
                 self.actual_train.append(target_cuda.item())
-                self.predicted_train.append(output.topk(1,1)[-1].item())
-                self.predicted_softmax_train.append(softmax(output.detach().cpu().numpy(), axis = -1)) # Save scores
+                self.predicted_train.append(class_outputs.topk(1,1)[-1].item())
+                self.predicted_softmax_train.append(softmax(class_outputs.detach().cpu().numpy(), axis = -1)) # Save scores
                 tensorboard_logs = {'train/loss': loss}
                 return {'loss': loss, 'log': tensorboard_logs}
 
         def validation_step(self, batch, batch_idx):
                 input_cuda, target_cuda = self.apply_transforms_GPU(batch, random_crop=False)
-                output, _, _ = self(input_cuda)
-                output = output[:, -1, :]
-                loss = F.cross_entropy(output, target_cuda.type(torch.long))
+                class_outputs, kinematics_outputs = self(input_cuda)
+                class_outputs = class_outputs[:, -1, :]
+                kinematics_outputs = kinematics_outputs[:, -1, :]
+                loss = F.cross_entropy(class_outputs, target_cuda.type(torch.long))
                 self.actual.append(target_cuda.item())
-                self.predicted.append(output.topk(1,1)[-1].item())
-                self.predicted_softmax.append(softmax(output.detach().cpu().numpy(), axis = -1)) # Save scores
+                self.predicted.append(class_outputs.topk(1,1)[-1].item())
+                self.predicted_softmax.append(softmax(class_outputs.detach().cpu().numpy(), axis = -1)) # Save scores
 
                 return {'val_loss': loss}
 

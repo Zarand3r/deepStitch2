@@ -1,2 +1,11 @@
 https://cv.gluon.ai/build/examples_action_recognition/feat_custom.html#sphx-glr-download-build-examples-action-recognition-feat-custom-py
 https://github.com/dmlc/gluon-cv/blob/master/scripts/action-recognition/feat_extract.py
+
+
+rgb_features/configuration
+rgb_features/get_videos.py
+rgb_features/gluon_extract_pytorch.py
+generate_ground_truth.py
+remove_class.py
+
+

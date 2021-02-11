@@ -18,6 +18,6 @@ data_labels = '/mnt/md1/richard_bao/balint_data/RACE_python_format_final.xlsx' #
 flownet_dir = '/home/richard_bao/robosurgery/FlowNetPytorch'
 flownet_model = '/home/richard_bao/robosurgery/FlowNetPytorch/trained_models/flownets_EPE1.951.pth.tar'
 checkpoints = '/home/richard_bao/robosurgery/checkpoints/task1'
-TCN_raw = '/mnt/md1/richard_bao/balint_samples/original'
-TCN_data = '/mnt/md1/richard_bao/balint_samples/TCN_data'
+TCN_raw = '/mnt/md1/richard_bao/balint_data/original'
+TCN_data = '/mnt/md1/richard_bao/balint_data/TCN_data'
 

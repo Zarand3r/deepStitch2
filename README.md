@@ -22,6 +22,15 @@ Action segmentation aided with semi-supervised injection of kinematics data to h
 
 Trying to classify the success of a particular action in the actions sequence. Also experimented with a transfer learning attempt to fine tune a ConvLSTM pre-trained action segmentation. We conclude that ConvLSTM is not fine grained enough to be effective for skills assessment because the success of particular actions depends on very fine grained details, like the position of the needle held relative to its length, that the ConvLSTM cannot pick up.
 
+The label in column O: "label_needle positionB" refers to the final needle position that was reached at time point B (column I). The needle is being manipulated during the AB interval to reach the final needle position at time point B, so I believe we use this interval for predicting needle position.
+
+The label in column P: "label_needle_entry_angleC" refers to the entry angle assessment for each time point C (column J). If there are multiple entry angle skills assessments, there were multiple attempts to hit the first needle target (time point C). The interval from time point B to the first C is usually used to predict the first entry angle skill assessment. Subsequent correspond to CC intervals. 
+
+The label in column S: "label_needle_driving_1D" refers to the needle driving 1 score. The first score is always assigned for the interval ranging from the last time point C to the first time point D. If there are additional attempts, the corresponding needle driving skill score refers to a D-D interval (though this interval includes some reverse movement of the needle usually). The D to E interval corresponds to the last D time point to the end of needle driving.
+
+The label in column T: "label_needle_driving_2FG" refers to the needle driving 2 score. This score is assigned for the interval from F to G. 
+
+
 4. Skills assessment with kinematics
 
 Skills assessment aided with semi-supervised injection of kinematics data to help the models focus on more fine grained details
