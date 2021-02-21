@@ -21,6 +21,7 @@ Action segmentation aided with semi-supervised injection of kinematics data to h
 3. Skills assessment
 
 Trying to classify the success of a particular action in the actions sequence. Also experimented with a transfer learning attempt to fine tune a ConvLSTM pre-trained action segmentation. We conclude that ConvLSTM is not fine grained enough to be effective for skills assessment because the success of particular actions depends on very fine grained details, like the position of the needle held relative to its length, that the ConvLSTM cannot pick up.
+	frames around timepoint B (1 second padding)
 
 The label in column O: "label_needle positionB" refers to the final needle position that was reached at time point B (column I). The needle is being manipulated during the AB interval to reach the final needle position at time point B, so I believe we use this interval for predicting needle position.
 

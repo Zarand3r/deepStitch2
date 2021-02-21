@@ -9,6 +9,7 @@ homedir = repo.working_dir
 sys.path.insert(1, f"{homedir}" + '/utils')
 import settings1
 
+# DONT FORGET TO REMOVE THE CLASS FROM THE mapping.txt file in the data directory too
 
 def remove_class(label="Other"):
     # feature_files = glob.glob(f"{settings1.TCN_data}/features/*.npy")
