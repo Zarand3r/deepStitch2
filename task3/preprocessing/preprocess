@@ -1,0 +1,3 @@
+python split.py
+CUDA_VISIBLE_DEVICES=1 python convert_using_flownet.py --input_dir /mnt/md1/richard_bao/balint_data/label_classification_data/positiveB
+CUDA_VISIBLE_DEVICES=1 python convert_using_flownet.py --input_dir /mnt/md1/richard_bao/balint_data/label_classification_data/negativeB
