@@ -17,6 +17,7 @@ homedir = repo.working_dir
 sys.path.insert(1, f"{homedir}" + '/utils')
 import settings3
 
+import convert_using_flownet
 
 def splice(args):   
     df = pd.read_excel(args.data_labels)
@@ -43,8 +44,8 @@ def splice(args):
     if not os.path.exists(destination_negative):
         os.makedirs(destination_negative)
 
-    for nn in range(len(df)):
-        if len(args.segments == 2):
+    if len(args.segments) == 2:
+        for nn in range(len(df)):
             if df.loc[nn]["timepoint_"+args.segments[0]] and df.loc[nn]["timepoint_"+args.segments[1]]:
                 fname = 'flownet_%s_%s_%02d.mp4' % (df.iloc[nn]['meta_video_file_name'][:-4], args.segments, df.iloc[nn]['meta_position_nn'])
                 video_input_fn = os.path.join(args.data_directory, args.segments, "optical_flow", fname)
@@ -56,13 +57,16 @@ def splice(args):
                 else:
                     video_output_fn = os.path.join(destination_positive, fname)
                 copyfile(video_input_fn, video_output_fn)
-        elif len(args.segments == 1):
+    elif len(args.segments) == 1:
+        for nn in range(len(df)):
             if df.loc[nn]["timepoint_"+args.segments[0]]:
                 timepoint = df.loc[nn]["timepoint_"+args.segments[0]]
+                video_input_fn = os.path.join(args.raw_directory, df.iloc[nn]['meta_video_file_name'])
                 fname = 'flownet_%s_%s_%02d.mp4' % (df.iloc[nn]['meta_video_file_name'][:-4], args.segments, df.iloc[nn]['meta_position_nn'])
-                video_input_fn = os.path.join(args.data_directory, args.segments, "optical_flow", fname)
+                print(video_input_fn)
                 if not os.path.exists(video_input_fn):
                     continue
+                print("hello")
                 # make this adapt to use max padding, finding the min between the set value and hte distance to the neighboring timepoint
                 start_val = timepoint - 1
                 end_val = timepoint + 1
@@ -75,16 +79,20 @@ def splice(args):
                     video_output_fn = os.path.join(destination_positive, fname)
                 cmd = 'ffmpeg -ss %s -i %s -an -vcodec h264 -r 30 -vframes %d %s' % (start_time, video_input_fn, n_frames, video_output_fn)
                 os.system(cmd)
+        # Generate the flow for destination_positive and destination_negative
+        # Flow1 = convert_using_flownet.OpticalFlow(args)
+        # Flow1.generate_flow()
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     # Input argument
+    parser.add_argument("--raw_directory", default = settings3.raw_directory, help = "Path to the data directory")
     # parser.add_argument("--data_labels", default = settings3.data_labels, help = "Path to labels")
     parser.add_argument("--data_labels", default = "RACE_python_format_final.xlsx", help = "Path to labels")
     parser.add_argument("--data_directory", default = settings3.data_directory, help = "Path to the data directory")
     parser.add_argument("--output_directory", default = settings3.output_directory, help = "Path to the output directory")
     # parser.add_argument("--segments", default = "AB", help = "segments")
-    arser.add_argument("--segments", default = "B", help = "segments")
+    parser.add_argument("--segments", default = "B", help = "segments")
     parser.add_argument("--label", default = "label_needle positionB", help = "label")
     parser.add_argument('--inclusive', dest='inclusive', action='store_true', help = "if inclusive, use first index of start, last index of end for list timepoints")
     args = parser.parse_args()

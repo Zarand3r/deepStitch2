@@ -26,12 +26,12 @@ parser.add_argument('--lr', default=0.0005)
 
 args = parser.parse_args()
 
-num_stages = args.stages
-num_layers = args.layers
-num_f_maps = args.f_maps
+num_stages = int(args.stages)
+num_layers = int(args.layers)
+num_f_maps = int(args.f_maps)
 features_dim = 2048
 bz = 1
-lr = args.lr
+lr = float(args.lr)
 num_epochs = 50
 
 # use the full temporal resolution @ 15fps
