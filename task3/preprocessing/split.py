@@ -17,12 +17,24 @@ homedir = repo.working_dir
 sys.path.insert(1, f"{homedir}" + '/utils')
 import settings3
 
-import convert_using_flownet
+#import convert_using_flownet
+
+def get_labels(labelsfile, header=[0]):
+    raw_data = []
+    try:
+        raw_data = pd.read_excel(labelsfile, skiprows=0, header=header)
+        print("Loaded excel file")
+    except:
+        try:
+            raw_data = pd.read_csv(labelsfile, skiprows=0, header=header)
+            print("Loaded csv file")
+        except:
+            print("File must be in excel or csv format")
+    raw_data = raw_data.where(pd.notnull(raw_data), None)
+    return raw_data
 
 def splice(args):   
-    df = pd.read_excel(args.data_labels)
-    df = df.where(pd.notnull(df), None)
-    # make modular
+    df = get_labels(args.data_labels)
 
     # Convert the strings to lists and none literals
     for ii in range(len(df)):
@@ -49,6 +61,7 @@ def splice(args):
             if df.loc[nn]["timepoint_"+args.segments[0]] and df.loc[nn]["timepoint_"+args.segments[1]]:
                 fname = 'flownet_%s_%s_%02d.mp4' % (df.iloc[nn]['meta_video_file_name'][:-4], args.segments, df.iloc[nn]['meta_position_nn'])
                 video_input_fn = os.path.join(args.data_directory, args.segments, "optical_flow", fname)
+                print("input: ", video_input_fn)
                 if not os.path.exists(video_input_fn):
                     continue
                 label = df.iloc[nn][args.label]
@@ -56,6 +69,7 @@ def splice(args):
                     video_output_fn = os.path.join(destination_negative, fname)
                 else:
                     video_output_fn = os.path.join(destination_positive, fname)
+                print("output: ", video_output_fn)
                 copyfile(video_input_fn, video_output_fn)
     elif len(args.segments) == 1:
         for nn in range(len(df)):
@@ -66,7 +80,6 @@ def splice(args):
                 print(video_input_fn)
                 if not os.path.exists(video_input_fn):
                     continue
-                print("hello")
                 # make this adapt to use max padding, finding the min between the set value and hte distance to the neighboring timepoint
                 start_val = timepoint - 1
                 end_val = timepoint + 1
@@ -91,7 +104,7 @@ if __name__ == '__main__':
     parser.add_argument("--data_labels", default = "RACE_python_format_final.xlsx", help = "Path to labels")
     parser.add_argument("--data_directory", default = settings3.data_directory, help = "Path to the data directory")
     parser.add_argument("--output_directory", default = settings3.output_directory, help = "Path to the output directory")
-    # parser.add_argument("--segments", default = "AB", help = "segments")
+    #parser.add_argument("--segments", default = "CD", help = "segments")
     parser.add_argument("--segments", default = "B", help = "segments")
     parser.add_argument("--label", default = "label_needle positionB", help = "label")
     parser.add_argument('--inclusive', dest='inclusive', action='store_true', help = "if inclusive, use first index of start, last index of end for list timepoints")

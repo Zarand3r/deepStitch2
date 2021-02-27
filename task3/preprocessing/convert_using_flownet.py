@@ -132,7 +132,7 @@ class OpticalFlow:
             self.save_flow(mp4_fn, export_ims, mp4_ims[0].shape)
 ##############################################################
 parser = argparse.ArgumentParser(description='Conversion')
-parser.add_argument('--input_dir', default="/mnt/md1/richard_bao/balint_data/label_classification_data/negativeB",type=str, help='directory with the mp4 videos')
+parser.add_argument('--input_dir', default="/mnt/md1/richard_bao/balint_data/label_classification_data/positiveB",type=str, help='directory with the mp4 videos')
 parser.add_argument('--gpu_id', default=1,type=int, help='which gpu')
 parser.add_argument('--window', default=4,type=int, help='sliding window for smoothing frames')
 parser.add_argument('--join', default=2,type=int, help='write optical flow side by side to original if 2')

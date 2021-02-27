@@ -14,11 +14,22 @@ homedir = repo.working_dir
 sys.path.insert(1, f"{homedir}" + '/utils')
 import settings1
 
+def get_labels(labelsfile, header=[0]):
+    raw_data = []
+    try:
+        raw_data = pd.read_excel(labelsfile, skiprows=0, header=header)
+        print("Loaded excel file")
+    except:
+        try:
+            raw_data = pd.read_csv(labelsfile, skiprows=0, header=header)
+            print("Loaded csv file")
+        except:
+            print("File must be in excel or csv format")
+    raw_data = raw_data.where(pd.notnull(raw_data), None)
+    return raw_data
 
 def splice(args):   
-    df = pd.read_excel(args.data_labels)
-    df = df.where(pd.notnull(df), None)
-    # make modular
+    df = get_labels(args.data_labels)
 
     # Convert the strings to lists and none literals
     for ii in range(len(df)):
