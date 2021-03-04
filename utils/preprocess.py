@@ -98,8 +98,8 @@ def main(labelsfile, data_directory, kinematics_directory):
                 video_output_fn = os.path.join(output_subdir, f"{filename[:-4]}_{count}.mp4") #m4v becomese mp4
                 start_time = '0' + str(datetime.timedelta(seconds=start))
                 n_frames = round(30.*(end-start))
-                cmd = 'ffmpeg -ss %s -i %s -an -vcodec h264 -r 30 -vframes %d %s' % (start_time, video_input_fn, n_frames, video_output_fn)
-                os.system(cmd)
+                #cmd = 'ffmpeg -ss %s -i %s -an -vcodec h264 -r 30 -vframes %d %s' % (start_time, video_input_fn, n_frames, video_output_fn)
+                #os.system(cmd)
                 kinematics_output_fn = get_kinematics(kinematics_directory, kinematicsfile, f"{filename[:-4]}_{count}", start, end)
                 labels.at[index, 'meta_video_file_name'] = video_output_fn
                 labels.at[index, 'meta_raw_kinematic_data_name'] = kinematics_output_fn

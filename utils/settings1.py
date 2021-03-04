@@ -12,13 +12,13 @@
 #flownet_model = '/home/richard_bao/robosurgery/FlowNetPytorch/trained_models/flownets_EPE1.951.pth.tar'
 #checkpoints = '/home/richard_bao/robosurgery/checkpoints/task1'
 
-raw_directory = '/mnt/md1/richard_bao/balint_data/original'
+raw_directory = '/mnt/md1/richard_bao/balint_data/original/demonstrations'
 data_directory = '/mnt/md1/richard_bao/balint_data/classification_data'
-data_labels = '/mnt/md1/richard_bao/balint_data/RACE_python_format_final.csv' #file with timestamps
-kinematics_directory = '/mnt/md1/richard_bao/balint_data/kinematics'
+data_labels = '/mnt/md1/richard_bao/balint_data/RACE_python_format_final_demonstrations.csv' #file with timestamps
+kinematics_directory = '/mnt/md1/richard_bao/balint_data/kinematics/demonstrations'
 flownet_dir = '/home/richard_bao/robosurgery/FlowNetPytorch'
 flownet_model = '/home/richard_bao/robosurgery/FlowNetPytorch/trained_models/flownets_EPE1.951.pth.tar'
 checkpoints = '/home/richard_bao/robosurgery/checkpoints/task1'
-TCN_raw = '/mnt/md1/richard_bao/balint_data/original'
+TCN_raw = '/mnt/md1/richard_bao/balint_data/original/demonstrations'
 TCN_data = '/mnt/md1/richard_bao/balint_data/TCN_data'
 label_TCN_data = '/mnt/md1/richard_bao/balint_data/label_TCN_data'
