@@ -15,7 +15,7 @@ import sys
 repo = git.Repo("./", search_parent_directories=True)
 homedir = repo.working_dir
 sys.path.insert(1, f"{homedir}" + '/utils')
-import settings3
+import settings
 
 #import convert_using_flownet
 
@@ -99,11 +99,11 @@ def splice(args):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     # Input argument
-    parser.add_argument("--raw_directory", default = settings3.raw_directory, help = "Path to the data directory")
-    # parser.add_argument("--data_labels", default = settings3.data_labels, help = "Path to labels")
+    parser.add_argument("--raw_directory", default = settings.raw_directory, help = "Path to the data directory")
+    # parser.add_argument("--data_labels", default = settings.data_labels, help = "Path to labels")
     parser.add_argument("--data_labels", default = "RACE_python_format_final.xlsx", help = "Path to labels")
-    parser.add_argument("--data_directory", default = settings3.data_directory, help = "Path to the data directory")
-    parser.add_argument("--output_directory", default = settings3.output_directory, help = "Path to the output directory")
+    parser.add_argument("--data_directory", default = settings.data_directory, help = "Path to the data directory")
+    parser.add_argument("--output_directory", default = settings.label_directory, help = "Path to the output directory")
     #parser.add_argument("--segments", default = "CD", help = "segments")
     parser.add_argument("--segments", default = "B", help = "segments")
     parser.add_argument("--label", default = "label_needle positionB", help = "label")

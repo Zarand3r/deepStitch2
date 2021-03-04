@@ -3,8 +3,8 @@ import sys
 repo = git.Repo("./", search_parent_directories=True)
 homedir = repo.working_dir
 sys.path.insert(1, f"{homedir}" + '/utils')
-import settings1
-sys.path.append(settings1.flownet_dir) #This should include the modules from https://github.com/ClementPinard/FlowNetPytorch so import models works
+import settings
+sys.path.append(settings.flownet_dir) #This should include the modules from https://github.com/ClementPinard/FlowNetPytorch so import models works
 import models
 
 import argparse
@@ -43,7 +43,7 @@ def mp4_load(fn):
 class OpticalFlow:
     def __init__(self, args):
         self.args = args
-        self.model_dir = settings1.flownet_model
+        self.model_dir = settings.flownet_model
         torch.cuda.set_device(self.args.gpu_id)
 
     def save_flow(self, mp4_fn, export_ims, shape):

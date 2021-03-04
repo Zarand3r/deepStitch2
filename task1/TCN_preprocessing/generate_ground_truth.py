@@ -13,7 +13,7 @@ from collections import defaultdict
 repo = git.Repo("./", search_parent_directories=True)
 homedir = repo.working_dir
 sys.path.insert(1, f"{homedir}" + '/utils')
-import settings1
+import settings
 
 def convert_video(video_path, output_directory):
         print(video_path)
@@ -133,5 +133,5 @@ def generate_labels(video_directory, output_directory, labels, stride=1):
 
 if __name__ == '__main__':
         # convert_video("2020_05_08_14_06_20_CUT.mp4","")
-        labels = get_labels(settings1.data_labels)
+        labels = get_labels(settings.data_labels)
         generate_labels("/mnt/md1/richard_bao/balint_data/TCN_data/features","/mnt/md1/richard_bao/balint_data/TCN_data/groundTruth",labels, 2)

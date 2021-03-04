@@ -3,8 +3,8 @@ import sys
 repo = git.Repo("./", search_parent_directories=True)
 homedir = repo.working_dir
 sys.path.insert(1, f"{homedir}" + '/utils')
-import settings1
-sys.path.append(settings1.flownet_dir) #This should include the modules from https://github.com/ClementPinard/FlowNetPytorch so import models works
+import settings
+sys.path.append(settings.flownet_dir) #This should include the modules from https://github.com/ClementPinard/FlowNetPytorch so import models works
 import models
 
 import argparse
@@ -42,13 +42,13 @@ def mp4_load(fn):
 
 ##############################################################
 parser = argparse.ArgumentParser(description='Conversion')
-parser.add_argument('--mp4_fn', default=settings1.raw_directory,type=str, help='input path')
+parser.add_argument('--mp4_fn', default=settings.raw_directory,type=str, help='input path')
 parser.add_argument('--gpu_id', default=1,type=int, help='which gpu')
 parser.add_argument('--window', default=4,type=int, help='sliding window for smoothing frames')
 parser.add_argument('--join', default=2,type=int, help='write optical flow side by side to original if 2')
 args = parser.parse_args()
 
-model_dir = settings1.flownet_model
+model_dir = settings.flownet_model
 mp4_fn = args.mp4_fn
 gpu_id = args.gpu_id
 window = args.window

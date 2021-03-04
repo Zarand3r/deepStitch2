@@ -7,13 +7,13 @@ import numpy as np
 repo = git.Repo("./", search_parent_directories=True)
 homedir = repo.working_dir
 sys.path.insert(1, f"{homedir}" + '/utils')
-import settings1
+import settings
 
 
 def remove_class(label="Other"):
-    # feature_files = glob.glob(f"{settings1.TCN_data}/features/*.npy")
-    feature_directory = os.path.join(settings1.TCN_data, "features")
-    label_files = glob.glob(f"{settings1.TCN_data}/groundTruth/*.txt")
+    # feature_files = glob.glob(f"{settings.TCN_data}/features/*.npy")
+    feature_directory = os.path.join(settings.TCN_data, "features")
+    label_files = glob.glob(f"{settings.TCN_data}/groundTruth/*.txt")
     label += "\n"
     for file in label_files:
         name = os.path.basename(file)

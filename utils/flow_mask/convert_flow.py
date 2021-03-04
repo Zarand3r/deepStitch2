@@ -3,8 +3,8 @@ import sys
 repo = git.Repo("./", search_parent_directories=True)
 homedir = repo.working_dir
 sys.path.insert(1, f"{homedir}" + '/utils')
-import settings1
-sys.path.append(settings1.flownet_dir) #This should include the modules from https://github.com/ClementPinard/FlowNetPytorch so import models works
+import settings
+sys.path.append(settings.flownet_dir) #This should include the modules from https://github.com/ClementPinard/FlowNetPytorch so import models works
 import models
 
 import argparse
@@ -46,7 +46,7 @@ def mp4_load(fn):
 class OpticalFlow:
     def __init__(self, args):
         self.args = args
-        self.model_dir = settings1.flownet_model
+        self.model_dir = settings.flownet_model
         torch.cuda.set_device(self.args.gpu_id)
 
     def save_flow(self, flow_output, fname, index):
@@ -128,8 +128,8 @@ class OpticalFlow:
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Conversion')
-    parser.add_argument('--input_dir', default=settings1.TCN_raw,type=str, help='directory with the mp4 videos')
-    parser.add_argument('--output_dir', default=settings1.TCN_data,type=str, help='directory to output the optical flows')
+    parser.add_argument('--input_dir', default=settings.TCN_raw,type=str, help='directory with the mp4 videos')
+    parser.add_argument('--output_dir', default=settings.TCN_data,type=str, help='directory to output the optical flows')
     parser.add_argument('--gpu_id', default=1,type=int, help='which gpu')
     parser.add_argument('--window', default=4,type=int, help='sliding window for smoothing frames')
     parser.add_argument('--div_flow', default=20, type=float, help='value by which flow will be divided. overwritten if stored in pretrained file')

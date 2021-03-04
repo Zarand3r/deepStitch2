@@ -16,7 +16,7 @@ import sys
 repo = git.Repo("./", search_parent_directories=True)
 homedir = repo.working_dir
 sys.path.insert(1, f"{homedir}" + '/utils')
-import settings1
+import settings
 
 
 def get_labels(labelsfile, header=[0]):
@@ -118,9 +118,9 @@ def main(labelsfile, data_directory, kinematics_directory):
         labels.to_csv(f"{labelsfile[:-4]}_demonstrations.csv", index=False)
 
 if __name__ == '__main__':
-        labelsfile = settings1.data_labels
-        kinematics_directory = settings1.kinematics_directory
-        data_directory = settings1.raw_directory
+        labelsfile = settings.data_labels
+        kinematics_directory = settings.kinematics_directory
+        data_directory = settings.raw_directory
         main(labelsfile, data_directory, kinematics_directory)
 
 

@@ -25,7 +25,7 @@ import sys
 repo = git.Repo("./", search_parent_directories=True)
 homedir = repo.working_dir
 sys.path.insert(1, f"{homedir}" + '/utils')
-import settings3
+import settings
 import feature_extractor
 from lightning_train import CustomDataset
 
@@ -175,7 +175,7 @@ if __name__ == '__main__':
         # ARGS
         parser = argparse.ArgumentParser(description='Training')
         parser.add_argument('--loadchk', default='', help='Pass through to load training from a checkpoint')
-        parser.add_argument('--datadir', default=settings3.output_directory, help='train directory')
+        parser.add_argument('--datadir', default=settings.label_directory, help='train directory')
         parser.add_argument('--gpu', default=0, type=int, help='GPU device number')
         parser.add_argument('--epochs', default=60, type=int, help='manual epoch number')
         parser.add_argument('--lr', default=0.0001, type=float, help='initial learning rate')
@@ -228,7 +228,7 @@ if __name__ == '__main__':
 
         checkpoint_callback = ModelCheckpoint(
                 # filepath=os.path.join(logger.log_dir, 'checkpoints'),
-                filepath=os.path.join(settings3.checkpoints, classification_name, "transfer",  "experiment1"),
+                filepath=os.path.join(settings.checkpoints4, classification_name, "transfer",  "experiment1"),
                 save_top_k=3,
                 verbose=True,
                 monitor='val_acc',

@@ -12,7 +12,7 @@ import sys
 repo = git.Repo("./", search_parent_directories=True)
 homedir = repo.working_dir
 sys.path.insert(1, f"{homedir}" + '/utils')
-import settings1
+import settings
 
 
 def splice(args):   
@@ -175,9 +175,9 @@ def splice(args):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     # Input argument
-    parser.add_argument("--data_labels", default = settings1.data_labels, help = "Path to labels")
-    parser.add_argument("--raw_directory", default = settings1.raw_directory, help = "Path to the raw data ")
-    parser.add_argument("--data_directory", default = settings1.data_directory, help = "Path to the output directory")
+    parser.add_argument("--data_labels", default = settings.data_labels, help = "Path to labels")
+    parser.add_argument("--raw_directory", default = settings.raw_directory, help = "Path to the raw data ")
+    parser.add_argument("--data_directory", default = settings.data_directory, help = "Path to the output directory")
     parser.add_argument("--timepoints", default = "A_B_C_D_E_F_G", help = "Path to the output directory")
     parser.add_argument('--inclusive', dest='inclusive', action='store_true', help = "if inclusive, use first index of start, last index of end for list timepoints")
     args = parser.parse_args()

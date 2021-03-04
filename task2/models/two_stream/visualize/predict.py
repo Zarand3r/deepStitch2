@@ -12,7 +12,7 @@ import sys
 repo = git.Repo("./", search_parent_directories=True)
 homedir = repo.working_dir
 sys.path.insert(1, f"{homedir}" + '/utils')
-import settings1
+import settings
 import lightning_train as classifier
 import salient_lightning_train as salient_classifier
 
@@ -113,7 +113,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     # Input argument
     parser.add_argument('--input_file', default=f'{homedir}/task1/models/two_stream/test/test1.mp4', help='Input file to predict')
-    parser.add_argument('--checkpoint_path', default=f'{settings1.checkpoints}/two_stream/AC_CE_EF_FG/version1_ckpt_epoch_46.ckpt', help='path to load checkpoints')
+    parser.add_argument('--checkpoint_path', default=f'{settings.checkpoints2}/two_stream/AC_CE_EF_FG/version1_ckpt_epoch_46.ckpt', help='path to load checkpoints')
     parser.add_argument('--hparams_path', default=f'{homedir}/task1/models/two_stream/lightning_logs/AC_CE_EF_FG/alexnet_False_convLSTM/version_1/hparams.yaml', help='path to load hyperparameters')
     args = parser.parse_args()
     #predict(args)

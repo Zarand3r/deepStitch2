@@ -27,7 +27,7 @@ repo = git.Repo("./", search_parent_directories=True)
 homedir = repo.working_dir
 sys.path.insert(1, f"{homedir}" + '/utils')
 from convlstmcells import ConvLSTMCell, ConvTTLSTMCell
-import settings3
+import settings
 
 
 class CustomDataset(Dataset):
@@ -377,7 +377,7 @@ if __name__ == '__main__':
         # ARGS
         parser = argparse.ArgumentParser(description='Training')
         parser.add_argument('--loadchk', default='', help='Pass through to load training from a checkpoint')
-        parser.add_argument('--datadir', default=settings3.output_directory, help='train directory')
+        parser.add_argument('--datadir', default=settings.label_directory, help='train directory')
         parser.add_argument('--gpu', default=0, type=int, help='GPU device number')
         parser.add_argument('--arch', default='alexnet', help='model architecture')
         parser.add_argument('--trainable_base', default=0, type=int, help='Whether to train the feature extractor')
@@ -435,7 +435,7 @@ if __name__ == '__main__':
 
         checkpoint_callback = ModelCheckpoint(
                 # filepath=os.path.join(logger.log_dir, 'checkpoints'),
-                filepath=os.path.join(settings3.checkpoints, "two_stream", classification_name, f'{hparams.arch}_{hparams.trainable_base}_{hparams.rnn_model}{hparams.masked}'),
+                filepath=os.path.join(settings.checkpoints3, "two_stream", classification_name, f'{hparams.arch}_{hparams.trainable_base}_{hparams.rnn_model}{hparams.masked}'),
                 save_top_k=3,
                 verbose=True,
                 monitor='val_acc',

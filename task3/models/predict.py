@@ -12,7 +12,7 @@ import sys
 repo = git.Repo("./", search_parent_directories=True)
 homedir = repo.working_dir
 sys.path.insert(1, f"{homedir}" + '/utils')
-import settings3
+import settings
 import lightning_train as classifier
 #import salient_lightning_train as classifier
 
@@ -110,7 +110,7 @@ def predict(args):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--checkpoint_path', default=f'{settings3.checkpoints}/positiveAB_negativeAB/_ckpt_epoch_7_v2.ckpt')
+    parser.add_argument('--checkpoint_path', default=f'{settings.checkpoints3}/positiveAB_negativeAB/_ckpt_epoch_7_v2.ckpt')
     parser.add_argument('--hparams_path', default=f'{homedir}/task3/models/lightning_logs/positiveAB_negativeAB/alexnet_False_convLSTM/version_6/hparams.yaml', help='path to load hyperparameters')
     args = parser.parse_args()
     #predict(args)
