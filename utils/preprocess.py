@@ -95,13 +95,14 @@ def main(labelsfile, data_directory, kinematics_directory):
                 output_subdir = os.path.join(data_directory, "demonstrations")
                 if not os.path.exists(output_subdir):
                     os.makedirs(output_subdir)
-                video_output_fn = os.path.join(output_subdir, f"{filename[:-4]}_{count}.mp4") #m4v becomese mp4
+                video_clip_name = f"{filename[:-4]}_{count}.mp4"
+                video_output_fn = os.path.join(output_subdir, video_clip_name) #m4v becomese mp4
                 start_time = '0' + str(datetime.timedelta(seconds=start))
                 n_frames = round(30.*(end-start))
                 #cmd = 'ffmpeg -ss %s -i %s -an -vcodec h264 -r 30 -vframes %d %s' % (start_time, video_input_fn, n_frames, video_output_fn)
                 #os.system(cmd)
-                kinematics_output_fn = get_kinematics(kinematics_directory, kinematicsfile, f"{filename[:-4]}_{count}", start, end)
-                labels.at[index, 'meta_video_file_name'] = video_output_fn
+                kinematics_output_fn = get_kinematics(kinematics_directory, kinematicsfile, video_clip_name[:-4], start, end)
+                labels.at[index, 'meta_video_file_name'] = video_clip_name  #video_output_fn
                 labels.at[index, 'meta_raw_kinematic_data_name'] = kinematics_output_fn
                 for time_label in ["timepoint_A", "timepoint_B", "timepoint_C", "timepoint_D", "timepoint_E", "timepoint_F", "timepoint_G"]:
                         t = labels.at[index, time_label]
@@ -118,7 +119,7 @@ def main(labelsfile, data_directory, kinematics_directory):
         labels.to_csv(f"{labelsfile[:-4]}_demonstrations.csv", index=False)
 
 if __name__ == '__main__':
-        labelsfile = settings.data_labels
+        labelsfile = settings.raw_data_labels
         kinematics_directory = settings.kinematics_directory
         data_directory = settings.raw_directory
         main(labelsfile, data_directory, kinematics_directory)

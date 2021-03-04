@@ -54,6 +54,8 @@ def get_labels(labelsfile, header=[0]):
         return raw_data
 
 def generate_labels(video_directory, output_directory, labels, stride=1):
+        if not os.path.exists(output_directory):
+            os.makedirs(output_directory)
         # some videos dont have A, and start at a later marker. Keep this in mind.
         columns = ['timepoint_A', 'timepoint_B', 'timepoint_C', 'timepoint_D', 'timepoint_E', 'timepoint_F', 'timepoint_G']
         fps = 29.97/stride

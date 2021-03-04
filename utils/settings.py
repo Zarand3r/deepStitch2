@@ -18,6 +18,7 @@ raw_directory = '/mnt/md1/richard_bao/balint_data/original/demonstrations'
 data_directory = '/mnt/md1/richard_bao/balint_data/classification_data'
 label_directory = '/mnt/md1/richard_bao/balint_data/label_classification_data'
 kinematics_directory = '/mnt/md1/richard_bao/balint_data/kinematics/demonstrations'
+raw_data_labels = '/mnt/md1/richard_bao/balint_data/RACE_python_format_final.csv'
 data_labels = '/mnt/md1/richard_bao/balint_data/RACE_python_format_final_demonstrations.csv' #file with timestamps
 flownet_dir = '/home/richard_bao/robosurgery/FlowNetPytorch'
 flownet_model = '/home/richard_bao/robosurgery/FlowNetPytorch/trained_models/flownets_EPE1.951.pth.tar'
