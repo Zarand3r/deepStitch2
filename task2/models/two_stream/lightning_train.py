@@ -5,6 +5,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from copy import deepcopy
 from scipy.special import softmax
+import pandas as pd
 import numpy as np
 import cv2
 
@@ -32,7 +33,7 @@ import settings
 
 class CustomDataset(Dataset):
         """CustomDataset"""
-        def __init__(self, global_dir, idxs= None, include_classes = [], flow_method = 'flownet', balance_classes = False, mode = 'train', max_frames = 150, stride = 2, masked=""):
+        def __init__(self, global_dir, kinematics_dir, idxs= None, include_classes = [], flow_method = 'flownet', balance_classes = False, mode = 'train', max_frames = 150, stride = 2, masked=""):
                 self.global_dir = global_dir
                 self.mode = mode
                 self.max_frames = stride*max_frames
@@ -75,21 +76,30 @@ class CustomDataset(Dataset):
                         video = torchvision.io.read_video(self.filtered_fns[idx][0], pts_unit = 'sec')[0]
                 label = self.filtered_fns[idx][1]
                 n_frames = video.size()[0]
+                ############################################################################################
+                kinematics_file = self.filtered_fns[idx][0].split(f"{flow_method}_")[-1][:-4]+".csv"
+                # kinematics csv should be preprocessed so it is interpolated for all frames.
+                # The only timepoints should be those that correspond to frames in the video
+                kinematics_df = pd.read_csv(kinematics_file, skiprows=0, header=[0], usecols=["Time_Stamp"]+kinematics_features)
+                kinematics = kinematics_df.values
+                ############################################################################################
                 if self.mode == 'train':
                         if n_frames > self.max_frames: # Sample random 200 frames
                                 start_ii = random.choice(list(range(0, n_frames-self.max_frames)))
                                 video = video[start_ii:start_ii+(self.max_frames-1), :, :]
                         start_phase = random.choice(list(range(self.stride)))
                         video = video[list(range(start_phase, video.size()[0], self.stride)), :, :]
+                        kinematics = kinematics[list(range(start_phase, video.size()[0], self.stride)), :, :]
                 elif self.mode == 'val':
                         if n_frames > self.max_frames: # Sample random 200 frames
                                 start_ii = random.choice(list(range(0, n_frames-self.max_frames)))
                                 video = video[start_ii:start_ii+(self.max_frames-1), :, :]
                         start_phase = random.choice(list(range(self.stride)))
                         video = video[list(range(start_phase, video.size()[0], self.stride)), :, :]
+                        kinematics = kinematics[list(range(start_phase, video.size()[0], self.stride)), :, :]
                 else:
                         raise ValueError('not supported mode must be train or test')
-                return (video, label)
+                return (video, label, kinematics)
 
         def remove_empty(self):
                 for class_curr in self.classes:
@@ -179,7 +189,7 @@ class FusionModel(LightningModule):
                         self.rnn = ConvLSTMCell(input_channels = self.final_channels*2, hidden_channels = int(self.hparams.hidden_size), kernel_size = 3, bias = True)
                         
                         self.fc = nn.Linear(int(self.hparams.hidden_size)*nF*nF, self.num_classes)
-                        self.fc_k = nn.Linear(int(self.hparams.hidden_size)*nF*nF, self.num_classes) #replace with the dimensions of the kinematics data
+                        self.fc_k = nn.Linear(int(self.hparams.hidden_size)*nF*nF, len(self.hparams.kinematics_features)) #replace with the dimensions of the kinematics data
                 elif args.rnn_model == 'convttLSTM': 
                         # Twice number of channels for RGB and OF which are concat
                         self.rnn = ConvTTLSTMCell(input_channels = self.final_channels*2, hidden_channels = self.final_channels, order = 3, steps = 5, ranks = 16, kernel_size = 3, bias = True)
@@ -390,6 +400,10 @@ if __name__ == '__main__':
         parser = argparse.ArgumentParser(description='Training')
         parser.add_argument('--loadchk', default='', help='Pass through to load training from a checkpoint')
         parser.add_argument('--datadir', default=settings.data_directory, help='train directory')
+        parser.add_argument('--kinematicsdir', default=settings.kinematics_directory, help='train directory')
+        parser.add_argument('--kinematics_features', default=["Tool_Camera_X", "Tool_Camera_Y", "Tool_Camera_Z", "Tool_Camera_Yaw", "Tool_Camera_Pitch", "Tool_Camera_Roll", \
+                "Tool_Left_X", "Tool_Left_Y", "Tool_Left_Z", "Tool_Left_Yaw", "Tool_Left_Pitch", "Tool_Left_Roll", "Tool_Left_Jaw_Opening_Angle", "Tool_Right_X", "Tool_Right_Y", \
+                "Tool_Right_Z", "Tool_Right_Yaw", "Tool_Right_Pitch", "Tool_Right_Roll", "Tool_Right_Jaw_Opening_Angle", "Motion_Scaling_Ratio"], help='features from kinematics file')
         parser.add_argument('--gpu', default=0, type=int, help='GPU device number')
         parser.add_argument('--arch', default='alexnet', help='model architecture')
         parser.add_argument('--trainable_base', default=0, type=int, help='Whether to train the feature extractor')

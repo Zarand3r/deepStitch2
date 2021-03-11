@@ -53,15 +53,24 @@ class CustomDataset(Dataset):
                 if idxs == None: # load all
                         idxs = list(range(len(fns)))
                 self.filtered_fns = [[f, self.classes.index(f.split('/')[-2]) ] for i, f in enumerate(fns) if i in idxs]
+                # TODO Implement option to down sample
                 if balance_classes:
                         class_counter = Counter([f[1] for f in self.filtered_fns])
                         print(class_counter)
                         print('balancing...')
-                        n_match = class_counter.most_common()[0][1]
+                        # n_match = class_counter.most_common()[0][1]
+                        # for class_curr in class_counter.keys():
+                        #         cnt = class_counter[class_curr]
+                        #         print(class_curr, cnt)
+                        #         self.filtered_fns.extend(random.choices([f for f in self.filtered_fns if f[1] == int(class_curr)], k=max(n_match-cnt, 1) ))
+                        # print('Classes now balanced')
+                        n_match = class_counter.most_common()[-1][1]
                         for class_curr in class_counter.keys():
                                 cnt = class_counter[class_curr]
                                 print(class_curr, cnt)
-                                self.filtered_fns.extend(random.choices([f for f in self.filtered_fns if f[1] == int(class_curr)], k=max(n_match-cnt, 1) ))
+                                removed = random.choices([f for f in self.filtered_fns if f[1] == int(class_curr)], k=max(cnt-nmatch, 1) )
+                                for f in removed:
+                                    self.filtered_fns.remove(f)
                         print('Classes now balanced')
 
         def __len__(self):
