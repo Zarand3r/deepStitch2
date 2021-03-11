@@ -90,7 +90,10 @@ def splice(args):
                 n_frames = round(30.*(end_val-start_val))
                 video_input_fn = df.iloc[nn]['meta_video_file_name']
                 video_input_fn = os.path.join(input_dir, video_input_fn)
-                video_output_fn = '%s_%s%s_%02d.mp4' % (df.iloc[nn]['meta_video_file_name'][:-4], all_timepoints[kk], all_timepoints[kk+1], df.iloc[nn]['meta_position_nn'])
+                video_output_fn = df.iloc[nn]['meta_video_file_name']
+                if os.path.exists(video_output_fn):
+                    video_output_fn = '%s_%s.mp4' % (video_output_fn[:-4], df.iloc[nn]['meta_position_nn'])
+                #video_output_fn = '%s_%s%s_%02d.mp4' % (df.iloc[nn]['meta_video_file_name'][:-4], all_timepoints[kk], all_timepoints[kk+1], df.iloc[nn]['meta_position_nn'])
                 df.at[nn, 'meta_cut_%s%s' % (all_timepoints[kk], all_timepoints[kk+1])] = video_output_fn
                 # video_output_fn = os.path.join(output_dir, video_output_fn)
                 output_subdir = os.path.join(output_dir, f"{all_timepoints[kk]}{all_timepoints[kk+1]}")

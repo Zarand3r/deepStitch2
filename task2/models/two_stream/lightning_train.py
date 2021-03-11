@@ -33,11 +33,14 @@ import settings
 
 class CustomDataset(Dataset):
         """CustomDataset"""
-        def __init__(self, global_dir, kinematics_dir, idxs= None, include_classes = [], flow_method = 'flownet', balance_classes = False, mode = 'train', max_frames = 150, stride = 2, masked=""):
+        def __init__(self, global_dir, kinematics_dir, kinematics_features, idxs= None, include_classes = [], flow_method = 'flownet', balance_classes = False, mode = 'train', max_frames = 150, stride = 2, masked=""):
                 self.global_dir = global_dir
                 self.mode = mode
                 self.max_frames = stride*max_frames
                 self.stride = stride
+                self.flow_method = flow_method
+                self.kinematics_dir = kinematics_dir
+                self.kinematics_features = kinematics_features
 
                 if len(include_classes) == 0:
                         self.classes = os.listdir(global_dir)
@@ -77,10 +80,11 @@ class CustomDataset(Dataset):
                 label = self.filtered_fns[idx][1]
                 n_frames = video.size()[0]
                 ############################################################################################
-                kinematics_file = self.filtered_fns[idx][0].split(f"{flow_method}_")[-1][:-4]+".csv"
+                kinematics_file = self.filtered_fns[idx][0].split(f"{self.flow_method}_")[-1][:-4]+".csv"
+                kinematics_file = os.path.join(self.kinematics_dir, kinematics_file)
                 # kinematics csv should be preprocessed so it is interpolated for all frames.
                 # The only timepoints should be those that correspond to frames in the video
-                kinematics_df = pd.read_csv(kinematics_file, skiprows=0, header=[0], usecols=["Time_Stamp"]+kinematics_features)
+                kinematics_df = pd.read_csv(kinematics_file, usecols=self.kinematics_features)
                 kinematics = kinematics_df.values
                 ############################################################################################
                 if self.mode == 'train':
@@ -89,14 +93,14 @@ class CustomDataset(Dataset):
                                 video = video[start_ii:start_ii+(self.max_frames-1), :, :]
                         start_phase = random.choice(list(range(self.stride)))
                         video = video[list(range(start_phase, video.size()[0], self.stride)), :, :]
-                        kinematics = kinematics[list(range(start_phase, video.size()[0], self.stride)), :, :]
+                        kinematics = kinematics[list(range(start_phase, video.size()[0], self.stride)), :]
                 elif self.mode == 'val':
                         if n_frames > self.max_frames: # Sample random 200 frames
                                 start_ii = random.choice(list(range(0, n_frames-self.max_frames)))
                                 video = video[start_ii:start_ii+(self.max_frames-1), :, :]
                         start_phase = random.choice(list(range(self.stride)))
                         video = video[list(range(start_phase, video.size()[0], self.stride)), :, :]
-                        kinematics = kinematics[list(range(start_phase, video.size()[0], self.stride)), :, :]
+                        kinematics = kinematics[list(range(start_phase, video.size()[0], self.stride)), :]
                 else:
                         raise ValueError('not supported mode must be train or test')
                 return (video, label, kinematics)
@@ -141,10 +145,10 @@ class FusionModel(LightningModule):
                 self.fc_size = args.fc_size
                 self.trainable_base = args.trainable_base
 
-                nf = 7
+                nF = 7
                 # select a base model
                 if args.arch.startswith('alexnet'):
-                        nf = 6
+                        nF = 6
                         self.features_rgb = original_model_rgb.features
                         for i, param in enumerate(self.features_rgb.parameters()):
                                 param.requires_grad = self.trainable_base
@@ -236,6 +240,7 @@ class FusionModel(LightningModule):
                         #########################################################################################
                         # Convolutional flavors
                         aggregate_outputs = []
+                        print("Number of frames: ", nFrames)
                         for kk in range(nFrames):
                                 f = self.features_rgb(inputs[:, kk, :, :, :, 0].permute(0, 3, 1, 2)) # permute to nB x nC x H x W
                                 f_of = self.features_of(inputs[:, kk, :, :, :, 1].permute(0, 3, 1, 2))  # permute to nB x nC x H x W
@@ -249,7 +254,9 @@ class FusionModel(LightningModule):
                                 outputs = outputs.reshape(outputs.size(0), -1)
                                 aggregate_outputs.append(outputs)
 
-                        class_outputs = self.fc(aggregate_outputs)
+                        aggregate_outputs = torch.stack(aggregate_outputs)
+                        class_outputs = self.fc(outputs)
+                        class_outputs = class_outputs.unsqueeze(1)
                         kinematics_outputs = self.fc_k(aggregate_outputs)
                         # Add a dimension to make the size consistent with old rnn
                         # class_outputs = class_outputs.unsqueeze(1)
@@ -261,11 +268,15 @@ class FusionModel(LightningModule):
 
         def training_step(self, batch, batch_idx):
                 # Batch is already on GPU by now
-                input_cuda, target_cuda = self.apply_transforms_GPU(batch, random_crop=self.hparams.random_crop)
+                input_cuda, target_cuda = self.apply_transforms_GPU(batch[0:2], random_crop=self.hparams.random_crop)
+                target_kinematics = batch[2]
                 class_outputs, kinematics_outputs = self(input_cuda)
                 class_outputs = class_outputs[:, -1, :]
                 kinematics_outputs = kinematics_outputs[:, -1, :]
-                loss = F.cross_entropy(class_outputs, target_cuda.type(torch.long))
+                mle_loss = nn.MSELoss()
+                print("predicted kinematics shape: ", kinematics_outputs.shape)
+                print("target kinematics shape: ", target_kinematics.shape)
+                loss = F.cross_entropy(class_outputs, target_cuda.type(torch.long)) + mle_loss(kinematics_outputs, target_kinematics)
                 self.actual_train.append(target_cuda.item())
                 self.predicted_train.append(class_outputs.topk(1,1)[-1].item())
                 self.predicted_softmax_train.append(softmax(class_outputs.detach().cpu().numpy(), axis = -1)) # Save scores
@@ -273,11 +284,13 @@ class FusionModel(LightningModule):
                 return {'loss': loss, 'log': tensorboard_logs}
 
         def validation_step(self, batch, batch_idx):
-                input_cuda, target_cuda = self.apply_transforms_GPU(batch, random_crop=False)
+                input_cuda, target_cuda = self.apply_transforms_GPU(batch[0:2], random_crop=False)
+                target_kinematics = batch[2]
                 class_outputs, kinematics_outputs = self(input_cuda)
                 class_outputs = class_outputs[:, -1, :]
                 kinematics_outputs = kinematics_outputs[:, -1, :]
-                loss = F.cross_entropy(class_outputs, target_cuda.type(torch.long))
+                mle_loss = nn.MSELoss()
+                loss = F.cross_entropy(class_outputs, target_cuda.type(torch.long)) + mle_loss(kinematics_outputs, target_kinematics)
                 self.actual.append(target_cuda.item())
                 self.predicted.append(class_outputs.topk(1,1)[-1].item())
                 self.predicted_softmax.append(softmax(class_outputs.detach().cpu().numpy(), axis = -1)) # Save scores
@@ -331,7 +344,7 @@ class FusionModel(LightningModule):
                 return [optimizer], [scheduler]
 
         def train_dataloader(self):
-                train_dataset   = CustomDataset(self.hparams.datadir, idxs = self.hparams.idx_train , include_classes = self.hparams.include_classes, 
+                train_dataset   = CustomDataset(self.hparams.datadir, self.hparams.kinematicsdir, self.hparams.kinematics_features, idxs = self.hparams.idx_train , include_classes = self.hparams.include_classes, 
                                                         flow_method = self.hparams.flow_method, balance_classes=True, mode = 'train', max_frames = self.hparams.loader_nframes,
                                                         stride = self.hparams.loader_stride, masked = self.hparams.masked)
                 train_dataloader        = DataLoader(train_dataset, batch_size=self.batch_size, shuffle=True, num_workers=self.hparams.number_workers, drop_last=True)
@@ -339,7 +352,7 @@ class FusionModel(LightningModule):
                 return train_dataloader
 
         def val_dataloader(self):
-                val_dataset     = CustomDataset(self.hparams.datadir, idxs = self.hparams.idx_test , include_classes = self.hparams.include_classes, 
+                val_dataset     = CustomDataset(self.hparams.datadir, self.hparams.kinematicsdir, self.hparams.kinematics_features, idxs = self.hparams.idx_test , include_classes = self.hparams.include_classes, 
                                                         flow_method = self.hparams.flow_method, balance_classes=False, mode = 'val', max_frames = self.hparams.loader_nframes,
                                                         stride = self.hparams.loader_stride, masked = self.hparams.masked)
                 val_dataloader  = DataLoader(val_dataset, batch_size=self.batch_size, shuffle=False, num_workers=self.hparams.number_workers, drop_last=True)
@@ -403,7 +416,7 @@ if __name__ == '__main__':
         parser.add_argument('--kinematicsdir', default=settings.kinematics_directory, help='train directory')
         parser.add_argument('--kinematics_features', default=["Tool_Camera_X", "Tool_Camera_Y", "Tool_Camera_Z", "Tool_Camera_Yaw", "Tool_Camera_Pitch", "Tool_Camera_Roll", \
                 "Tool_Left_X", "Tool_Left_Y", "Tool_Left_Z", "Tool_Left_Yaw", "Tool_Left_Pitch", "Tool_Left_Roll", "Tool_Left_Jaw_Opening_Angle", "Tool_Right_X", "Tool_Right_Y", \
-                "Tool_Right_Z", "Tool_Right_Yaw", "Tool_Right_Pitch", "Tool_Right_Roll", "Tool_Right_Jaw_Opening_Angle", "Motion_Scaling_Ratio"], help='features from kinematics file')
+                "Tool_Right_Z", "Tool_Right_Yaw", "Tool_Right_Pitch", "Tool_Right_Roll", "Tool_Right_Jaw_Opening_Angle"], help='features from kinematics file')
         parser.add_argument('--gpu', default=0, type=int, help='GPU device number')
         parser.add_argument('--arch', default='alexnet', help='model architecture')
         parser.add_argument('--trainable_base', default=0, type=int, help='Whether to train the feature extractor')

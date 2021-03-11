@@ -68,9 +68,14 @@ class CustomDataset(Dataset):
                         for class_curr in class_counter.keys():
                                 cnt = class_counter[class_curr]
                                 print(class_curr, cnt)
-                                removed = random.choices([f for f in self.filtered_fns if f[1] == int(class_curr)], k=max(cnt-nmatch, 1) )
-                                for f in removed:
-                                    self.filtered_fns.remove(f)
+                                indices = [index for index, x in enumerate(self.filtered_fns) if x[1] == int(class_curr)]
+                                indices = random.choices(indices, k=max(cnt-n_match, 1))
+                                indices.sort(reverse=True)
+                                for index in indices:
+                                    del self.filtered_fns[index]
+                                #removed = random.choices([f for f in self.filtered_fns if f[1] == int(class_curr)], k=max(cnt-n_match, 1) )
+                                #for f in removed:
+                                #    self.filtered_fns.remove(f)
                         print('Classes now balanced')
 
         def __len__(self):
