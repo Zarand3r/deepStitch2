@@ -1,4 +1,4 @@
-name: tensor 
+name: tensor
 channels:
   - pytorch
   - anaconda
@@ -163,4 +163,4 @@ dependencies:
         - zlib=1.2.11=h7b6447c_3
         - zstd=1.4.5=h9ceee32_0
 
-prefix: /central/groups/tensorlab/rbao/anaconda/tensor
+prefix: /home/idris/anaconda3/envs/tensor

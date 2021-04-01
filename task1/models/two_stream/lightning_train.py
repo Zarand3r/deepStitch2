@@ -11,7 +11,7 @@ import cv2
 # Torch imports
 from pytorch_lightning.core.lightning import LightningModule
 from pytorch_lightning import Trainer
-from pytorch_lightning.logging import TensorBoardLogger
+from pytorch_lightning.loggers import TensorBoardLogger
 from pytorch_lightning.callbacks import ModelCheckpoint
 import torch
 import torch.nn as nn
@@ -26,8 +26,8 @@ import sys
 repo = git.Repo("./", search_parent_directories=True)
 homedir = repo.working_dir
 sys.path.insert(1, f"{homedir}" + '/utils')
-from convlstmcells import ConvLSTMCell, ConvTTLSTMCell
-import settings
+from utils.convlstmcells import ConvLSTMCell, ConvTTLSTMCell
+import utils.settings
 
 
 class CustomDataset(Dataset):
