@@ -1372,8 +1372,8 @@ kinematics_features:
 - Tool_Right_Jaw_Opening_Angle
 kinematicsdir: /mnt/md1/richard_bao/balint_data/kinematics/demonstrations
 loadchk: ''
-loader_nframes: 140
-loader_stride: 2
+loader_nframes: 200
+loader_stride: 1
 logging_dir: lightning_logs
 lr: 0.0001
 lr_lambdas: 0.9

@@ -52,6 +52,7 @@ class CustomDataset(Dataset):
                         fns = []
                         for class_curr in include_classes:
                                 fns.extend(glob.glob(os.path.join(global_dir, class_curr, "optical_flow"+masked, '%s*' % flow_method)))
+                fns  = [f for f in fns if os.path.exists(os.path.join(kinematics_dir, f.split(flow_method+"_")[-1][:-4]+".csv"))]
                 if len(fns) == 0:
                         raise ValueError('Likely that you have not pre-computed the optical flow or data directory is wrong!')
                 if idxs == None: # load all
@@ -81,29 +82,33 @@ class CustomDataset(Dataset):
                 n_frames = video.size()[0]
                 ############################################################################################
                 kinematics_file = self.filtered_fns[idx][0].split(f"{self.flow_method}_")[-1][:-4]+".csv"
-                kinematics_file = os.path.join(self.kinematics_dir, kinematics_file)
+                class_curr = self.filtered_fns[idx][0].split('/')[-3]
+                kinematics_file = os.path.join(self.kinematics_dir, class_curr, kinematics_file)
                 # kinematics csv should be preprocessed so it is interpolated for all frames.
                 # The only timepoints should be those that correspond to frames in the video
                 kinematics_df = pd.read_csv(kinematics_file, usecols=self.kinematics_features)
                 kinematics = kinematics_df.values
+                kinematics = kinematics[:n_frames, :]
                 ############################################################################################
                 if self.mode == 'train':
                         if n_frames > self.max_frames: # Sample random 200 frames
                                 start_ii = random.choice(list(range(0, n_frames-self.max_frames)))
                                 video = video[start_ii:start_ii+(self.max_frames-1), :, :]
+                                kinematics = kinematics[start_ii:start_ii+(self.max_frames-1), :]
                         start_phase = random.choice(list(range(self.stride)))
                         video = video[list(range(start_phase, video.size()[0], self.stride)), :, :]
-                        kinematics = kinematics[list(range(start_phase, video.size()[0], self.stride)), :]
+                        kinematics = kinematics[list(range(start_phase, kinematics.shape[0], self.stride)), :]
                 elif self.mode == 'val':
                         if n_frames > self.max_frames: # Sample random 200 frames
                                 start_ii = random.choice(list(range(0, n_frames-self.max_frames)))
                                 video = video[start_ii:start_ii+(self.max_frames-1), :, :]
+                                kinematics = kinematics[start_ii:start_ii+(self.max_frames-1), :]
                         start_phase = random.choice(list(range(self.stride)))
                         video = video[list(range(start_phase, video.size()[0], self.stride)), :, :]
-                        kinematics = kinematics[list(range(start_phase, video.size()[0], self.stride)), :]
+                        kinematics = kinematics[list(range(start_phase, kinematics.shape[0], self.stride)), :]
                 else:
                         raise ValueError('not supported mode must be train or test')
-                return (video, label, kinematics)
+                return (video, label, kinematics, self.filtered_fns[idx][0])
 
         def remove_empty(self):
                 for class_curr in self.classes:
@@ -267,15 +272,15 @@ class FusionModel(LightningModule):
                         return class_outputs, kinematics_outputs
 
         def training_step(self, batch, batch_idx):
+                print(batch_idx)
                 # Batch is already on GPU by now
                 input_cuda, target_cuda = self.apply_transforms_GPU(batch[0:2], random_crop=self.hparams.random_crop)
-                target_kinematics = batch[2]
+                target_kinematics = batch[2].squeeze()
+                target_kinematics = target_kinematics.type(torch.cuda.FloatTensor)
                 class_outputs, kinematics_outputs = self(input_cuda)
                 class_outputs = class_outputs[:, -1, :]
                 kinematics_outputs = kinematics_outputs[:, -1, :]
                 mle_loss = nn.MSELoss()
-                print("predicted kinematics shape: ", kinematics_outputs.shape)
-                print("target kinematics shape: ", target_kinematics.shape)
                 loss = F.cross_entropy(class_outputs, target_cuda.type(torch.long)) + mle_loss(kinematics_outputs, target_kinematics)
                 self.actual_train.append(target_cuda.item())
                 self.predicted_train.append(class_outputs.topk(1,1)[-1].item())
@@ -285,7 +290,8 @@ class FusionModel(LightningModule):
 
         def validation_step(self, batch, batch_idx):
                 input_cuda, target_cuda = self.apply_transforms_GPU(batch[0:2], random_crop=False)
-                target_kinematics = batch[2]
+                target_kinematics = batch[2].squeeze()
+                target_kinematics = target_kinematics.type(torch.cuda.FloatTensor)
                 class_outputs, kinematics_outputs = self(input_cuda)
                 class_outputs = class_outputs[:, -1, :]
                 kinematics_outputs = kinematics_outputs[:, -1, :]
@@ -438,8 +444,8 @@ if __name__ == '__main__':
         parser.add_argument('--auto_lr', default=0, type=int)
         parser.add_argument('--use_pretrained', default=1, type=int, help='whether or not to load pretrained weights')
         parser.add_argument('--logging_dir', default='lightning_logs', type=str)
-        parser.add_argument('--loader_nframes', default=140, type=int, help='How many frames to load at stride 2')
-        parser.add_argument('--loader_stride', default=2, type=int, help='stride for dataloader')
+        parser.add_argument('--loader_nframes', default=200, type=int, help='How many frames to load at stride 2')
+        parser.add_argument('--loader_stride', default=1, type=int, help='stride for dataloader')
         parser.add_argument('--number_workers', default=0, type=int, help='number of workers for Dataloader')
         parser.add_argument('--batch_size', default=1, type=int, help='batch size')
         parser.add_argument('--masked', dest='masked', action='store_true', help = "train on masked?")
