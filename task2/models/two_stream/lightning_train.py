@@ -2,7 +2,9 @@ import os, argparse, glob, random, tempfile
 from collections import Counter
 from sklearn.metrics import confusion_matrix, roc_auc_score
 import seaborn as sns
-import matplotlib.pyplot as plt
+import matplotlib
+matplotlib.use('Agg') 
+plt = matplotlib.pyplot
 from copy import deepcopy
 from scipy.special import softmax
 import pandas as pd
