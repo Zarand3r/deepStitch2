@@ -32,6 +32,15 @@ sys.path.insert(1, f"{homedir}" + '/utils')
 from convlstmcells import ConvLSTMCell, ConvTTLSTMCell
 import settings
 
+def convert_to_kinematic_name(fname):
+        curr_class = fname.split('_')[-2]
+        fname = fname.split("flownet_")[-1][:-4]
+        temp = fname.split(curr_class+"_")
+        fname = temp[0]
+        identifier = temp[-1]
+        fname = fname + str(int(identifier)) + ".csv"
+        return curr_class, fname
+
 
 class CustomDataset(Dataset):
         """CustomDataset"""
@@ -54,12 +63,12 @@ class CustomDataset(Dataset):
                         fns = []
                         for class_curr in include_classes:
                                 fns.extend(glob.glob(os.path.join(global_dir, class_curr, '%s*' % flow_method)))
-                fns  = [f for f in fns if os.path.exists(os.path.join(kinematics_dir, f.split(flow_method+"_")[-1][:-4]+".csv"))]
+                fns  = [f for f in fns if os.path.exists(os.path.join(kinematics_dir, convert_to_kinematic_name(f)[1]))]
                 if len(fns) == 0:
                         raise ValueError('Likely that you have not pre-computed the optical flow or data directory is wrong!')
                 if idxs == None: # load all
                         idxs = list(range(len(fns)))
-                self.filtered_fns = [[f, self.classes.index(f.split('/')[-3]) ] for i, f in enumerate(fns) if i in idxs]
+                self.filtered_fns = [[f, self.classes.index(f.split('/')[-2]) ] for i, f in enumerate(fns) if i in idxs]
                 if balance_classes:
                         class_counter = Counter([f[1] for f in self.filtered_fns])
                         print(class_counter)
@@ -83,8 +92,7 @@ class CustomDataset(Dataset):
                 label = self.filtered_fns[idx][1]
                 n_frames = video.size()[0]
                 ############################################################################################
-                kinematics_file = self.filtered_fns[idx][0].split(f"{self.flow_method}_")[-1][:-4]+".csv"
-                class_curr = self.filtered_fns[idx][0].split('/')[-3]
+                class_curr, kinematics_file = convert_to_kinematic_name(self.filtered_fns[idx][0])
                 kinematics_file = os.path.join(self.kinematics_dir, class_curr, kinematics_file)
                 # kinematics csv should be preprocessed so it is interpolated for all frames.
                 # The only timepoints should be those that correspond to frames in the video
