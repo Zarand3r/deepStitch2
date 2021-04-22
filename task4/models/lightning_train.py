@@ -255,7 +255,6 @@ class FusionModel(LightningModule):
                         #########################################################################################
                         # Convolutional flavors
                         aggregate_outputs = []
-                        print("Number of frames: ", nFrames)
                         for kk in range(nFrames):
                                 f = self.features_rgb(inputs[:, kk, :, :, :, 0].permute(0, 3, 1, 2)) # permute to nB x nC x H x W
                                 f_of = self.features_of(inputs[:, kk, :, :, :, 1].permute(0, 3, 1, 2))  # permute to nB x nC x H x W
@@ -282,7 +281,6 @@ class FusionModel(LightningModule):
                         return class_outputs, kinematics_outputs
 
         def training_step(self, batch, batch_idx):
-                print(batch_idx)
                 # Batch is already on GPU by now
                 input_cuda, target_cuda = self.apply_transforms_GPU(batch[0:2], random_crop=self.hparams.random_crop)
                 target_kinematics = batch[2].squeeze()
