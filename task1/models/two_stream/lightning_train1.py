@@ -24,12 +24,12 @@ from torch.utils.data import Dataset, DataLoader
 
 import sys, os
 
-sys.path.append('../../../../../../../')
+sys.path.append('../../../')
 # Custom imports
 import git
 import sys
 
-repo = git.Repo("../../../../", search_parent_directories=True)
+repo = git.Repo("./", search_parent_directories=True)
 homedir = repo.working_dir
 sys.path.insert(1, f"{homedir}" + '/utils')
 from utils.convlstmcells import ConvLSTMCell, ConvTTLSTMCell
@@ -156,7 +156,7 @@ class FusionModel(LightningModule):
             for i, param in enumerate(self.features_of.parameters()):
                 param.requires_grad = self.trainable_base
 
-            # Make the output of each one be to fc_size/2 so that we cooncat the two fc outputs
+            # Make the output of each one be to fc_size/2 so that we concat the two fc outputs
             self.fc_pre_rgb = nn.Sequential(nn.Linear(256 * 6 * 6, int(args.fc_size / 2)),
                                             nn.Dropout()) if 'conv' not in args.rnn_model else None
             self.fc_pre_of = nn.Sequential(nn.Linear(256 * 6 * 6, int(args.fc_size / 2)),
@@ -200,6 +200,14 @@ class FusionModel(LightningModule):
             nF = 6 if args.arch.startswith('alexnet') else 7
             self.fc = nn.Linear(int(self.hparams.hidden_size) * nF * nF,
                                 self.num_classes)  # replace self.final_channels here the parameter must equal the hidden_channels in self.rnn
+
+            self.fc_attn1 = nn.Linear((int(self.hparams.hidden_size) + (2 * self.final_channels)) * nF * nF,
+                                      ((int(self.hparams.hidden_size) + (2 * self.final_channels)) * nF * nF) // 2)
+
+            self.fc_attn2 = nn.Linear(((int(self.hparams.hidden_size) + (2 * self.final_channels)) * nF * nF) // 2,
+                                      int(self.hparams.hidden_size) * nF * nF)
+
+
         elif args.rnn_model == 'convttLSTM':
             # Twice number of channels for RGB and OF which are concat
             self.rnn = ConvTTLSTMCell(input_channels=self.final_channels * 2, hidden_channels=self.final_channels,
@@ -219,9 +227,10 @@ class FusionModel(LightningModule):
     def forward(self, inputs, hidden=None, steps=0):
         nBatch, nFrames, ofH, ofW, nChannels, _ = inputs.shape
         assert nFrames > 0, "cannot have videos with 0 frames"
-        if self.current_epoch == 1:
-            sampleImg = torch.rand((1, 16, 244, 244, 3, 2))
-            self.logger.experiment.add_graph(FusionModel(self.hparams), sampleImg)
+
+        device = torch.device("cuda:3")
+        outputs = torch.rand(1, 0, 6, 6)
+        outputs = outputs.to(device)
 
         #########################################################################################
         # Non convolutional (old way)
@@ -253,22 +262,55 @@ class FusionModel(LightningModule):
                 f = self.features_rgb(inputs[:, kk, :, :, :, 0].permute(0, 3, 1, 2))  # permute to nB x nC x H x W
                 f_of = self.features_of(inputs[:, kk, :, :, :, 1].permute(0, 3, 1, 2))  # permute to nB x nC x H x W
 
+                X_t = torch.cat([f, f_of], dim=1)
+                #print("X0 " + str(X_t))
+
+                if kk > 0:
+                    C_t = torch.cat([outputs, X_t], dim=1)
+                    #print("C_t " + str(C_t.shape))
+                    #print()
+                    #print("O2 " + str(outputs.shape))
+                    #print()
+                    mid = int(self.hparams.hidden_size) + (2 * int(self.final_channels))
+                    #print(self.final_channels)
+                    #print()
+                    #print(mid)
+
+                    m = nn.Softmax(dim=-1)
+                    n = nn.ReLU()
+
+                    # C_t size nB x (num_hidden + 2*nC) x H x W
+                    C_t = C_t.reshape(1, mid, 6, 6)
+                    # 1. reshape C_t to nB x (H x W x (num_hidden + 2*nC))
+                    C_t = C_t.reshape(C_t.size(0), -1)
+                    # print(C_t.shape)
+                    # 2. fc_attn1 input size either (H x W x (num_hidden + 2*nC)), output size is (H x W x (num_hidden + 2*nC)) or /2
+                    A_t = self.fc_attn1(C_t)
+                    # 3. n(A_t)
+                    A_t = n(A_t)
+                    # 4. fc_attn2 input size is (H x W x (num_hidden + 2*nC)) or /2, and output size is H x W, nB x (H x W)
+                    A_t = self.fc_attn2(A_t)
+                    # 5. softmax with dim -1
+                    A_t = m(A_t)
+                    # 6. reshape to nB x 1 x H x W as the attention map
+                    A_t.reshape(1, 64, 6, 6)
+
+                    # A_t of size nB x 1 x H x W => repeat it along dim=1 to get nB x 2*nC x H x W size (shape of X_t)
+                    A_t = X_t.repeat(1, 1, 1, 1)
+                    # X_t = X_t * A_t
+                    X_t = X_t * A_t
+
+
+
                 # Size nBatch x nChannels x H x W
                 if kk == 0:
-                    outputs = self.rnn(torch.cat([f, f_of], dim=1), first_step=True)
+                    X_t = torch.cat([outputs, X_t], dim=1)
+                    outputs = self.rnn(X_t, first_step=True)
                 else:
-                    outputs = self.rnn(torch.cat([f, f_of], dim=1), first_step=False)
-                # outputs = torch.cat([outputs, X_t], dim=1)
-
-            listofints = [int(x) for x in outputs.shape]
-            print(listofints)
+                    outputs = self.rnn(X_t, first_step=False)
 
             outputs = outputs.reshape(outputs.size(0), -1)
-            listofints = [int(x) for x in outputs.shape]
-            print(listofints)
             outputs = self.fc(outputs)
-            listofints = [int(x) for x in outputs.shape]
-            print(listofints)
             # Add a dimension to make the size consistent with old rnn
             outputs = outputs.unsqueeze(1)
 
@@ -485,7 +527,7 @@ if __name__ == '__main__':
     #####################################################################################
     print('Logging to: % s' % hparams.logging_dir)
     logger = TensorBoardLogger(hparams.logging_dir, name='%s/%s_%s_%s%s' % (
-    classification_name, hparams.arch, hparams.trainable_base, hparams.rnn_model, hparams.masked))
+        classification_name, hparams.arch, hparams.trainable_base, hparams.rnn_model, hparams.masked))
     logger.log_hyperparams(hparams)  # Log the hyperparameters
     # Set default device
     # torch.cuda.set_device(hparams.gpu)
