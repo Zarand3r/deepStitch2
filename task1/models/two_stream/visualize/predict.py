@@ -12,7 +12,9 @@ import sys
 repo = git.Repo("./", search_parent_directories=True)
 homedir = repo.working_dir
 sys.path.insert(1, f"{homedir}" + '/utils')
-import settings
+sys.path.insert(1, 'task1/models/two_stream')
+
+import utils.settings
 import lightning_train as classifier
 import salient_lightning_train as salient_classifier
 
@@ -65,7 +67,7 @@ def show_saliency_maps(args):
     loader = model.val_dataloader()
     dataiter = iter(loader)
     save_dir = "saliency_figures/version1"
-    if model.hparams.masked = "_masked":
+    if model.hparams.masked == "_masked":
         save_dir = "saliency_figures/masked"
     for idx in range(20, 260, 20):
         for i in range(20):

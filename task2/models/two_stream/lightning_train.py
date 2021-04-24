@@ -12,7 +12,7 @@ import cv2
 # Torch imports
 from pytorch_lightning.core.lightning import LightningModule
 from pytorch_lightning import Trainer
-from pytorch_lightning.logging import TensorBoardLogger
+from pytorch_lightning.loggers import TensorBoardLogger
 from pytorch_lightning.callbacks import ModelCheckpoint
 import torch
 import torch.nn as nn
@@ -27,8 +27,8 @@ import sys
 repo = git.Repo("./", search_parent_directories=True)
 homedir = repo.working_dir
 sys.path.insert(1, f"{homedir}" + '/utils')
-from convlstmcells import ConvLSTMCell, ConvTTLSTMCell
-import settings
+from utils.convlstmcells import ConvLSTMCell, ConvTTLSTMCell
+import utils.settings as settings
 
 
 class CustomDataset(Dataset):
@@ -157,8 +157,8 @@ class FusionModel(LightningModule):
                                 param.requires_grad = self.trainable_base
                         
                         # Make the output of each one be to fc_size/2 so that we cooncat the two fc outputs
-                        self.fc_pre_rgb = nn.Sequential(nn.Linear(256*nf*nf, int(args.fc_size/2) ), nn.Dropout()) if 'conv' not in args.rnn_model else None
-                        self.fc_pre_of = nn.Sequential(nn.Linear(256*nf*nf, int(args.fc_size/2) ), nn.Dropout()) if 'conv' not in args.rnn_model else None
+                        self.fc_pre_rgb = nn.Sequential(nn.Linear(256*nF*nF, int(args.fc_size/2) ), nn.Dropout()) if 'conv' not in args.rnn_model else None
+                        self.fc_pre_of = nn.Sequential(nn.Linear(256*nF*nF, int(args.fc_size/2) ), nn.Dropout()) if 'conv' not in args.rnn_model else None
                         self.final_channels = 256
 
                 elif args.arch.startswith('resnet18'):
@@ -174,8 +174,8 @@ class FusionModel(LightningModule):
                         for i, param in enumerate(self.features_of.parameters()):
                                 param.requires_grad = self.trainable_base
                         
-                        self.fc_pre_rgb = nn.Sequential(nn.Linear(512*nf*nf, int(args.fc_size/2) ), nn.Dropout()) if 'conv' not in args.rnn_model else None
-                        self.fc_pre_of = nn.Sequential(nn.Linear(512*nf*nf, int(args.fc_size/2) ), nn.Dropout()) if 'conv' not in args.rnn_model else None
+                        self.fc_pre_rgb = nn.Sequential(nn.Linear(512*nF*nF, int(args.fc_size/2) ), nn.Dropout()) if 'conv' not in args.rnn_model else None
+                        self.fc_pre_of = nn.Sequential(nn.Linear(512*nF*nF, int(args.fc_size/2) ), nn.Dropout()) if 'conv' not in args.rnn_model else None
                         self.final_channels = 512
 
                 else:
@@ -474,7 +474,7 @@ if __name__ == '__main__':
 
         checkpoint_callback = ModelCheckpoint(
                 # filepath=os.path.join(logger.log_dir, 'checkpoints'),
-                filepath=os.path.join(settings.checkpoints2, "two_stream", classification_name, f'{hparams.arch}_{hparams.trainable_base}_{hparams.rnn_model}{hparams.masked}'),
+                dirpath=os.path.join(settings.checkpoints2, "two_stream", classification_name, f'{hparams.arch}_{hparams.trainable_base}_{hparams.rnn_model}{hparams.masked}'),
                 save_top_k=3,
                 verbose=True,
                 monitor='val_acc',
@@ -495,6 +495,6 @@ if __name__ == '__main__':
         if hparams.loadchk == '':
                 trainer = Trainer(**kwargs)
         else:
-                trainer = Trainer(resume_from_checkpoint = haparams.loadchk, **kwargs)
+                trainer = Trainer(resume_from_checkpoint = hparams.loadchk, **kwargs)
         trainer.fit(model)
 

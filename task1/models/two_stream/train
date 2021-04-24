@@ -1,2 +1,2 @@
-python lightning_train.py --gpu 1 --rnn_model "convLSTM" --number_workers 3 --hidden_size 64 --include_classes "AC_CE_EF_FG" --masked
-#python lightning_train.py --gpu 1 --rnn_model "convLSTM" --number_workers 3 --hidden_size 64 --include_classes "AC_CE_EF_FG"
+#python lightning_train.py --gpu 1 --rnn_model "convLSTM" --number_workers 3 --hidden_size 64 --include_classes "AC_CE_EF_FG" --masked
+#python lightning_train.py --gpu 3 --rnn_model "convLSTM" --number_workers 3 --hidden_size 64 --include_classes "AC_CE_EF_FG"

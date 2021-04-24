@@ -51,7 +51,7 @@ class ConvTTLSTMCell(nn.Module):
         super(ConvTTLSTMCell, self).__init__()
 
         ## Input/output interfaces
-        self.input_channels  = input_channels
+        self.input_channels = input_channels
         self.hidden_channels = hidden_channels
 
         ## Convolutional tensor-train network
