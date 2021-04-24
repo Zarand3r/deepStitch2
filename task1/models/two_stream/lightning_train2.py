@@ -271,9 +271,7 @@ class FusionModel(LightningModule):
                     #print("O2 " + str(outputs.shape))
                     #print()
                     mid = int(self.hparams.hidden_size) + (2 * int(self.final_channels))
-                    #print(self.final_channels)
-                    #print()
-                    #print(mid)
+
 
                     m = nn.Softmax(dim=-1)
                     n = nn.ReLU()
