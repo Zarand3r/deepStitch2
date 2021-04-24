@@ -200,6 +200,14 @@ class FusionModel(LightningModule):
             nF = 6 if args.arch.startswith('alexnet') else 7
             self.fc = nn.Linear(int(self.hparams.hidden_size) * nF * nF,
                                 self.num_classes)  # replace self.final_channels here the parameter must equal the hidden_channels in self.rnn
+
+            self.fc_attn1 = nn.Linear((2 * self.final_channels) * nF * nF,
+                                      ((int(self.hparams.hidden_size) + (2 * self.final_channels)) * nF * nF) // 2)
+
+            self.fc_attn2 = nn.Linear(((int(self.hparams.hidden_size) + (2 * self.final_channels)) * nF * nF) // 2,
+                                      int(self.hparams.hidden_size) * nF * nF)
+
+
         elif args.rnn_model == 'convttLSTM':
             # Twice number of channels for RGB and OF which are concat
             self.rnn = ConvTTLSTMCell(input_channels=self.final_channels * 2, hidden_channels=self.final_channels,
@@ -250,11 +258,49 @@ class FusionModel(LightningModule):
                 f = self.features_rgb(inputs[:, kk, :, :, :, 0].permute(0, 3, 1, 2))  # permute to nB x nC x H x W
                 f_of = self.features_of(inputs[:, kk, :, :, :, 1].permute(0, 3, 1, 2))  # permute to nB x nC x H x W
 
+                X_t = torch.cat([f, f_of], dim=1)
+
                 # Size nBatch x nChannels x H x W
                 if kk == 0:
-                    outputs = self.rnn(torch.cat([f, f_of], dim=1), first_step=True)
+                    outputs = self.rnn(X_t, first_step=True)
                 else:
-                    outputs = self.rnn(torch.cat([f, f_of], dim=1), first_step=False)
+
+                    #print(outputs.shape)
+                    #C_t = torch.cat([outputs, X_t], dim=1)
+                    C_t = X_t
+                    #print()
+                    #print("O2 " + str(outputs.shape))
+                    #print()
+                    mid = int(self.hparams.hidden_size) + (2 * int(self.final_channels))
+                    #print(self.final_channels)
+                    #print()
+                    #print(mid)
+
+                    m = nn.Softmax(dim=-1)
+                    n = nn.ReLU()
+
+                    # C_t size nB x (num_hidden + 2*nC) x H x W
+                    C_t = C_t.reshape(1, 512, 6, 6)
+                    # 1. reshape C_t to nB x (H x W x (num_hidden + 2*nC))
+                    C_t = C_t.reshape(C_t.size(0), -1)
+                    # print(C_t.shape)
+                    # 2. fc_attn1 input size either (H x W x (num_hidden + 2*nC)), output size is (H x W x (num_hidden + 2*nC)) or /2
+                    A_t = self.fc_attn1(C_t)
+                    # 3. n(A_t)
+                    A_t = n(A_t)
+                    # 4. fc_attn2 input size is (H x W x (num_hidden + 2*nC)) or /2, and output size is H x W, nB x (H x W)
+                    A_t = self.fc_attn2(A_t)
+                    # 5. softmax with dim -1
+                    A_t = m(A_t)
+                    # 6. reshape to nB x 1 x H x W as the attention map
+                    A_t.reshape(1, 64, 6, 6)
+
+                    # A_t of size nB x 1 x H x W => repeat it along dim=1 to get nB x 2*nC x H x W size (shape of X_t)
+                    A_t = X_t.repeat(1, 1, 1, 1)
+                    # X_t = X_t * A_t
+                    X_t = X_t * A_t
+
+                    outputs = self.rnn(X_t, first_step=False)
 
             outputs = outputs.reshape(outputs.size(0), -1)
             outputs = self.fc(outputs)
