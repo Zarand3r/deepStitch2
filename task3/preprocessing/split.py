@@ -17,6 +17,17 @@ homedir = repo.working_dir
 sys.path.insert(1, f"{homedir}" + '/utils')
 import settings
 
+# USE THIS OR CHANGE LINE 72
+# def convert_to_kinematic_name(fname):
+#         curr_class = fname.split('_')[-2]
+#         fname = fname.split("flownet_")[-1][:-4]
+#         temp = fname.split(curr_class+"_")
+#         fname = temp[0]
+#         identifier = temp[-1]
+#         fname = fname + str(int(identifier)) + ".csv"
+#         return curr_class, fname
+
+
 #import convert_using_flownet
 
 def get_labels(labelsfile, header=[0]):
@@ -59,7 +70,7 @@ def splice(args):
     if len(args.segments) == 2:
         for nn in range(len(df)):
             if df.loc[nn]["timepoint_"+args.segments[0]] and df.loc[nn]["timepoint_"+args.segments[1]]:
-                fname = 'flownet_%s_%s_%02d.mp4' % (df.iloc[nn]['meta_video_file_name'][:-4], args.segments, df.iloc[nn]['meta_position_nn'])
+                fname = 'flownet_%s_%d.mp4' % (df.iloc[nn]['meta_video_file_name'][:-4], df.iloc[nn]['meta_position_nn'])
                 video_input_fn = os.path.join(args.data_directory, args.segments, "optical_flow", fname)
                 print("input: ", video_input_fn)
                 if not os.path.exists(video_input_fn):
@@ -76,7 +87,7 @@ def splice(args):
             if df.loc[nn]["timepoint_"+args.segments[0]]:
                 timepoint = df.loc[nn]["timepoint_"+args.segments[0]]
                 video_input_fn = os.path.join(args.raw_directory, df.iloc[nn]['meta_video_file_name'])
-                fname = 'flownet_%s_%s_%02d.mp4' % (df.iloc[nn]['meta_video_file_name'][:-4], args.segments, df.iloc[nn]['meta_position_nn'])
+                fname = 'flownet_%s_%d.mp4' % (df.iloc[nn]['meta_video_file_name'][:-4], df.iloc[nn]['meta_position_nn'])
                 print(video_input_fn)
                 if not os.path.exists(video_input_fn):
                     continue
