@@ -7,7 +7,7 @@ epochs: 60
 fc_size: 32
 flow_method: flownet
 gpu: 3
-hidden_size: 256
+hidden_size: 128
 idx_test:
 - 331
 - 276
@@ -405,7 +405,7 @@ loadchk: ''
 loader_nframes: 200
 loader_stride: 1
 logging_dir: lightning_logs
-lr: 0.0001
+lr: 1.0e-05
 lr_lambdas: 0.9
 masked: ''
 number_workers: 3

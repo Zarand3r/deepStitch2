@@ -1,14 +1,14 @@
-accum_batches: 3
+accum_batches: 2
 arch: alexnet
 auto_lr: false
 batch_size: 1
 datadir: /mnt/md1/richard_bao/balint_data/label_classification_data
-epochs: 20
+epochs: 30
 fc_size: 32
 filenames: []
 flow_method: flownet
 gpu: 3
-hidden_size: 64
+hidden_size: 128
 idx_test:
 - 331
 - 276
