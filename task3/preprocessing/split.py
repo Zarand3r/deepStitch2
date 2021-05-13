@@ -78,8 +78,11 @@ def splice(args):
                 label = df.iloc[nn][args.label]
                 if label == 0:
                     video_output_fn = os.path.join(destination_negative, fname)
-                else:
+                elif label == 1:
                     video_output_fn = os.path.join(destination_positive, fname)
+                else:
+                    print("skip")
+                    continue
                 print("output: ", video_output_fn)
                 copyfile(video_input_fn, video_output_fn)
     elif len(args.segments) == 1:
@@ -99,8 +102,11 @@ def splice(args):
                 label = df.iloc[nn][args.label]
                 if label == 0:
                     video_output_fn = os.path.join(destination_negative, fname)
-                else:
+                elif label == 1:
                     video_output_fn = os.path.join(destination_positive, fname)
+                else:
+                    print("skip")
+                    continue
                 cmd = 'ffmpeg -ss %s -i %s -an -vcodec h264 -r 30 -vframes %d %s' % (start_time, video_input_fn, n_frames, video_output_fn)
                 os.system(cmd)
         # Generate the flow for destination_positive and destination_negative

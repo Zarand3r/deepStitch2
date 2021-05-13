@@ -33,12 +33,19 @@ from convlstmcells import ConvLSTMCell, ConvTTLSTMCell
 import settings
 
 def convert_to_kinematic_name(fname):
-        curr_class = fname.split('_')[-2]
+        #curr_class = fname.split('_')[-2]
+        #fname = fname.split("flownet_")[-1][:-4]
+        #temp = fname.split(curr_class+"_")
+        #fname = temp[0]
+        #identifier = temp[-1]
+        #fname = fname + str(int(identifier)) + ".csv"
+        curr_class = os.path.basename(os.path.dirname(fname))
+        if "positive" in curr_class:
+            curr_class = curr_class.replace("positive", "")
+        if "negative" in curr_class:
+            curr_class = curr_class.replace("negative", "")
         fname = fname.split("flownet_")[-1][:-4]
-        temp = fname.split(curr_class+"_")
-        fname = temp[0]
-        identifier = temp[-1]
-        fname = fname + str(int(identifier)) + ".csv"
+        fname = fname + ".csv"
         return curr_class, fname
 
 
