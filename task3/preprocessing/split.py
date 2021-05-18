@@ -90,9 +90,10 @@ def splice(args):
             if df.loc[nn]["timepoint_"+args.segments[0]]:
                 timepoint = df.loc[nn]["timepoint_"+args.segments[0]]
                 video_input_fn = os.path.join(args.raw_directory, df.iloc[nn]['meta_video_file_name'])
-                fname = 'flownet_%s_%d.mp4' % (df.iloc[nn]['meta_video_file_name'][:-4], df.iloc[nn]['meta_position_nn'])
+                fname = '%s_%d.mp4' % (df.iloc[nn]['meta_video_file_name'][:-4], df.iloc[nn]['meta_position_nn'])
                 print(video_input_fn)
-                if not os.path.exists(video_input_fn):
+                if not os.path.exists(video_input_fn) or isinstance(timepoint, list):
+                    print("FAIL")
                     continue
                 # make this adapt to use max padding, finding the min between the set value and hte distance to the neighboring timepoint
                 start_val = timepoint - 1
@@ -118,7 +119,7 @@ if __name__ == '__main__':
     # Input argument
     parser.add_argument("--raw_directory", default = settings.raw_directory, help = "Path to the data directory")
     # parser.add_argument("--data_labels", default = settings.data_labels, help = "Path to labels")
-    parser.add_argument("--data_labels", default = "RACE_python_format_final.xlsx", help = "Path to labels")
+    parser.add_argument("--data_labels", default = settings.data_labels, help = "Path to labels")
     parser.add_argument("--data_directory", default = settings.data_directory, help = "Path to the data directory")
     parser.add_argument("--output_directory", default = settings.label_directory, help = "Path to the output directory")
     #parser.add_argument("--segments", default = "CD", help = "segments")

@@ -3,5 +3,6 @@ source activate tensor
 # CUDA_VISIBLE_DEVICES=1 python lightning_train.py --gpu 1 --rnn_model "convLSTM" --number_workers 3 --hidden_size 128 --accum_batches 1 --include_classes "positiveAB_negativeAB"
 #CUDA_VISIBLE_DEVICES=2 python lightning_train.py --gpu 2 --rnn_model "convLSTM" --number_workers 3 --hidden_size 16 --accum_batches 5 --lr 0.001 --weight_decay 0.01 --epochs 30 --include_classes "positiveAB_negativeAB"
 #CUDA_VISIBLE_DEVICES=3 python lightning_train.py --gpu 3 --rnn_model "convLSTM" --number_workers 3 --hidden_size 128 --accum_batches 2  --epochs 30  --include_classes "positiveBC_negativeBC"
-CUDA_VISIBLE_DEVICES=3 python lightning_train.py --gpu 3 --rnn_model "convLSTM" --number_workers 3 --hidden_size 128 --accum_batches 2  --epochs 30  --include_classes "positiveB_negativeB"
+#CUDA_VISIBLE_DEVICES=3 python lightning_train.py --gpu 3 --rnn_model "convLSTM" --number_workers 3 --hidden_size 128 --accum_batches 2  --epochs 30  --include_classes "positiveB_negativeB"
+CUDA_VISIBLE_DEVICES=3 python lightning_train.py --gpu 3 --rnn_model "convLSTM" --number_workers 3 --hidden_size 128 --accum_batches 2 --include_classes "positiveC_negativeC"
 #CUDA_VISIBLE_DEVICES=3 python lightning_train.py --gpu 3 --rnn_model "convLSTM" --number_workers 3 --hidden_size 128 --accum_batches 2  --epochs 30  --include_classes "positiveCD_negativeCD"
