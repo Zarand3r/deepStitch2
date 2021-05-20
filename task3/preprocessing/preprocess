@@ -1,5 +1,6 @@
 #python split.py --segments B --label "label_needle positionB"
 #python split.py --segments C --label label_needle_entry_angleC
+python split.py --segments C --label label_needle_entry_angleC --window 0.5
 #python split.py --segments FG --label label_needle_driving_2FG
 #python split.py --segments BC --label label_needle_entry_angleC
 #python split.py --segments CD --label label_needle_driving_1D

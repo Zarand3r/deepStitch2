@@ -96,8 +96,8 @@ def splice(args):
                     print("FAIL")
                     continue
                 # make this adapt to use max padding, finding the min between the set value and hte distance to the neighboring timepoint
-                start_val = timepoint - 1
-                end_val = timepoint + 1
+                start_val = timepoint - float(args.window)
+                end_val = timepoint + float(args.window)
                 start_time = '0' + str(datetime.timedelta(seconds=start_val))
                 n_frames = round(30.*(end_val-start_val))
                 label = df.iloc[nn][args.label]
@@ -125,6 +125,7 @@ if __name__ == '__main__':
     #parser.add_argument("--segments", default = "CD", help = "segments")
     parser.add_argument("--segments", default = "B", help = "segments")
     parser.add_argument("--label", default = "label_needle positionB", help = "label")
+    parser.add_argument("--window", default = 1, help = "window")
     parser.add_argument('--inclusive', dest='inclusive', action='store_true', help = "if inclusive, use first index of start, last index of end for list timepoints")
     args = parser.parse_args()
     splice(args)
