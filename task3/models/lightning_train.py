@@ -35,7 +35,7 @@ import settings
 
 class CustomDataset(Dataset):
         """CustomDataset"""
-        def __init__(self, global_dir, idxs= None, include_classes = [], flow_method = 'flownet', balance_classes = False, mode = 'train', max_frames = 150, stride = 2, masked=""):
+        def __init__(self, global_dir, idxs= None, include_classes = [], flow_method = 'flownet', balance_classes = False, mode = 'train', max_frames = 150, stride = 2, masked="", upsample=False):
                 self.global_dir = global_dir
                 self.mode = mode
                 self.max_frames = stride*max_frames
@@ -61,24 +61,22 @@ class CustomDataset(Dataset):
                         class_counter = Counter([f[1] for f in self.filtered_fns])
                         print(class_counter)
                         print('balancing...')
-                        # n_match = class_counter.most_common()[0][1]
-                        # for class_curr in class_counter.keys():
-                        #         cnt = class_counter[class_curr]
-                        #         print(class_curr, cnt)
-                        #         self.filtered_fns.extend(random.choices([f for f in self.filtered_fns if f[1] == int(class_curr)], k=max(n_match-cnt, 1) ))
-                        # print('Classes now balanced')
-                        n_match = class_counter.most_common()[-1][1]
-                        for class_curr in class_counter.keys():
-                                cnt = class_counter[class_curr]
-                                print(class_curr, cnt)
-                                indices = [index for index, x in enumerate(self.filtered_fns) if x[1] == int(class_curr)]
-                                indices = random.choices(indices, k=max(cnt-n_match, 1))
-                                indices.sort(reverse=True)
-                                for index in indices:
-                                    del self.filtered_fns[index]
-                                #removed = random.choices([f for f in self.filtered_fns if f[1] == int(class_curr)], k=max(cnt-n_match, 1) )
-                                #for f in removed:
-                                #    self.filtered_fns.remove(f)
+                        if upsample:
+                            n_match = class_counter.most_common()[0][1]
+                            for class_curr in class_counter.keys():
+                                    cnt = class_counter[class_curr]
+                                    print(class_curr, cnt)
+                                    self.filtered_fns.extend(random.choices([f for f in self.filtered_fns if f[1] == int(class_curr)], k=max(n_match-cnt, 1) ))
+                        else:
+                            n_match = class_counter.most_common()[-1][1]
+                            for class_curr in class_counter.keys():
+                                    cnt = class_counter[class_curr]
+                                    print(class_curr, cnt)
+                                    indices = [index for index, x in enumerate(self.filtered_fns) if x[1] == int(class_curr)]
+                                    indices = random.choices(indices, k=max(cnt-n_match, 1))
+                                    indices.sort(reverse=True)
+                                    for index in indices:
+                                        del self.filtered_fns[index]
                         print('Classes now balanced')
 
         def __len__(self):
@@ -334,7 +332,7 @@ class FusionModel(LightningModule):
         def train_dataloader(self):
                 train_dataset   = CustomDataset(self.hparams.datadir, idxs = self.hparams.idx_train , include_classes = self.hparams.include_classes, 
                                                         flow_method = self.hparams.flow_method, balance_classes=True, mode = 'train', max_frames = self.hparams.loader_nframes,
-                                                        stride = self.hparams.loader_stride, masked = self.hparams.masked)
+                                                        stride = self.hparams.loader_stride, masked = self.hparams.masked, upsample = self.hparams.upsample)
                 self.filenames = train_dataset.filtered_fns
                 train_dataloader        = DataLoader(train_dataset, batch_size=self.batch_size, shuffle=True, num_workers=self.hparams.number_workers, drop_last=True)
                 self.epoch_len = len(train_dataset)
@@ -343,7 +341,7 @@ class FusionModel(LightningModule):
         def val_dataloader(self):
                 val_dataset     = CustomDataset(self.hparams.datadir, idxs = self.hparams.idx_test , include_classes = self.hparams.include_classes, 
                                                         flow_method = self.hparams.flow_method, balance_classes=True, mode = 'val', max_frames = self.hparams.loader_nframes,
-                                                        stride = self.hparams.loader_stride, masked = self.hparams.masked)
+                                                        stride = self.hparams.loader_stride, masked = self.hparams.masked, upsample = self.hparams.upsample)
                 val_dataloader  = DataLoader(val_dataset, batch_size=self.batch_size, shuffle=False, num_workers=self.hparams.number_workers, drop_last=True)
                 return val_dataloader
 
@@ -428,6 +426,7 @@ if __name__ == '__main__':
         parser.add_argument('--number_workers', default=0, type=int, help='number of workers for Dataloader')
         parser.add_argument('--batch_size', default=1, type=int, help='batch size')
         parser.add_argument('--masked', dest='masked', action='store_true', help = "train on masked?")
+        parser.add_argument('--upsample', dest='upsample', action='store_true', help = "upsample or downsample?")
         
         hparams = parser.parse_args()
         hparams.trainable_base = True if hparams.trainable_base == 1 else False
