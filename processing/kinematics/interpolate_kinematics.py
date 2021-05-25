@@ -99,6 +99,6 @@ def splice(all_timepoints = ['A', 'B', 'C', 'D', 'E', 'F', 'G']):
                 kk+=1
 
 if __name__ == '__main__':
-    #interpolate()
-    #splice()
-    splice(all_timepoints=['A', 'C', 'E'])
+    interpolate()
+    splice()
+    # splice(all_timepoints=['A', 'C', 'E'])

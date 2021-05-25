@@ -1,0 +1,1 @@
+CUDA_VISIBLE_DEVICES=2 python lightning_train.py --gpu 2 --rnn_model "convLSTM" --number_workers 3 --hidden_size 128 --weight_decay 0.00001 --lr 0.0001 --include_classes "AB_BC_CD_DE_EF_FG"
