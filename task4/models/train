@@ -1,7 +1,7 @@
 source activate tensor
 
 
-CUDA_VISIBLE_DEVICES=1 python lightning_train.py --gpu 1 --rnn_model "convLSTM" --number_workers 3 --hidden_size 128 --weight_decay 0.00001 --lr 0.0001 --accum_batches 12 --fc_size 128 --epochs 40 --use_pretrained 1 --include_classes "positiveFG_negativeFG"
+CUDA_VISIBLE_DEVICES=2 python lightning_train.py --gpu 2 --rnn_model "convLSTM" --number_workers 3 --hidden_size 128 --weight_decay 0.00001 --lr 0.0001 --accum_batches 8 --fc_size 32 --epochs 60 --use_pretrained 1 --include_classes "positiveCD_negativeCD"
 #CUDA_VISIBLE_DEVICES=1 python lightning_train.py --gpu 1 --rnn_model "convLSTM" --number_workers 3 --hidden_size 128 --weight_decay 0.00001 --lr 0.0001 --accum_batches 8 --epochs 50 --use_pretrained 1 --include_classes "positiveCD_negativeCD"
 #CUDA_VISIBLE_DEVICES=1 python lightning_train.py --gpu 1 --rnn_model "convLSTM" --number_workers 3 --hidden_size 256 --weight_decay 0.00001 --lr 0.0001 --accum_batches 4 --epochs 30 --use_pretrained 1 --include_classes "positiveCD_negativeCD"
 #CUDA_VISIBLE_DEVICES=2 python lightning_train.py --gpu 2 --rnn_model "convLSTM" --number_workers 3 --hidden_size 256 --weight_decay 0.00001 --lr 0.0001 --accum_batches 2 --epochs 30 --use_pretrained 1 --include_classes "positiveCD_negativeCD"
