@@ -1,0 +1,51 @@
+#!/bin/bash
+#SBATCH --time=5:00:00   # walltime
+#SBATCH --ntasks=1   # number of processor cores (i.e. tasks)
+#SBATCH --nodes=1   # number of nodes
+#SBATCH --mail-user=rbao@caltech.edu   # email address
+#SBATCH --mail-type=BEGIN
+#SBATCH --mail-type=END
+#SBATCH --mail-type=FAIL
+#SBATCH --error=errors/mask.err 
+#SBATCH --output=outputs/mask.out
+
+#Submit this script with: sbatch thefilename
+
+#Activate conda env
+#conda activate tensor
+source activate tensor
+echo "Environment activated, running masking scripts...."
+
+cd ../../
+cd task1
+cd preprocessing
+#cd prep_race_videos
+#python process_race_videos.py
+#cd ../
+cd mask
+
+for D in $(find /mnt/md1/richard_bao/balint_data/classification_data -mindepth 3 -maxdepth 3) ; do
+    echo $D 
+    python mask1.py --video $D --optical
+done
+
+# for D in $(find /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/BC -mindepth 2 -maxdepth 2) ; do
+#     echo $D 
+#     python mask1.py --video $D --optical
+# done
+
+# for D in $(find /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/CD -mindepth 2 -maxdepth 2) ; do
+#     echo $D 
+#     python mask1.py --video $D --optical
+# done
+
+# for D in $(find /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/DE -mindepth 2 -maxdepth 2) ; do
+#     echo $D 
+#     python mask1.py --video $D --optical
+# done
+
+# for D in $(find /central/groups/tensorlab/rbao/robosurgery/balint_data/classification_data/EF -mindepth 2 -maxdepth 2) ; do
+#     echo $D 
+#     python mask1.py --video $D --optical
+# done
+
