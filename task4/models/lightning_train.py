@@ -316,6 +316,7 @@ class FusionModel(LightningModule):
                 kinematics_outputs = kinematics_outputs[:, -1, :]
                 mle_loss = nn.MSELoss()
                 loss = F.cross_entropy(class_outputs, target_cuda.type(torch.long)) + mle_loss(kinematics_outputs, target_kinematics)
+                #TODO: separate classificaiton and kinematics loss, don't let the kinematics loss influence the validation, and plot losses separately
                 self.actual.append(target_cuda.item())
                 self.predicted.append(class_outputs.topk(1,1)[-1].item())
                 self.predicted_softmax.append(softmax(class_outputs.detach().cpu().numpy(), axis = -1)) # Save scores
