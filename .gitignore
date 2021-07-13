@@ -11,3 +11,6 @@ task3/models/lightning_train3.py
 task4/models/lightning_train2.py
 
 test.py
+
+task1/models/two_stream/lightning_train1_1.py
+task1/models/two_stream/lightning_train2_1.py
