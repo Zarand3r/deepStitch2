@@ -202,9 +202,9 @@ class FusionModel(LightningModule):
                                 self.num_classes)  # replace self.final_channels here the parameter must equal the hidden_channels in self.rnn
 
             self.fc_attn1 = nn.Linear((int(self.hparams.hidden_size) + (2 * self.final_channels)) * nF * nF,
-                                      ((int(self.hparams.hidden_size) + (2 * self.final_channels)) * nF * nF) // 2)
+                                      ((int(self.hparams.hidden_size) + (2 * self.final_channels)) * nF * nF))
 
-            self.fc_attn2 = nn.Linear(((int(self.hparams.hidden_size) + (2 * self.final_channels)) * nF * nF) // 2,
+            self.fc_attn2 = nn.Linear(((int(self.hparams.hidden_size) + (2 * self.final_channels)) * nF * nF),
                                       int(self.hparams.hidden_size) * nF * nF)
 
 

@@ -11,7 +11,7 @@ import cv2
 # Torch imports
 from pytorch_lightning.core.lightning import LightningModule
 from pytorch_lightning import Trainer
-from pytorch_lightning.logging import TensorBoardLogger
+from pytorch_lightning.loggers import TensorBoardLogger
 from pytorch_lightning.callbacks import ModelCheckpoint
 import torch
 import torch.nn as nn
@@ -20,14 +20,18 @@ import torch.nn.functional as F
 import torchvision
 from torch.utils.data import Dataset, DataLoader
 
+import sys, os
+
+sys.path.append('../../')
 # Custom imports
 import git
 import sys
+
 repo = git.Repo("./", search_parent_directories=True)
 homedir = repo.working_dir
 sys.path.insert(1, f"{homedir}" + '/utils')
-from convlstmcells import ConvLSTMCell, ConvTTLSTMCell
-import settings
+from utils.convlstmcells import ConvLSTMCell, ConvTTLSTMCell
+import utils.settings as settings
 
 
 class CustomDataset(Dataset):
@@ -192,6 +196,7 @@ class FusionModel(LightningModule):
                         
                         nF = 6 if args.arch.startswith('alexnet') else 7
                         self.fc = nn.Linear(int(self.hparams.hidden_size)*nF*nF, self.num_classes) #replace self.final_channels here the parameter must equal the hidden_channels in self.rnn
+
                 elif args.rnn_model == 'convttLSTM': 
                         # Twice number of channels for RGB and OF which are concat
                         self.rnn = ConvTTLSTMCell(input_channels = self.final_channels*2, hidden_channels = self.final_channels, order = 3, steps = 5, ranks = 16, kernel_size = 3, bias = True)
@@ -477,5 +482,5 @@ if __name__ == '__main__':
         if hparams.loadchk == '':
                 trainer = Trainer(**kwargs)
         else:
-                trainer = Trainer(resume_from_checkpoint = haparams.loadchk, **kwargs)
+                trainer = Trainer(resume_from_checkpoint = hparams.loadchk, **kwargs)
         trainer.fit(model)

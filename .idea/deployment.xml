@@ -1,32 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="PublishConfigData" autoUpload="Always" serverName="idris@131.215.143.158:22" remoteFilesAllowedToDisappearOnAutoupload="false">
+  <component name="PublishConfigData" autoUpload="Always" remoteFilesAllowedToDisappearOnAutoupload="false" showNewOnSourceInSync="false">
     <serverData>
       <paths name="idris@131.215.143.158:22">
-        <serverdata>
-          <mappings>
-            <mapping deploy="/" local="$PROJECT_DIR$" web="/" />
-          </mappings>
-        </serverdata>
-      </paths>
-      <paths name="idris@131.215.143.158:22 (2)">
         <serverdata>
           <mappings>
             <mapping local="$PROJECT_DIR$" web="/" />
           </mappings>
         </serverdata>
       </paths>
-      <paths name="idris@131.215.143.158:22 (3)">
+      <paths name="idris@131.215.143.158:22 (1)">
         <serverdata>
           <mappings>
-            <mapping deploy="/home/idris/Desktop/deepStitch" local="$PROJECT_DIR$" web="/" />
+            <mapping local="$PROJECT_DIR$" web="/" />
           </mappings>
         </serverdata>
       </paths>
-      <paths name="idris@131.215.143.158:22 (4)">
+      <paths name="idris@131.215.143.158:22 (5)">
         <serverdata>
           <mappings>
-            <mapping deploy="/home/idris/Desktop/deepStitch" local="$PROJECT_DIR$" />
+            <mapping deploy="/home/idris/robosurgery/deepStitch2" local="$PROJECT_DIR$" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="ios2359@cooperlabgpu4.fsm.northwestern.edu:22">
+        <serverdata>
+          <mappings>
+            <mapping local="$PROJECT_DIR$" web="/" />
           </mappings>
         </serverdata>
       </paths>

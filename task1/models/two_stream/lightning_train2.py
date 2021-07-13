@@ -205,7 +205,7 @@ class FusionModel(LightningModule):
                                       ((int(self.hparams.hidden_size) + (2 * self.final_channels)) * nF * nF) // 2)
 
             self.fc_attn2 = nn.Linear(((int(self.hparams.hidden_size) + (2 * self.final_channels)) * nF * nF) // 2,
-                                      int(self.hparams.hidden_size) * nF * nF)
+                                      nF * nF)
 
 
         elif args.rnn_model == 'convttLSTM':
@@ -274,6 +274,7 @@ class FusionModel(LightningModule):
 
 
                     m = nn.Softmax(dim=-1)
+                    p = nn.Sigmoid()
                     n = nn.ReLU()
 
                     # C_t size nB x (num_hidden + 2*nC) x H x W
@@ -290,10 +291,11 @@ class FusionModel(LightningModule):
                     # 5. softmax with dim -1
                     A_t = m(A_t)
                     # 6. reshape to nB x 1 x H x W as the attention map
-                    A_t.reshape(1, 64, 6, 6)
+                    A_t.reshape(1, 1, 6, 6)
 
                     # A_t of size nB x 1 x H x W => repeat it along dim=1 to get nB x 2*nC x H x W size (shape of X_t)
                     A_t = X_t.repeat(1, 1, 1, 1)
+
                     # X_t = X_t * A_t
                     X_t = X_t * A_t
 
