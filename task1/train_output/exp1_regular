@@ -1,0 +1,47 @@
+Epoch 1: 100%|███████████████████████████████████████████████████████████████████████████████▉| 1391/1392 [15:00<00:00,  1.54it/s, loss=0.211, v_num=45]
+Epoch 00000: val_acc reached 0.71910 (best 0.71910), saving model to /home/idris/robosurgery/checkpoints/task1/two_stream/AC_CE_EF_FG/alexnet_False_conv
+LSTM/epoch=0.ckpt as top 3
+Epoch 2: 100%|███████████████████████████████████████████████████████████████████████████████▉| 1391/1392 [14:25<00:00,  1.61it/s, loss=0.077, v_num=45]
+Epoch 00001: val_acc reached 0.92884 (best 0.92884), saving model to /home/idris/robosurgery/checkpoints/task1/two_stream/AC_CE_EF_FG/alexnet_False_conv
+LSTM/epoch=1.ckpt as top 3
+Epoch 3: 100%|███████████████████████████████████████████████████████████████████████████████▉| 1391/1392 [15:21<00:00,  1.51it/s, loss=0.079, v_num=45]
+Epoch 00002: val_acc reached 0.93258 (best 0.93258), saving model to /home/idris/robosurgery/checkpoints/task1/two_stream/AC_CE_EF_FG/alexnet_False_conv
+LSTM/epoch=2.ckpt as top 3
+Epoch 4: 100%|███████████████████████████████████████████████████████████████████████████████▉| 1391/1392 [15:10<00:00,  1.53it/s, loss=0.022, v_num=45]
+Epoch 00003: val_acc reached 0.96255 (best 0.96255), saving model to /home/idris/robosurgery/checkpoints/task1/two_stream/AC_CE_EF_FG/alexnet_False_conv
+LSTM/epoch=3.ckpt as top 3
+Epoch 5: 100%|███████████████████████████████████████████████████████████████████████████████▉| 1391/1392 [15:38<00:00,  1.48it/s, loss=0.053, v_num=45]
+Epoch 00004: val_acc  was not in top 3████████████████████████████████████████████████████████████████████████████████| 267/267 [02:30<00:00,  6.66it/s]
+Epoch 6: 100%|███████████████████████████████████████████████████████████████████████████████▉| 1391/1392 [15:18<00:00,  1.51it/s, loss=0.042, v_num=45]
+Epoch 00005: val_acc reached 0.93633 (best 0.96255), saving model to /home/idris/robosurgery/checkpoints/task1/two_stream/AC_CE_EF_FG/alexnet_False_conv
+LSTM/epoch=5.ckpt as top 3
+Epoch 7: 100%|███████████████████████████████████████████████████████████████████████████████▉| 1391/1392 [15:28<00:00,  1.50it/s, loss=0.037, v_num=45]
+Epoch 00006: val_acc  was not in top 3████████████████████████████████████████████████████████████████████████████████| 267/267 [02:31<00:00,  6.33it/s]
+Epoch 8: 100%|███████████████████████████████████████████████████████████████████████████████▉| 1391/1392 [15:20<00:00,  1.51it/s, loss=0.007, v_num=45]
+Epoch 00007: val_acc reached 0.97378 (best 0.97378), saving model to /home/idris/robosurgery/checkpoints/task1/two_stream/AC_CE_EF_FG/alexnet_False_conv
+LSTM/epoch=7.ckpt as top 3
+Epoch 9: 100%|███████████████████████████████████████████████████████████████████████████████▉| 1391/1392 [15:14<00:00,  1.52it/s, loss=0.019, v_num=45]
+Epoch 00008: val_acc  was not in top 3████████████████████████████████████████████████████████████████████████████████| 267/267 [02:30<00:00,  6.60it/s]
+Epoch 10: 100%|██████████████████████████████████████████████████████████████████████████████▉| 1391/1392 [15:21<00:00,  1.51it/s, loss=0.019, v_num=45]
+Epoch 00009: val_acc reached 0.94757 (best 0.97378), saving model to /home/idris/robosurgery/checkpoints/task1/two_stream/AC_CE_EF_FG/alexnet_False_conv
+LSTM/epoch=9.ckpt as top 3
+
+
+
+ with torch.no_grad():
+     C_t = C_t.clone()
+     C_t.resize_(1, mid, 6, 6)
+
+
+X_t = torch.cat([f, f_of], dim=1)
+
+if kk == 0:
+    device = torch.device("cuda:3")
+    outputs = torch.zeros(1, 0, 6, 6)
+    outputs = outputs.to(device)
+    C_t = torch.cat([outputs, X_t], dim=1)
+    C_t = C_t.reshape(1, X_t.shape[1], 6, 6)
+else:
+    C_t = torch.cat([outputs, X_t], dim=1)
+    mid = int(self.hparams.hidden_size) + (2 * int(self.final_channels))
+    C_t = C_t.reshape(1, mid, 6, 6)

@@ -1,0 +1,5 @@
+#python split.py --segments B --label "label_needle positionB"
+python split.py --segments BC --label label_needle_entry_angleC
+python split.py --segments CD --label label_needle_driving_1D
+#CUDA_VISIBLE_DEVICES=1 python convert_using_flownet.py --input_dir /mnt/md1/richard_bao/balint_data/label_classification_data/positiveB
+#CUDA_VISIBLE_DEVICES=1 python convert_using_flownet.py --input_dir /mnt/md1/richard_bao/balint_data/label_classification_data/negativeB
