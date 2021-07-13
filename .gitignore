@@ -1,3 +1,13 @@
 lightning_logs/*
 __pycache__/*
 **/.DS_Store
+
+task4/models/test.py
+task4/models/test1.py
+task3/models/lightning_train1_1.py
+task3/models/lightning_train2.py
+task3/models/lightning_train3.py
+
+task4/models/lightning_train2.py
+
+test.py
