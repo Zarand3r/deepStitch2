@@ -9,6 +9,9 @@ import matplotlib.cm as cm
 import skimage.transform
 import argparse
 import cv2
+import git
+repo = git.Repo("./", search_parent_directories=True)
+
 #from scipy import imread, imresize
 from PIL import Image
 
