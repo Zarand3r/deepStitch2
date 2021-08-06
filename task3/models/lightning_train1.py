@@ -331,10 +331,10 @@ class FusionModel(LightningModule):
                     # 5. softmax with dim -1
                     A_t = m(A_t)
                     # 6. reshape to nB x 1 x H x W as the attention map
-                    A_t.reshape(1, 1, 6, 6)
+                    A_t = A_t.reshape(1, 1, 6, 6)
 
                     # A_t of size nB x 1 x H x W => repeat it along dim=1 to get nB x 2*nC x H x W size (shape of X_t)
-                    A_t = X_t.repeat(1, 1, 1, 1)
+                    A_t = torch.repeat_interleave(A_t, 512, axis=1)
 
                     # X_t = X_t * A_t
                     X_t = X_t * A_t
