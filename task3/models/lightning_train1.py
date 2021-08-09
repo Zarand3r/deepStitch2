@@ -299,7 +299,7 @@ class FusionModel(LightningModule):
 
                     C_t = torch.cat([outputs, X_t], dim=1)
 
-                    #C_t = self.rnn1(C_t, first_step=True)
+                    C_t = self.rnn1(C_t, first_step=True)
 
                     #print("C_t " + str(C_t.shape))
                     #print()
@@ -405,7 +405,7 @@ class FusionModel(LightningModule):
         return {'val_loss': avg_loss, 'val_acc': torch.tensor(top1_val), 'log': tensorboard_logs}
 
     def send_im_calculate_top1(self, actual, predicted, cmap_use='Blues', name='tmp/name'):
-        cm = confusion_matrix(actual, predicted)
+        cm = confusion_matrix(actual, predicted, normalize='true')
         fig = plt.figure();
         sns.heatmap(cm, cmap=cmap_use, ax=plt.gca(), annot=True, xticklabels=self.hparams.include_classes,
                     yticklabels=self.hparams.include_classes)

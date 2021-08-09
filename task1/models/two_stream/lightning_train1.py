@@ -227,11 +227,6 @@ class FusionModel(LightningModule):
     def forward(self, inputs, hidden=None, steps=0):
         nBatch, nFrames, ofH, ofW, nChannels, _ = inputs.shape
         assert nFrames > 0, "cannot have videos with 0 frames"
-
-        device = torch.device("cuda:3")
-        outputs = torch.rand(1, 0, 6, 6)
-        outputs = outputs.to(device)
-
         #########################################################################################
         # Non convolutional (old way)
         if 'conv' not in self.hparams.rnn_model:
@@ -263,20 +258,31 @@ class FusionModel(LightningModule):
                 f_of = self.features_of(inputs[:, kk, :, :, :, 1].permute(0, 3, 1, 2))  # permute to nB x nC x H x W
 
                 X_t = torch.cat([f, f_of], dim=1)
-                #print("X0 " + str(X_t))
 
-                if kk > 0:
+                # feature encoding
+                X_t = self.fc_conv1(X_t)
+                # print("X1 " + str(X_t.shape))
+                #X_t = nn.functional.relu(X_t)
+                #X_t = self.fc_conv1(X_t)
+
+                # Size nBatch x nChannels x H x W
+                if kk == 0:
+                    outputs = self.rnn(X_t, first_step=True)
+                else:
+
                     C_t = torch.cat([outputs, X_t], dim=1)
+
+                    C_t = self.rnn1(C_t, first_step=True)
+
                     #print("C_t " + str(C_t.shape))
                     #print()
                     #print("O2 " + str(outputs.shape))
                     #print()
                     mid = int(self.hparams.hidden_size) + (2 * int(self.final_channels))
-                    #print(self.final_channels)
-                    #print()
-                    #print(mid)
+
 
                     m = nn.Softmax(dim=-1)
+                    p = nn.Sigmoid()
                     n = nn.ReLU()
 
                     # C_t size nB x (num_hidden + 2*nC) x H x W
@@ -290,23 +296,22 @@ class FusionModel(LightningModule):
                     A_t = n(A_t)
                     # 4. fc_attn2 input size is (H x W x (num_hidden + 2*nC)) or /2, and output size is H x W, nB x (H x W)
                     A_t = self.fc_attn2(A_t)
+
+                    #A_t = n(A_t)
+
+                    #A_t = self.fc_attn3(A_t)
+
                     # 5. softmax with dim -1
                     A_t = m(A_t)
                     # 6. reshape to nB x 1 x H x W as the attention map
-                    A_t.reshape(1, 64, 6, 6)
+                    A_t = A_t.reshape(1, 1, 6, 6)
 
                     # A_t of size nB x 1 x H x W => repeat it along dim=1 to get nB x 2*nC x H x W size (shape of X_t)
-                    A_t = X_t.repeat(1, 1, 1, 1)
+                    A_t = A_t.repeat(1, 512, 1, 1)
+
                     # X_t = X_t * A_t
                     X_t = X_t * A_t
 
-
-
-                # Size nBatch x nChannels x H x W
-                if kk == 0:
-                    X_t = torch.cat([outputs, X_t], dim=1)
-                    outputs = self.rnn(X_t, first_step=True)
-                else:
                     outputs = self.rnn(X_t, first_step=False)
 
             outputs = outputs.reshape(outputs.size(0), -1)
@@ -371,7 +376,7 @@ class FusionModel(LightningModule):
         return {'val_loss': avg_loss, 'val_acc': torch.tensor(top1_val), 'log': tensorboard_logs}
 
     def send_im_calculate_top1(self, actual, predicted, cmap_use='Blues', name='tmp/name'):
-        cm = confusion_matrix(actual, predicted)
+        cm = confusion_matrix(actual, predicted, normalize='true')
         fig = plt.figure();
         sns.heatmap(cm, cmap=cmap_use, ax=plt.gca(), annot=True, xticklabels=self.hparams.include_classes,
                     yticklabels=self.hparams.include_classes)
