@@ -73,7 +73,6 @@ class CustomDataset(Dataset):
                 self.filtered_fns = [[f, self.classes.index(f.split('/')[-2]) ] for i, f in enumerate(fns) if i in idxs]
                 if balance_classes:
                         class_counter = Counter([f[1] for f in self.filtered_fns])
-                        print(class_counter)
                         print('balancing...')
                         if upsample:
                             n_match = class_counter.most_common()[0][1]
@@ -296,8 +295,8 @@ class FusionModel(LightningModule):
                                 X_t = self.fc_conv1(X_t)
                                 #print("X1 " + str(X_t.shape))
                                 #print()
-                                #X_t = nn.functional.relu(X_t)
-                                #X_t = self.fc_conv1(X_t)
+                                X_t = nn.functional.relu(X_t)
+                                X_t = self.fc_conv1(X_t)
 
                                 # Size nBatch x nChannels x H x W
                                 if kk == 0:
@@ -309,7 +308,7 @@ class FusionModel(LightningModule):
                                         #print("X_t " + str(X_t.shape))
                                         C_t = torch.cat([outputs, X_t], dim=1)
 
-                                        C_t = self.rnn1(C_t, first_step=True)
+                                        #C_t = self.rnn1(C_t, first_step=True)
 
                                         # print("C_t " + str(C_t.shape))
                                         # print()
@@ -417,7 +416,7 @@ class FusionModel(LightningModule):
                 return {'val_loss': avg_loss, 'val_acc':torch.tensor(top1_val), 'log': tensorboard_logs}
         
         def send_im_calculate_top1(self, actual, predicted, cmap_use = 'Blues', name = 'tmp/name'):
-                cm = confusion_matrix(actual, predicted)
+                cm = confusion_matrix(actual, predicted, normalize='true')
                 fig = plt.figure(); sns.heatmap(cm, cmap = cmap_use, ax =plt.gca(), annot = True, xticklabels = self.hparams.include_classes, yticklabels = self.hparams.include_classes)
                 self.logger.experiment.add_figure(name, fig, global_step=self.current_epoch, close = True)
                 top1 = float(sum([a==b for a,b in zip(actual, predicted)]))/len(actual)
@@ -576,7 +575,8 @@ if __name__ == '__main__':
                 verbose=True,
                 monitor='val_acc',
                 mode='max',
-                prefix='')
+                prefix=''
+        )
 
         kwargs = {'gpus': [hparams.gpu], 'logger':logger, 'check_val_every_n_epoch':1,
                                 'accumulate_grad_batches':hparams.accum_batches, 'fast_dev_run' :False, 

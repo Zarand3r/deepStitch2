@@ -59,10 +59,10 @@ class CustomDataset(Dataset):
         if idxs == None:  # load all
             idxs = list(range(len(fns)))
         self.filtered_fns = [[f, self.classes.index(f.split('/')[-2])] for i, f in enumerate(fns) if i in idxs]
+        print('\nfns length is ' + str(len(fns)))
         # TODO Implement option to down sample
         if balance_classes:
             class_counter = Counter([f[1] for f in self.filtered_fns])
-            print(class_counter)
             print('balancing...')
             # n_match = class_counter.most_common()[0][1]
             # for class_curr in class_counter.keys():
@@ -209,7 +209,6 @@ class FusionModel(LightningModule):
             self.rnn1 = ConvLSTMCell(input_channels=640,
                                     hidden_channels=640, kernel_size=3, bias=True)
 
-
             nF = 6 if args.arch.startswith('alexnet') else 7
 
             self.fc_k = nn.Linear(int(self.hparams.hidden_size) * nF * nF,
@@ -289,8 +288,8 @@ class FusionModel(LightningModule):
                 # feature encoding
                 X_t = self.fc_conv1(X_t)
                 # print("X1 " + str(X_t.shape))
-                #X_t = nn.functional.relu(X_t)
-                #X_t = self.fc_conv1(X_t)
+                X_t = nn.functional.relu(X_t)
+                X_t = self.fc_conv1(X_t)
 
                 # Size nBatch x nChannels x H x W
                 if kk == 0:
