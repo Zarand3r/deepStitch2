@@ -33,7 +33,7 @@ repo = git.Repo("./", search_parent_directories=True)
 homedir = repo.working_dir
 sys.path.insert(1, f"{homedir}" + '/utils')
 from utils.convlstmcells import ConvLSTMCell, ConvTTLSTMCell
-import utils.settings as settings
+import utils.tube_settings as settings
 
 
 class CustomDataset(Dataset):
@@ -196,6 +196,12 @@ class FusionModel(LightningModule):
             # Twice number of channels for RGB and OF which are concat
             self.rnn = ConvLSTMCell(input_channels=self.final_channels * 2,
                                     hidden_channels=int(self.hparams.hidden_size), kernel_size=3, bias=True)
+            self.rnn1 = ConvLSTMCell(input_channels=640,
+                                    hidden_channels=640, kernel_size=3, bias=True)
+
+
+            self.fc_conv1 = nn.Conv2d(in_channels=512,
+                                      out_channels=512, kernel_size=3, padding=1)
 
             nF = 6 if args.arch.startswith('alexnet') else 7
             self.fc = nn.Linear(int(self.hparams.hidden_size) * nF * nF,
@@ -205,7 +211,7 @@ class FusionModel(LightningModule):
                                       ((int(self.hparams.hidden_size) + (2 * self.final_channels)) * nF * nF))
 
             self.fc_attn2 = nn.Linear(((int(self.hparams.hidden_size) + (2 * self.final_channels)) * nF * nF),
-                                      int(self.hparams.hidden_size) * nF * nF)
+                                      nF * nF)
 
 
         elif args.rnn_model == 'convttLSTM':
@@ -262,8 +268,8 @@ class FusionModel(LightningModule):
                 # feature encoding
                 X_t = self.fc_conv1(X_t)
                 # print("X1 " + str(X_t.shape))
-                #X_t = nn.functional.relu(X_t)
-                #X_t = self.fc_conv1(X_t)
+                X_t = nn.functional.relu(X_t)
+                X_t = self.fc_conv1(X_t)
 
                 # Size nBatch x nChannels x H x W
                 if kk == 0:
@@ -501,7 +507,7 @@ if __name__ == '__main__':
     parser.add_argument('--overfit', default=0, type=int)
     parser.add_argument('--auto_lr', default=0, type=int)
     parser.add_argument('--use_pretrained', default=1, type=int, help='whether or not to load pretrained weights')
-    parser.add_argument('--logging_dir', default='lightning_logs', type=str)
+    parser.add_argument('--logging_dir', default='lightning_logs1', type=str)
     parser.add_argument('--loader_nframes', default=140, type=int, help='How many frames to load at stride 2')
     parser.add_argument('--loader_stride', default=2, type=int, help='stride for dataloader')
     parser.add_argument('--number_workers', default=0, type=int, help='number of workers for Dataloader')

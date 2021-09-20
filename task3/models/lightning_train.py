@@ -22,7 +22,7 @@ from torch.utils.data import Dataset, DataLoader
 
 import sys, os
 
-# sys.path.append('../../')
+sys.path.append('../../')
 # Custom importsu
 import git
 import sys
@@ -311,7 +311,7 @@ class FusionModel(LightningModule):
                 return {'val_loss': avg_loss, 'val_acc':torch.tensor(top1_val), 'log': tensorboard_logs}
         
         def send_im_calculate_top1(self, actual, predicted, cmap_use = 'Blues', name = 'tmp/name'):
-                cm = confusion_matrix(actual, predicted)
+                cm = confusion_matrix(actual, predicted, normalize='true')
                 fig = plt.figure(); sns.heatmap(cm, cmap = cmap_use, ax =plt.gca(), annot = True, xticklabels = self.hparams.include_classes, yticklabels = self.hparams.include_classes)
                 self.logger.experiment.add_figure(name, fig, global_step=self.current_epoch, close = True)
                 top1 = float(sum([a==b for a,b in zip(actual, predicted)]))/len(actual)
