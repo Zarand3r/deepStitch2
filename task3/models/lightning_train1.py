@@ -54,11 +54,20 @@ class CustomDataset(Dataset):
             fns = []
             for class_curr in include_classes:
                 fns.extend(glob.glob(os.path.join(global_dir, class_curr, '%s*' % flow_method)))
+            if len(fns) == 0:
+                for class_curr in include_classes:
+                    fns.extend(glob.glob(os.path.join(
+                        global_dir, class_curr, "optical_flow"+masked, '%s*' % flow_method)))
         if len(fns) == 0:
             raise ValueError('Likely that you have not pre-computed the optical flow or data directory is wrong!')
         if idxs == None:  # load all
             idxs = list(range(len(fns)))
-        self.filtered_fns = [[f, self.classes.index(f.split('/')[-2])] for i, f in enumerate(fns) if i in idxs]
+        if "optical_flow" in fns[0].split('/')[-2]:
+            self.filtered_fns = [[f, self.classes.index(
+                f.split('/')[-3])] for i, f in enumerate(fns) if i in idxs]
+        else:
+            self.filtered_fns = [[f, self.classes.index(
+                f.split('/')[-2])] for i, f in enumerate(fns) if i in idxs]
         # TODO Implement option to down sample
         if balance_classes:
             class_counter = Counter([f[1] for f in self.filtered_fns])
@@ -139,8 +148,12 @@ class FusionModel(LightningModule):
         fns = []
         for class_curr in self.hparams.include_classes:
             fns.extend(glob.glob(os.path.join(self.hparams.datadir, class_curr, '%s*' % self.hparams.flow_method)))
+        if len(fns) == 0:
+            for class_curr in self.hparams.include_classes:
+                fns.extend(glob.glob(os.path.join(self.hparams.datadir, class_curr,
+                                                  "optical_flow"+self.hparams.masked, '%s*' % self.hparams.flow_method)))
         idx = list(range(len(fns)))
-        random.seed(self.hparams.seed);
+        random.seed(self.hparams.seed)
         random.shuffle(idx)
         self.hparams.filenames = []
         self.hparams.idx_train = idx[:int(self.hparams.train_proportion * len(idx))].copy()  # Save as hyperparams
