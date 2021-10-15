@@ -31,11 +31,12 @@ repo = git.Repo("./", search_parent_directories=True)
 homedir = repo.working_dir
 sys.path.insert(1, f"{homedir}" + '/utils')
 from utils.convlstmcells import ConvLSTMCell, ConvTTLSTMCell
-import utils.settings as settings
+import utils.tube_settings as settings
 
 
 class CustomDataset(Dataset):
     """CustomDataset"""
+
 
     def __init__(self, global_dir, idxs=None, include_classes=[], flow_method='flownet', balance_classes=False,
                  mode='train', max_frames=150, stride=2, masked=""):
@@ -91,6 +92,51 @@ class CustomDataset(Dataset):
                 # for f in removed:
                 #    self.filtered_fns.remove(f)
             print('Classes now balanced')
+
+    def __init__(self, global_dir, idxs= None, include_classes = [], flow_method = 'flownet', balance_classes = False, mode = 'train', max_frames = 150, stride = 2, masked="", upsample=False):
+            self.global_dir = global_dir
+            self.mode = mode
+            self.max_frames = stride*max_frames
+            self.stride = stride
+
+            if len(include_classes) == 0:
+                    self.classes = os.listdir(global_dir)
+                    self.remove_empty()
+                    fns = glob.glob(os.path.join(global_dir, '*', '%s*' % flow_method))
+            else:
+                    self.classes = include_classes
+                    self.remove_empty()
+                    fns = []
+                    for class_curr in include_classes:
+                            fns.extend(glob.glob(os.path.join(global_dir, class_curr, '%s*' % flow_method)))
+            if len(fns) == 0:
+                    raise ValueError('Likely that you have not pre-computed the optical flow or data directory is wrong!')
+            if idxs == None: # load all
+                    idxs = list(range(len(fns)))
+            self.filtered_fns = [[f, self.classes.index(f.split('/')[-2]) ] for i, f in enumerate(fns) if i in idxs]
+            # TODO Implement option to down sample
+            if balance_classes:
+                    class_counter = Counter([f[1] for f in self.filtered_fns])
+                    print(class_counter)
+                    print('balancing...')
+                    if upsample:
+                        n_match = class_counter.most_common()[0][1]
+                        for class_curr in class_counter.keys():
+                                cnt = class_counter[class_curr]
+                                print(class_curr, cnt)
+                                self.filtered_fns.extend(random.choices([f for f in self.filtered_fns if f[1] == int(class_curr)], k=max(n_match-cnt, 1) ))
+                    else:
+                        n_match = class_counter.most_common()[-1][1]
+                        for class_curr in class_counter.keys():
+                                cnt = class_counter[class_curr]
+                                print(class_curr, cnt)
+                                indices = [index for index, x in enumerate(self.filtered_fns) if x[1] == int(class_curr)]
+                                indices = random.choices(indices, k=max(cnt-n_match, 1))
+                                indices.sort(reverse=True)
+                                for index in indices:
+                                    del self.filtered_fns[index]
+                    print('Classes now balanced')
+
 
     def __len__(self):
         return len(self.filtered_fns)
@@ -445,7 +491,7 @@ class FusionModel(LightningModule):
                                       include_classes=self.hparams.include_classes,
                                       flow_method=self.hparams.flow_method, balance_classes=True, mode='train',
                                       max_frames=self.hparams.loader_nframes,
-                                      stride=self.hparams.loader_stride, masked=self.hparams.masked)
+                                                        stride = self.hparams.loader_stride, masked = self.hparams.masked, upsample = self.hparams.upsample)
         self.filenames = train_dataset.filtered_fns
         train_dataloader = DataLoader(train_dataset, batch_size=self.batch_size, shuffle=True,
                                       num_workers=self.hparams.number_workers, drop_last=True)
@@ -457,7 +503,7 @@ class FusionModel(LightningModule):
                                     include_classes=self.hparams.include_classes,
                                     flow_method=self.hparams.flow_method, balance_classes=True, mode='val',
                                     max_frames=self.hparams.loader_nframes,
-                                    stride=self.hparams.loader_stride, masked=self.hparams.masked)
+                                                        stride = self.hparams.loader_stride, masked = self.hparams.masked, upsample = self.hparams.upsample)
         val_dataloader = DataLoader(val_dataset, batch_size=self.batch_size, shuffle=False,
                                     num_workers=self.hparams.number_workers, drop_last=True)
         return val_dataloader
@@ -556,12 +602,13 @@ if __name__ == '__main__':
     parser.add_argument('--overfit', default=0, type=int)
     parser.add_argument('--auto_lr', default=0, type=int)
     parser.add_argument('--use_pretrained', default=1, type=int, help='whether or not to load pretrained weights')
-    parser.add_argument('--logging_dir', default='lightning_logs', type=str)
+    parser.add_argument('--logging_dir', default='lightning_logs1', type=str)
     parser.add_argument('--loader_nframes', default=140, type=int, help='How many frames to load at stride 2')
     parser.add_argument('--loader_stride', default=2, type=int, help='stride for dataloader')
     parser.add_argument('--number_workers', default=0, type=int, help='number of workers for Dataloader')
     parser.add_argument('--batch_size', default=1, type=int, help='batch size')
     parser.add_argument('--masked', dest='masked', action='store_true', help="train on masked?")
+    parser.add_argument('--upsample', dest='upsample', action='store_true', help = "upsample or downsample?")
 
     hparams = parser.parse_args()
     hparams.trainable_base = True if hparams.trainable_base == 1 else False
