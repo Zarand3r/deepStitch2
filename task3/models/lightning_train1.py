@@ -496,7 +496,6 @@ class FusionModel(LightningModule):
 
                                       stride=self.hparams.loader_stride, masked=self.hparams.masked, upsample = self.hparams.upsample)
 
-                                                        stride = self.hparams.loader_stride, masked = self.hparams.masked, upsample = self.hparams.upsample)
 
         self.filenames = train_dataset.filtered_fns
         train_dataloader = DataLoader(train_dataset, batch_size=self.batch_size, shuffle=True,
@@ -512,10 +511,9 @@ class FusionModel(LightningModule):
 
                                     stride=self.hparams.loader_stride, masked=self.hparams.masked, upsample = self.hparams.upsample)
 
-                                                        stride = self.hparams.loader_stride, masked = self.hparams.masked, upsample = self.hparams.upsample)
 
-        val_dataloader = DataLoader(val_dataset, batch_size=self.batch_size, shuffle=False,
-                                    num_workers=self.hparams.number_workers, drop_last=True)
+        val_dataloader = DataLoader(val_dataset, batch_size=self.batch_size, shuffle=False, num_workers=self.hparams.number_workers, drop_last=True)
+
         return val_dataloader
 
     def apply_transforms_GPU(self, batch, random_crop=False):
