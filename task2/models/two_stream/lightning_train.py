@@ -47,7 +47,7 @@ class CustomDataset(Dataset):
                 if len(include_classes) == 0:
                         self.classes = os.listdir(global_dir)
                         self.remove_empty()
-                        fns = glob.glob(os.path.join(global_dir, '*', '%s*' % flow_method))
+                        fns = glob.glob(os.path.join(global_dir, '*', "optical_flow"+masked, '%s*' % flow_method))
                 else:
                         self.classes = include_classes
                         self.remove_empty()
@@ -86,6 +86,8 @@ class CustomDataset(Dataset):
                 kinematics_file = self.filtered_fns[idx][0].split(f"{self.flow_method}_")[-1][:-4]+".csv"
                 class_curr = self.filtered_fns[idx][0].split('/')[-3]
                 kinematics_file = os.path.join(self.kinematics_dir, class_curr, kinematics_file)
+                # if not os.path.exists(kinematics_file) or not os.path.exists(self.filtered_fns[idx][0]):
+                #         print("============================================================")
                 # kinematics csv should be preprocessed so it is interpolated for all frames.
                 # The only timepoints should be those that correspond to frames in the video
                 kinematics_df = pd.read_csv(kinematics_file, usecols=self.kinematics_features)
@@ -110,7 +112,8 @@ class CustomDataset(Dataset):
                         kinematics = kinematics[list(range(start_phase, kinematics.shape[0], self.stride)), :]
                 else:
                         raise ValueError('not supported mode must be train or test')
-                return (video, label, kinematics, self.filtered_fns[idx][0])
+                result = [video, label, kinematics, " "]
+                return result
 
         def remove_empty(self):
                 for class_curr in self.classes:
@@ -133,7 +136,7 @@ class FusionModel(LightningModule):
                 self.predicted_softmax = []; self.predicted_softmax_train = []
                 self.batch_size = self.hparams.batch_size
                 ############################################################################################
-                # Generate the tra300in and test splits
+                # Generate the train and test splits
                 fns = []
                 for class_curr in self.hparams.include_classes:
                         fns.extend(glob.glob(os.path.join(self.hparams.datadir, class_curr, "optical_flow"+self.hparams.masked, '%s*' % self.hparams.flow_method)))
@@ -247,7 +250,7 @@ class FusionModel(LightningModule):
                         #########################################################################################
                         # Convolutional flavors
                         aggregate_outputs = []
-                        print("Number of frames: ", nFrames)
+                        # print("Number of frames: ", nFrames)
                         for kk in range(nFrames):
                                 f = self.features_rgb(inputs[:, kk, :, :, :, 0].permute(0, 3, 1, 2)) # permute to nB x nC x H x W
                                 f_of = self.features_of(inputs[:, kk, :, :, :, 1].permute(0, 3, 1, 2))  # permute to nB x nC x H x W
@@ -274,7 +277,6 @@ class FusionModel(LightningModule):
                         return class_outputs, kinematics_outputs
 
         def training_step(self, batch, batch_idx):
-                print(batch_idx)
                 # Batch is already on GPU by now
                 input_cuda, target_cuda = self.apply_transforms_GPU(batch[0:2], random_crop=self.hparams.random_crop)
                 target_kinematics = batch[2].squeeze()
@@ -353,7 +355,7 @@ class FusionModel(LightningModule):
 
         def train_dataloader(self):
                 train_dataset   = CustomDataset(self.hparams.datadir, self.hparams.kinematicsdir, self.hparams.kinematics_features, idxs = self.hparams.idx_train , include_classes = self.hparams.include_classes, 
-                                                        flow_method = self.hparams.flow_method, balance_classes=True, mode = 'train', max_frames = self.hparams.loader_nframes,
+                                                        flow_method = self.hparams.flow_method, balance_classes=False, mode = 'train', max_frames = self.hparams.loader_nframes,
                                                         stride = self.hparams.loader_stride, masked = self.hparams.masked)
                 train_dataloader        = DataLoader(train_dataset, batch_size=self.batch_size, shuffle=True, num_workers=self.hparams.number_workers, drop_last=True)
                 self.epoch_len = len(train_dataset)

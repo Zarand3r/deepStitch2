@@ -34,10 +34,11 @@ def splice(args):
     # Convert the strings to lists and none literals
     for ii in range(len(df)):
         for col_name in df.columns:
-            if 'label' in col_name or 'timepoint' in col_name:
+            # if 'label' in col_name or 'timepoint' in col_name:
+            if 'timepoint' in col_name:
                 curr_entry = df.at[ii, col_name]
                 if type(curr_entry) == str:
-                    #print(curr_entry, ii)
+                    # print(curr_entry, ii)
                     if curr_entry == 'none':
                         df.at[ii, col_name] = ast.literal_eval('None')
                     else:
@@ -73,11 +74,16 @@ def splice(args):
         while kk < len(all_timepoints)-1:
             start_col = 'timepoint_%s' % all_timepoints[kk]
             end_col = 'timepoint_%s' % all_timepoints[kk+1]
-            #print('on %s to %s' % (start_col, end_col))
+            # print('on %s to %s' % (start_col, end_col))
             start_val, end_val = df.iloc[nn][start_col], df.iloc[nn][end_col]
-            if start_val is None or end_val is None:
+            if start_val is None:
+                kk+=1
+                # print("skipped1")
+                pass
+            elif end_val is None:
                 #print('ff 2 due to None val')
                 kk+=2
+                # print("skipped2")
                 pass
             else:
                 # If start_val is a list make it the last one
@@ -88,29 +94,35 @@ def splice(args):
                 #print(start_val)
                 start_time = '0' + str(datetime.timedelta(seconds=start_val))
                 n_frames = round(30.*(end_val-start_val))
-                video_input_fn = df.iloc[nn]['meta_video_file_name']
-                video_input_fn = os.path.join(input_dir, video_input_fn)
-                video_output_fn = df.iloc[nn]['meta_video_file_name']
-                if os.path.exists(video_output_fn):
-                    video_output_fn = '%s_%s.mp4' % (video_output_fn[:-4], df.iloc[nn]['meta_position_nn'])
-                #video_output_fn = '%s_%s%s_%02d.mp4' % (df.iloc[nn]['meta_video_file_name'][:-4], all_timepoints[kk], all_timepoints[kk+1], df.iloc[nn]['meta_position_nn'])
-                df.at[nn, 'meta_cut_%s%s' % (all_timepoints[kk], all_timepoints[kk+1])] = video_output_fn
-                # video_output_fn = os.path.join(output_dir, video_output_fn)
+                video_input_fn = df.iloc[nn]['meta_video_file_name'].strip()
+                video_input_path = os.path.join(input_dir, video_input_fn)
+                video_output_fn = df.iloc[nn]['meta_video_file_name'].strip()
+                # video_output_fn = '%s_%s.mp4' % (video_output_fn[:-4], int(df.iloc[nn]['meta_position_nn']))
+                video_output_fn = f"{video_output_fn[:-4]}.mp4"
+                #video_output_path = '%s_%s%s_%02d.mp4' % (df.iloc[nn]['meta_video_file_name'][:-4], all_timepoints[kk], all_timepoints[kk+1], df.iloc[nn]['meta_position_nn'])
+                # df.at[nn, 'meta_cut_%s%s' % (all_timepoints[kk], all_timepoints[kk+1])] = video_output_fn
+                # video_output_path = os.path.join(output_dir, video_output_fn)
                 output_subdir = os.path.join(output_dir, f"{all_timepoints[kk]}{all_timepoints[kk+1]}")
                 if not os.path.exists(output_subdir):
                     os.makedirs(output_subdir)
-                video_output_fn = os.path.join(output_subdir, video_output_fn)
+                video_output_path = os.path.join(output_subdir, video_output_fn)
 
-                if not os.path.exists(video_input_fn):
-                    raise ValueError('The file you are trying to chop does not exist')
+                if not os.path.exists(video_input_path):
+                    raise ValueError(f"The file {video_input_path} you are trying to chop does not exist")
                 else:
-                    if not os.path.exists(video_output_fn):
-                        cmd = 'ffmpeg -ss %s -i %s -an -vcodec h264 -r 30 -vframes %d %s' % (start_time, video_input_fn, n_frames, video_output_fn)
+                    if not os.path.exists(video_output_path):
+                        if " " in video_input_fn:
+                            video_input_fn = "'"+video_input_fn+"'"
+                            video_input_path = os.path.join(input_dir, video_input_fn)
+                        if " " in video_output_fn:
+                            video_output_fn = "'"+video_output_fn+"'"
+                            video_output_path = os.path.join(output_subdir, video_output_fn)
+                        cmd = 'ffmpeg -ss %s -i %s -an -vcodec h264 -r 30 -vframes %d %s' % (start_time, video_input_path, n_frames, video_output_path)
                         #print(cmd)
                         os.system(cmd)
+                        print(f"moving {video_input_path} to {video_output_path}")
                     else:
                         print('already exists so skipping...')
-                    #print(cmd)
                     kk+=1
 
 
@@ -192,7 +204,7 @@ if __name__ == '__main__':
     parser.add_argument("--data_labels", default = settings.data_labels, help = "Path to labels")
     parser.add_argument("--raw_directory", default = settings.raw_directory, help = "Path to the raw data ")
     parser.add_argument("--data_directory", default = settings.data_directory, help = "Path to the output directory")
-    parser.add_argument("--timepoints", default = "A_B_C_D_E_F_G", help = "Path to the output directory")
+    parser.add_argument("--timepoints", default = "A_B_C_E_F_G", help = "Path to the output directory")
     parser.add_argument('--inclusive', dest='inclusive', action='store_true', help = "if inclusive, use first index of start, last index of end for list timepoints")
     args = parser.parse_args()
     splice(args)

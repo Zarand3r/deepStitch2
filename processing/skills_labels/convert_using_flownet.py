@@ -56,7 +56,7 @@ class OpticalFlow:
         fn_out = os.path.join(subdir_out, 'flownet_'+ mp4_fn.split('/')[-1])
 
         fourcc = cv2.VideoWriter_fourcc(*'mp4v')
-        out = cv2.VideoWriter(fn_out,fourcc, 30.0, (int(args.join*nX),int(nY)))
+        out = cv2.VideoWriter(fn_out,fourcc, 30.0, (int(self.args.join*nX),int(nY)))
 
         for frame in export_ims:
             out.write(frame)
@@ -78,7 +78,7 @@ class OpticalFlow:
         cudnn.benchmark = True
 
         # if 'div_flow' in network_data.keys():
-        #     args.div_flow = network_data['div_flow']
+        #     self.args.div_flow = network_data['div_flow']
 
         mp4_list = glob.glob(os.path.join(self.args.input_dir, "*.mp4"))
         print(self.args.input_dir)
@@ -94,15 +94,15 @@ class OpticalFlow:
 
             #frame_ints = list(range(n_im))
 
-            for ii in tqdm(range(n_im-args.window)):
+            for ii in tqdm(range(n_im-self.args.window)):
                 aa=ii
-                bb=ii+args.window
+                bb=ii+self.args.window
 
                 img1 = input_transform(mp4_ims[aa])
                 img2 = input_transform(mp4_ims[bb])
                 input_var = torch.cat([img1, img2]).unsqueeze(0)
 
-                # if args.bidirectional:
+                # if self.args.bidirectional:
                 # feed inverted pair along with normal pair
                 inverted_input_var = torch.cat([img2, img1]).unsqueeze(0)
                 input_var = torch.cat([input_var, inverted_input_var])
@@ -118,11 +118,11 @@ class OpticalFlow:
 
                 # Convert to an RGBim1.
                 for suffix, flow_output in zip(['flow', 'inv_flow'], output):
-                    rgb_flow = flow2rgb(args.div_flow * flow_output, max_value=args.max_flow)
+                    rgb_flow = flow2rgb(self.args.div_flow * flow_output, max_value=self.args.max_flow)
                     to_save = (rgb_flow * 255).astype(np.uint8).transpose(1,2,0)
 
-                combined = np.zeros([nY, args.join*nX, nC], dtype=np.uint8)
-                if args.join == 2:
+                combined = np.zeros([nY, self.args.join*nX, nC], dtype=np.uint8)
+                if self.args.join == 2:
                     combined[:, :nX, :] = mp4_ims[aa][:, :, [2,1,0]] # Invert back for BGR
                     combined[:, nX:, :] = to_save
                 else:
@@ -131,15 +131,17 @@ class OpticalFlow:
                 export_ims.append(combined) # Save for list
             self.save_flow(mp4_fn, export_ims, mp4_ims[0].shape)
 ##############################################################
-parser = argparse.ArgumentParser(description='Conversion')
-parser.add_argument('--input_dir', default="/mnt/md1/richard_bao/balint_data/label_classification_data/positiveB",type=str, help='directory with the mp4 videos')
-parser.add_argument('--gpu_id', default=1,type=int, help='which gpu')
-parser.add_argument('--window', default=4,type=int, help='sliding window for smoothing frames')
-parser.add_argument('--join', default=2,type=int, help='write optical flow side by side to original if 2')
-parser.add_argument('--div_flow', default=2, type=float, help='value by which flow will be divided. overwritten if stored in pretrained file')
-parser.add_argument('--max_flow', default=20, type=float, help='max flow value. Flow map color is saturated above this value. If not set, will use flow map\'s max value')
-parser.add_argument('--output_type', default='gray', help='viz or raw or gray')
-args = parser.parse_args()
 
-Flow1 = OpticalFlow(args)
-Flow1.generate_flow()
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='Conversion')
+    parser.add_argument('--input_dir', default="/mnt/md1/richard_bao/balint_data/label_classification_data/positiveB",type=str, help='directory with the mp4 videos')
+    parser.add_argument('--gpu_id', default=1,type=int, help='which gpu')
+    parser.add_argument('--window', default=4,type=int, help='sliding window for smoothing frames')
+    parser.add_argument('--join', default=2,type=int, help='write optical flow side by side to original if 2')
+    parser.add_argument('--div_flow', default=2, type=float, help='value by which flow will be divided. overwritten if stored in pretrained file')
+    parser.add_argument('--max_flow', default=20, type=float, help='max flow value. Flow map color is saturated above this value. If not set, will use flow map\'s max value')
+    parser.add_argument('--output_type', default='gray', help='viz or raw or gray')
+    args = parser.parse_args()
+
+    Flow1 = OpticalFlow(args)
+    Flow1.generate_flow()

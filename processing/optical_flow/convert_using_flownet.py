@@ -42,7 +42,7 @@ def mp4_load(fn):
 
 ##############################################################
 parser = argparse.ArgumentParser(description='Conversion')
-parser.add_argument('--mp4_fn', default=settings.raw_directory,type=str, help='input path')
+parser.add_argument('--mp4_fn', default=settings.data_directory,type=str, help='input path')
 parser.add_argument('--gpu_id', default=1,type=int, help='which gpu')
 parser.add_argument('--window', default=4,type=int, help='sliding window for smoothing frames')
 parser.add_argument('--join', default=2,type=int, help='write optical flow side by side to original if 2')
@@ -74,66 +74,67 @@ if __name__ == '__main__':
     # if 'div_flow' in network_data.keys():
     #     args.div_flow = network_data['div_flow']
 
+    print(f"file name {mp4_fn}")
 
-    mp4_ims = mp4_load(mp4_fn)
-    n_im = len(mp4_ims) # Number of images
+    # mp4_ims = mp4_load(mp4_fn)
+    # n_im = len(mp4_ims) # Number of images
 
-    export_ims = []
-    [nY, nX, nC] = mp4_ims[0].shape
+    # export_ims = []
+    # [nY, nX, nC] = mp4_ims[0].shape
 
-    #frame_ints = list(range(n_im))
-    div_flow = 2
-    max_flow = 20
-    outs = []
+    # #frame_ints = list(range(n_im))
+    # div_flow = 2
+    # max_flow = 20
+    # outs = []
 
-    for ii in tqdm(range(n_im-window)):
+    # for ii in tqdm(range(n_im-window)):
         
-        aa=ii
-        bb=ii+window
+    #     aa=ii
+    #     bb=ii+window
 
-        img1 = input_transform(mp4_ims[aa])
-        img2 = input_transform(mp4_ims[bb])
-        input_var = torch.cat([img1, img2]).unsqueeze(0)
+    #     img1 = input_transform(mp4_ims[aa])
+    #     img2 = input_transform(mp4_ims[bb])
+    #     input_var = torch.cat([img1, img2]).unsqueeze(0)
 
-        # if args.bidirectional:
-        # feed inverted pair along with normal pair
-        inverted_input_var = torch.cat([img2, img1]).unsqueeze(0)
-        input_var = torch.cat([input_var, inverted_input_var])
+    #     # if args.bidirectional:
+    #     # feed inverted pair along with normal pair
+    #     inverted_input_var = torch.cat([img2, img1]).unsqueeze(0)
+    #     input_var = torch.cat([input_var, inverted_input_var])
 
-        input_var = input_var.cuda()
-        # compute output
-        output = model(input_var)
+    #     input_var = input_var.cuda()
+    #     # compute output
+    #     output = model(input_var)
 
-        outs.append(np.array(output.cpu().detach()))
+    #     outs.append(np.array(output.cpu().detach()))
 
-        # Upsample
-        output = F.interpolate(output, size=img1.size()[-2:], mode='bilinear', align_corners=False)
+    #     # Upsample
+    #     output = F.interpolate(output, size=img1.size()[-2:], mode='bilinear', align_corners=False)
 
-        # Convert to an RGBim1.
-        for suffix, flow_output in zip(['flow', 'inv_flow'], output):
-            rgb_flow = flow2rgb(div_flow * flow_output, max_value=max_flow)
-            to_save = (rgb_flow * 255).astype(np.uint8).transpose(1,2,0)
+    #     # Convert to an RGBim1.
+    #     for suffix, flow_output in zip(['flow', 'inv_flow'], output):
+    #         rgb_flow = flow2rgb(div_flow * flow_output, max_value=max_flow)
+    #         to_save = (rgb_flow * 255).astype(np.uint8).transpose(1,2,0)
 
-        combined = np.zeros([nY, join*nX, nC], dtype=np.uint8)
-        if join == 2:
-            combined[:, :nX, :] = mp4_ims[aa][:, :, [2,1,0]] # Invert back for BGR
-            combined[:, nX:, :] = to_save
-        else:
-            combined[:, :, :] = to_save
+    #     combined = np.zeros([nY, join*nX, nC], dtype=np.uint8)
+    #     if join == 2:
+    #         combined[:, :nX, :] = mp4_ims[aa][:, :, [2,1,0]] # Invert back for BGR
+    #         combined[:, nX:, :] = to_save
+    #     else:
+    #         combined[:, :, :] = to_save
 
-        export_ims.append(combined) # Save for list
+    #     export_ims.append(combined) # Save for list
 
-    # Write out the MP4
-    subdir_out = os.path.join('/'.join(mp4_fn.split('/')[:-1]), "optical_flow")
-    if not os.path.exists(subdir_out):
-        os.makedirs(subdir_out)
+    # # Write out the MP4
+    # subdir_out = os.path.join('/'.join(mp4_fn.split('/')[:-1]), "optical_flow")
+    # if not os.path.exists(subdir_out):
+    #     os.makedirs(subdir_out)
 
-    fn_out = os.path.join(subdir_out, 'flownet_'+ mp4_fn.split('/')[-1])
+    # fn_out = os.path.join(subdir_out, 'flownet_'+ mp4_fn.split('/')[-1])
 
-    fourcc = cv2.VideoWriter_fourcc(*'mp4v')
-    out = cv2.VideoWriter(fn_out,fourcc, 30.0, (int(join*nX),int(nY)))
+    # fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+    # out = cv2.VideoWriter(fn_out,fourcc, 30.0, (int(join*nX),int(nY)))
 
-    for frame in export_ims:
-        out.write(frame)
+    # for frame in export_ims:
+    #     out.write(frame)
 
-    out.release()
+    # out.release()

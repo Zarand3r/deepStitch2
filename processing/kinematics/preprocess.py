@@ -67,7 +67,8 @@ def get_kinematics(kinematics_directory, kinematicsfile, filename, start, end):
             with open(kinematics_output_fn, 'w') as csvfile: 
                     writer = csv.DictWriter(csvfile, fieldnames = (rows[0].keys()))  
                     writer.writeheader()  
-                    writer.writerows(rows) 
+                    writer.writerows(rows)
+
         return kinematics_output_fn
 
 def main(labelsfile, data_directory, kinematics_directory):
@@ -75,7 +76,9 @@ def main(labelsfile, data_directory, kinematics_directory):
         previous_filename = None
         count = 1
         for index, row in labels.iterrows():
-                filename = row['meta_video_file_name']
+                if row['meta_video_file_name'] is None:
+                        continue
+                filename = row['meta_video_file_name'].strip()
                 if filename == previous_filename:
                         count += 1
                 else:
@@ -91,18 +94,27 @@ def main(labelsfile, data_directory, kinematics_directory):
                 if isinstance(start, list):
                         start = start[0]
                 if isinstance(end, list):
-                    end = end[-1]
+                        end = end[-1]
 
-                # video_input_fn = os.path.join(data_directory, filename)
+                video_clip_name = f"{filename[:-4]}_{count}.mp4"
                 # output_subdir = os.path.join(data_directory, "demonstrations")
                 # if not os.path.exists(output_subdir):
                 #     os.makedirs(output_subdir)
-                video_clip_name = f"{filename[:-4]}_{count}.mp4"
-                # video_output_fn = os.path.join(output_subdir, video_clip_name) #m4v becomese mp4
+
+                # sanitized_video_clip_name = video_clip_name
+                # if " " in filename:
+                #         filename = f"'{filename}'"
+                #         sanitized_video_clip_name = f"'{sanitized_video_clip_name}'"
+                # video_input_fn = os.path.join(data_directory, filename)
+                # video_output_fn = os.path.join(output_subdir, sanitized_video_clip_name) #m4v becomese mp4
                 # start_time = '0' + str(datetime.timedelta(seconds=start))
                 # n_frames = round(30.*(end-start))
-                #cmd = 'ffmpeg -ss %s -i %s -an -vcodec h264 -r 30 -vframes %d %s' % (start_time, video_input_fn, n_frames, video_output_fn)
-                #os.system(cmd)
+                # print(f"writing {video_input_fn} to {video_output_fn}")
+                # print(n_frames)
+                # cmd = 'ffmpeg -ss %s -i %s -an -vcodec h264 -r 30 -vframes %d %s' % (start_time, video_input_fn, n_frames, video_output_fn)
+                # os.system(cmd)
+
+
                 kinematics_output_fn = get_kinematics(kinematics_directory, kinematicsfile, video_clip_name[:-4], start, end)
                 labels.at[index, 'meta_video_file_name'] = video_clip_name  #video_output_fn
                 labels.at[index, 'meta_raw_kinematic_data_name'] = kinematics_output_fn
@@ -118,12 +130,12 @@ def main(labelsfile, data_directory, kinematics_directory):
                                 t -= start
                         labels.at[index, time_label] = t
 
-        labels.to_csv(f"{labelsfile[:-4]}_demonstrations.csv", index=False)
+        labels.to_csv(f"{labelsfile[:-5]}_demonstrations.csv", index=False)
 
 if __name__ == '__main__':
         labelsfile = settings.raw_data_labels
         kinematics_directory = settings.raw_kinematics_directory
-        data_directory = settings.raw_directory
+        data_directory = settings.original_directory
         main(labelsfile, data_directory, kinematics_directory)
 
 

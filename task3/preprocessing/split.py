@@ -117,7 +117,7 @@ if __name__ == '__main__':
     #parser.add_argument("--segments", default = "CD", help = "segments")
     parser.add_argument("--segments", default = "B", help = "segments")
     parser.add_argument("--label", default = "label_needle positionB", help = "label")
-    parser.add_argument("--window", default = 1, help = "window")
+    parser.add_argument("--window", default = 0.5, help = "window")
     parser.add_argument('--inclusive', dest='inclusive', action='store_true', help = "if inclusive, use first index of start, last index of end for list timepoints")
     args = parser.parse_args()
     splice(args)

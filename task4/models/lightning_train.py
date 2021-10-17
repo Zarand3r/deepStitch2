@@ -34,6 +34,8 @@ import settings
 
 def convert_to_kinematic_name(fname):
         curr_class = os.path.basename(os.path.dirname(fname))
+        if "optical_flow" in curr_class:
+                curr_class = fname.split('/')[-3]
         if "positive" in curr_class:
             curr_class = curr_class.replace("positive", "")
         if "negative" in curr_class:
@@ -57,19 +59,31 @@ class CustomDataset(Dataset):
                 if len(include_classes) == 0:
                         self.classes = os.listdir(global_dir)
                         self.remove_empty()
-                        fns = glob.glob(os.path.join(global_dir, '*', '%s*' % flow_method))
+                        fns = glob.glob(os.path.join(global_dir, '*', "optical_flow"+masked, '%s*' % flow_method))
                 else:
                         self.classes = include_classes
                         self.remove_empty()
                         fns = []
                         for class_curr in include_classes:
                                 fns.extend(glob.glob(os.path.join(global_dir, class_curr, '%s*' % flow_method)))
-                fns  = [f for f in fns if os.path.exists(os.path.join(kinematics_dir, convert_to_kinematic_name(f)[1]))]
+                        if len(fns) == 0:
+                                for class_curr in include_classes:
+                                        fns.extend(glob.glob(os.path.join(global_dir, class_curr, "optical_flow"+masked, '%s*' % flow_method)))
+                print("BOINK ", os.path.join(kinematics_dir, convert_to_kinematic_name(fns[0])[0], convert_to_kinematic_name(fns[0])[1]))
+                fns  = [f for f in fns if os.path.exists(os.path.join(kinematics_dir, convert_to_kinematic_name(f)[0], convert_to_kinematic_name(f)[1]))]
+                # fns  = [f for f in fns if os.path.exists(os.path.join(kinematics_dir, 'C', convert_to_kinematic_name(f)[1]))] # hotfix!!! commented above is proper
                 if len(fns) == 0:
-                        raise ValueError('Likely that you have not pre-computed the optical flow or data directory is wrong!')
+                        raise ValueError('Likely that you have not pre-computed the optical flow or data directory or kinematics directory is wrong!')
+                # idxs = None # hotfix!!!!! comes from idx_train and shit starting from line 165
+                print(len(fns))
+                print(len(idxs))
                 if idxs == None: # load all
                         idxs = list(range(len(fns)))
-                self.filtered_fns = [[f, self.classes.index(f.split('/')[-2]) ] for i, f in enumerate(fns) if i in idxs]
+                if "optical_flow" in fns[0].split('/')[-2]:
+                        self.filtered_fns = [[f, self.classes.index(f.split('/')[-3]) ] for i, f in enumerate(fns) if i in idxs] # hotfix!!!! changed from -2 to -3 because of hotfix due to bug in get_kinematic_name
+                else:
+                        self.filtered_fns = [[f, self.classes.index(f.split('/')[-2]) ] for i, f in enumerate(fns) if i in idxs]
+                print(len(self.filtered_fns))
                 if balance_classes:
                         class_counter = Counter([f[1] for f in self.filtered_fns])
                         print(class_counter)
@@ -104,6 +118,7 @@ class CustomDataset(Dataset):
                 n_frames = video.size()[0]
                 ############################################################################################
                 class_curr, kinematics_file = convert_to_kinematic_name(self.filtered_fns[idx][0])
+                # class_curr = 'C' # hotfix because of the bug in convert_to_kinematic_name
                 kinematics_file = os.path.join(self.kinematics_dir, class_curr, kinematics_file)
                 # kinematics csv should be preprocessed so it is interpolated for all frames.
                 # The only timepoints should be those that correspond to frames in the video
@@ -152,10 +167,13 @@ class FusionModel(LightningModule):
                 self.predicted_softmax = []; self.predicted_softmax_train = []
                 self.batch_size = self.hparams.batch_size
                 ############################################################################################
-                # Generate the tra300in and test splits
+                # Generate the train and test splits
                 fns = []
                 for class_curr in self.hparams.include_classes:
                         fns.extend(glob.glob(os.path.join(self.hparams.datadir, class_curr, '%s*' % self.hparams.flow_method)))
+                if len(fns) == 0:
+                        for class_curr in self.hparams.include_classes:
+                                fns.extend(glob.glob(os.path.join(self.hparams.datadir, class_curr, "optical_flow"+self.hparams.masked, '%s*' % self.hparams.flow_method)))
                 idx = list(range(len(fns)))
                 random.seed(self.hparams.seed); random.shuffle(idx)
                 self.hparams.idx_train  = idx[:int(self.hparams.train_proportion*len(idx))].copy() # Save as hyperparams
@@ -315,7 +333,7 @@ class FusionModel(LightningModule):
                 class_outputs = class_outputs[:, -1, :]
                 kinematics_outputs = kinematics_outputs[:, -1, :]
                 mle_loss = nn.MSELoss()
-                loss = F.cross_entropy(class_outputs, target_cuda.type(torch.long)) + mle_loss(kinematics_outputs, target_kinematics)
+                loss = F.cross_entropy(class_outputs, target_cuda.type(torch.long)) + self.hparams.kweight*mle_loss(kinematics_outputs, target_kinematics)
                 #TODO: separate classificaiton and kinematics loss, don't let the kinematics loss influence the validation, and plot losses separately
                 self.actual.append(target_cuda.item())
                 self.predicted.append(class_outputs.topk(1,1)[-1].item())
@@ -347,7 +365,7 @@ class FusionModel(LightningModule):
                 return {'val_loss': avg_loss, 'val_acc':torch.tensor(top1_val), 'log': tensorboard_logs}
         
         def send_im_calculate_top1(self, actual, predicted, cmap_use = 'Blues', name = 'tmp/name'):
-                cm = confusion_matrix(actual, predicted)
+                cm = confusion_matrix(actual, predicted, normalize='true')
                 fig = plt.figure(); sns.heatmap(cm, cmap = cmap_use, ax =plt.gca(), annot = True, xticklabels = self.hparams.include_classes, yticklabels = self.hparams.include_classes)
                 self.logger.experiment.add_figure(name, fig, global_step=self.current_epoch, close = True)
                 top1 = float(sum([a==b for a,b in zip(actual, predicted)]))/len(actual)
@@ -468,6 +486,7 @@ if __name__ == '__main__':
         parser.add_argument('--loader_stride', default=1, type=int, help='stride for dataloader')
         parser.add_argument('--number_workers', default=0, type=int, help='number of workers for Dataloader')
         parser.add_argument('--batch_size', default=1, type=int, help='batch size')
+        parser.add_argument('--kweight', default=1, type=float, help='kinematics weight, relative to video weight of 1')
         parser.add_argument('--masked', dest='masked', action='store_true', help = "train on masked?")
         parser.add_argument('--upsample', dest='upsample', action='store_true', help = "upsample or downsample?")
         

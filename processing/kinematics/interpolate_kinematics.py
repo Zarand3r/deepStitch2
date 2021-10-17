@@ -19,6 +19,8 @@ def interpolate():
     kinematics_file_list = glob.glob(os.path.join(settings.kinematics_directory, "*.csv"))
     for kinematics_file in kinematics_file_list:
         video_path = os.path.join(settings.raw_directory, os.path.basename(kinematics_file[:-4])+".mp4")
+        # print(f"interpolating {kinematics_file}")
+        # print(f"video path {video_path}")
         cap = cv2.VideoCapture(video_path)
         length = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
         kinematics = pd.read_csv(kinematics_file)
@@ -32,6 +34,12 @@ def interpolate():
             yp = kinematics[:, i]
             columns.append(np.interp(x, xp, yp))
         kinematics = np.column_stack(columns)
+        if len(kinematics) == 0:
+            print(kinematics_file)
+            print(video_path)
+            print(length)
+            # Length is 0 if the video doesnt exist or is empty. Both cases are apparent. There are 2 anomalous names.
+            # Tube_3_2020-05-08 14-12-27_trimmed_4+.mp4 doesnt exist in original/demonstrations
         np.savetxt(kinematics_file, kinematics, delimiter=",", header=header, comments='')
 
 
@@ -55,7 +63,8 @@ def splice(all_timepoints = ['A', 'B', 'C', 'D', 'E', 'F', 'G']):
     # Convert the strings to lists and none literals
     for ii in range(len(df)):
         for col_name in df.columns:
-            if 'label' in col_name or 'timepoint' in col_name:
+            # if 'label' in col_name or 'timepoint' in col_name:
+            if 'timepoint' in col_name:
                 curr_entry = df.at[ii, col_name]
                 if type(curr_entry) == str:
                     #print(curr_entry, ii)
@@ -81,8 +90,7 @@ def splice(all_timepoints = ['A', 'B', 'C', 'D', 'E', 'F', 'G']):
             start_val, end_val = df.iloc[nn][start_col], df.iloc[nn][end_col]
             if start_val is None or end_val is None:
                 #print('ff 2 due to None val')
-                kk+=2
-                pass
+                kk+=1
             else:
                 # If start_val is a list make it the last one
                 if type(start_val) == list:
@@ -96,9 +104,10 @@ def splice(all_timepoints = ['A', 'B', 'C', 'D', 'E', 'F', 'G']):
                 if not os.path.exists(output_subdir):
                     os.makedirs(output_subdir)
                 np.savetxt(os.path.join(output_subdir, os.path.basename(kinematics_file)), kinematics_splice, delimiter=",", header=header, comments='')
+                print(f"saving {kinematics_file} to {os.path.join(output_subdir, os.path.basename(kinematics_file))}")
                 kk+=1
 
 if __name__ == '__main__':
     interpolate()
-    splice()
-    # splice(all_timepoints=['A', 'C', 'E'])
+    # splice()
+    splice(all_timepoints=['A', 'B', 'C', 'E', 'F', 'G'])
